@@ -1,0 +1,200 @@
+#include "stdafx.h"
+#include "Enemy1.h"
+#include "Player.h"
+
+namespace
+{
+	const float CHARACON_RADIUS = 20.0f;
+	const float CHARACON_HEIGHT = 100.0f;
+
+}
+
+Enemy1::Enemy1()
+{
+
+}
+
+Enemy1::~Enemy1()
+{
+
+}
+
+bool Enemy1::Start()
+{
+	m_modelRender.Init("Assets/modelData/kuribo-.tkm");
+	//m_modelRender.Init("Assets/modelData/unityChan.tkm");
+
+	m_player = FindGO<Player>("player");
+
+	m_modelRender.SetPosition(m_position);
+	m_modelRender.SetRotation(m_rotation);
+	m_modelRender.SetScale(m_scale);
+
+	m_charaCon.Init(
+		CHARACON_RADIUS,
+		CHARACON_HEIGHT,
+		m_position
+	);
+	// 初期状態・初期向き・プレイヤー参照の確保（エンジン側の探し方に合わせてください）
+	m_enemyState = enEnemyState_Idle;
+	m_forward = Vector3::AxisZ; // 初期前ベクトル
+	return true;
+}
+
+void Enemy1::Update()
+{
+	ManageState();
+
+	Chase();
+
+	Rotation();
+
+	m_modelRender.Update();
+}
+
+void Enemy1::Chase()
+{
+	//追跡ステートでないなら、追跡処理はしない。
+	if (m_enemyState != enEnemyState_Chase)
+	{
+		return;
+	}
+
+	m_position = m_charaCon.Execute(m_moveSpeed, g_gameTime->GetFrameDeltaTime());
+	if (m_charaCon.IsOnGround()) {
+		//地面についた。
+		m_moveSpeed.y = 0.0f;
+	}
+	Vector3 modelPosition = m_position;
+	//ちょっとだけモデルの座標を挙げる。
+	modelPosition.y += 2.5f;
+	m_modelRender.SetPosition(modelPosition);
+}
+
+void Enemy1::Rotation()
+{
+	if (fabsf(m_moveSpeed.x) < 0.001f && fabsf(m_moveSpeed.z) < 0.001f)
+	{
+		//m_moveSpeed.xとm_moveSpeed.zの絶対値がともに0.001以下ということは
+		//このフレームではキャラは移動していないので旋回する必要はない。
+		return;
+	}
+	//atan2はtanθの値を角度(ラジアン単位)に変換してくれる関数。
+	//m_moveSpeed.x / m_moveSpeed.zの結果はtanθになる。
+	//atan2を使用して、角度を求めている。
+	//これが回転角度になる。
+	float angle = atan2(-m_moveSpeed.x, m_moveSpeed.z);
+	//atanが返してくる角度はラジアン単位なので
+	//SetRotationDegではなくSetRotationを使用する。
+	m_rotation.SetRotationY(-angle);
+
+	//回転を設定する。
+	m_modelRender.SetRotation(m_rotation);
+
+	//プレイヤーの前ベクトルを計算する。
+	m_forward = Vector3::AxisZ;
+	m_rotation.Apply(m_forward);
+}
+
+void Enemy1::Collision()
+{
+
+}
+
+const bool Enemy1::SearchPlayer() const
+{
+	Vector3 diff = m_player->GetPosition() - m_position;
+
+	if (diff.LengthSq() <= 700.0f * 700.0f)
+	{
+		//エネミーからプレイヤーに向かうベクトルを正規化する。
+		diff.Normalize();
+		//エネミーの正面のベクトルと、エネミーからプレイヤーに向かうベクトルの。
+		//内積(cosθ)を求める。
+		float cos = m_forward.Dot(diff);
+		//内積(cosθ)から角度(θ)を求める。
+		float angle = acosf(cos);
+		//角度(θ)が120°より小さければ。
+		if (angle <= (Math::PI / 180.0f) * 120.0f)
+		{
+			//プレイヤーを見つけた！
+			return true;
+		}
+	}
+	return false;
+}
+
+void Enemy1::ProcessCommonStateTransition()
+{
+	//各タイマーを初期化。
+	m_idleTimer = 0.0f;
+	m_chaseTimer = 0.0f;
+
+	//エネミーからプレイヤーに向かうベクトルを計算する。
+	Vector3 diff = m_player->GetPosition() - m_position;
+
+	//プレイヤーを見つけたら
+	if (SearchPlayer() == true)
+	{
+		//ベクトルを正規化する。
+		diff.Normalize();
+		//移動速度を設定する。
+		m_moveSpeed = diff * 250.0f;
+		//追跡ステートへ遷移する。
+		m_enemyState = enEnemyState_Chase;
+		return;
+	}
+	//プレイヤーを見つけられなければ。
+	else
+	{
+		m_enemyState = enEnemyState_Idle;
+		return;
+	}
+}
+void Enemy1::ProcessIdleStateTransition()
+{
+	m_idleTimer += g_gameTime->GetFrameDeltaTime();
+	//待機時間がある程度経過したら。
+	if (m_idleTimer >= 0.9f)
+	{
+		//他のステートへ遷移する。
+		ProcessCommonStateTransition();
+	}
+
+}
+
+void Enemy1::ProcessWalkStateTransition()
+{
+	//他のステートに遷移する。
+	ProcessCommonStateTransition();
+}
+
+void Enemy1::ProcessRunStateTransition()
+{
+	//他のステートに遷移する。
+	ProcessCommonStateTransition();
+}
+
+void Enemy1::ManageState()
+{
+	switch (m_enemyState)
+	{
+	case enEnemyState_Idle:
+		//待機ステートの遷移処理。
+		ProcessIdleStateTransition();
+		break;
+	case enEnemyState_Chase:
+		//追跡ステートの遷移処理。
+		//ProcessChaseStateTransition();
+		break;
+	case enEnemyState_Dead:
+		//死亡ステートの遷移処理。
+		//ProcessDeadStateTransition();
+		break;
+	}
+}
+
+void Enemy1::Render(RenderContext& rc)
+{
+	m_modelRender.Draw(rc);
+}

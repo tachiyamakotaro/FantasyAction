@@ -9,9 +9,11 @@ public:
 	void Move();
 	void Dash();
 	void Jump();
+	void JumpAttack();
 	void Damege();
 	//void LifeZeroDeath();
 	void Rotation();
+	void PlayerState();
 	void Animation();
 	void Render(RenderContext& rc);
 
@@ -64,29 +66,32 @@ public:
 		return m_characterController;
 	}
 
-	Vector3 m_position;
-	CharacterController m_characterController;
-	Vector3 m_moveSpeed;
-	Quaternion m_rotation;
-	Vector3 m_startPosition;
+	CharacterController		m_characterController;
+	Quaternion				m_rotation;
+	Vector3					m_position;
+	Vector3					m_startPosition;
+	Vector3					m_down = Vector3::AxisY;
+	Vector3					m_moveSpeed;
 
 	bool m_moveFlag = true;
 	bool m_dashFlag = false;
 	int m_life = 3;
 
+private:
+
 	SoundSource* m_jumpSe;
 
-	enum EnAnimationClip {
-		enAnimationClip_Idle,
-		enAnimationClip_Walk,
-		enAnimationClip_Run,
-		enAnimationClip_Jump,
-		enAnimationClip_Clear,
-		enAnimationClip_Death,
-		enAnimationClip_Num,
+	enum EnPlayerState {
+		enPlayerState_Idle,
+		enPlayerState_Walk,
+		enPlayerState_Run,
+		enPlayerState_Jump,
+		enPlayerState_Clear,
+		enPlayerState_Death,
+		enPlayerState_Num,
 	};
-	EnAnimationClip m_animationState = enAnimationClip_Idle;
-	AnimationClip m_animationClips[enAnimationClip_Num];
+	EnPlayerState m_playerState = enPlayerState_Idle;
+	AnimationClip m_animationClips[enPlayerState_Num];
 	ModelRender m_modelRender;
 	//bool m_renderFlag = true;
 };

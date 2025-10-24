@@ -1,4 +1,5 @@
 #pragma once
+#include "physics/PhysicsGhostObject.h"
 
 class Player;
 
@@ -20,6 +21,9 @@ public:
 	bool Start();
 	void Update();
 	void Render(RenderContext& rc);
+	void MakeStepOnJudge();
+	void UpdateStepOnJudge();
+	void Gravity();
 	/// <summary>
 	/// 座標を設定する。
 	/// </summary>
@@ -83,25 +87,10 @@ public:
 	/// </summary>
 	void ProcessIdleStateTransition();
 	/// <summary>
-	/// 歩きステートの遷移処理。
+	/// 死亡ステートの遷移処理。
 	/// </summary>
-	void ProcessWalkStateTransition();
-	/// <summary>
-	/// 走りステートの遷移処理。
-	/// </summary>
-	void ProcessRunStateTransition();
-	/// <summary>
-	/// 追跡ステートの背遷移処理。
-	/// </summary>
-	/*void ProcessChaseStateTransition();
-	/// <summary>
-	/// 被ダメージステートの遷移処理。
-	/// </summary>
-	void ProcessReceiveDamageStateTransition();
-	/// <summary>
-	/// ダウンステートの遷移処理。
-	/// </summary>
-	void ProcessDeadStateTransition();*/
+	void ProcessDeadStateTransition();
+	
 	ModelRender					m_modelRender;								//モデルレンダー。
 	Vector3						m_position;									//座標。
 	Vector3						m_moveSpeed;								//移動速度。
@@ -110,8 +99,12 @@ public:
 	Vector3						m_scale = Vector3::One;						//大きさ。
 	CharacterController			m_charaCon;									//キャラコン。
 	EnEnemyState				m_enemyState = enEnemyState_Idle;			//エネミーステート。
+	PhysicsGhostObject			m_stepOnJudge;								//踏んだ時の判定。
+
 	Player* m_player = nullptr;							//プレイヤー。
+
 	float						m_chaseTimer = 0.0f;						//追跡タイマー。
 	float						m_idleTimer = 0.0f;
+	float						m_deleteTimer = 0.0f;
 };
 

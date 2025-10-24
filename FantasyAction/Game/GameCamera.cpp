@@ -4,7 +4,7 @@
 
 namespace
 {
-	const Vector3 IN_GAME_CAMERA_POS(0.0f, 125.0f, -350.0f);
+	const Vector3 IN_GAME_CAMERA_POS(0.0f, 125.0f, -400.0f);
 	const float CAMERA_MOVE_SPEED = 1000.0f;
 	const float CAMERA_COLLISION = 5.0f;
 	const float CAMERA_NEAR = 1.0f;

@@ -28,7 +28,7 @@ bool Game::Start()
 
 	m_stageNo1=NewGO<StageNo1>(0, "stageNo1");
 
-	//PhysicsWorld::GetInstance()->EnableDrawDebugWireFrame();
+	PhysicsWorld::GetInstance()->EnableDrawDebugWireFrame();
 	
 	return true;
 }

@@ -11,6 +11,8 @@ namespace
 	const float CHARACTER_DASHSPEED_MAGNIFICATION = 2.0f;
 	const float GRAVITY = 40.0f;
 	const float STICK_INPUT = 0.001f;
+	const float JUMP_ATTACK_RADIUS = 10.0f;
+	const float JUMP_ATTACK_HEIGHT = 10.0f;
 }
 
 Player::Player()
@@ -25,21 +27,21 @@ Player::~Player()
 
 bool Player::Start()
 {
-	m_animationClips[enAnimationClip_Idle].Load("Assets/animData/idle.tka");
-	m_animationClips[enAnimationClip_Idle].SetLoopFlag(true);
-	m_animationClips[enAnimationClip_Walk].Load("Assets/animData/walk.tka");
-	m_animationClips[enAnimationClip_Walk].SetLoopFlag(true);
-	m_animationClips[enAnimationClip_Run].Load("Assets/animData/run.tka");
-	m_animationClips[enAnimationClip_Run].SetLoopFlag(true);
-	m_animationClips[enAnimationClip_Jump].Load("Assets/animData/jump.tka");
-	m_animationClips[enAnimationClip_Jump].SetLoopFlag(false);
-	m_animationClips[enAnimationClip_Clear].Load("Assets/animData/clear.tka");
-	m_animationClips[enAnimationClip_Clear].SetLoopFlag(false);
-	m_animationClips[enAnimationClip_Death].Load("Assets/animData/KneelDown.tka");
-	m_animationClips[enAnimationClip_Death].SetLoopFlag(false);
+	m_animationClips[enPlayerState_Idle].Load("Assets/animData/idle.tka");
+	m_animationClips[enPlayerState_Idle].SetLoopFlag(true);
+	m_animationClips[enPlayerState_Walk].Load("Assets/animData/walk.tka");
+	m_animationClips[enPlayerState_Walk].SetLoopFlag(true);
+	m_animationClips[enPlayerState_Run].Load("Assets/animData/run.tka");
+	m_animationClips[enPlayerState_Run].SetLoopFlag(true);
+	m_animationClips[enPlayerState_Jump].Load("Assets/animData/jump.tka");
+	m_animationClips[enPlayerState_Jump].SetLoopFlag(false);
+	m_animationClips[enPlayerState_Clear].Load("Assets/animData/clear.tka");
+	m_animationClips[enPlayerState_Clear].SetLoopFlag(false);
+	m_animationClips[enPlayerState_Death].Load("Assets/animData/KneelDown.tka");
+	m_animationClips[enPlayerState_Death].SetLoopFlag(false);
 
 	m_modelRender.Init("Assets/modelData/unityChan.tkm", m_animationClips,
-		enAnimationClip_Num, enModelUpAxisY);
+		enPlayerState_Num, enModelUpAxisY);
 
 	m_characterController.Init(CAPSULE_COLLIDER_RADIUS, CAPSULE_COLLIDER_HEIGHT, m_position);
 
@@ -52,6 +54,8 @@ void Player::Update()
 
 	Rotation();
 
+	PlayerState();
+
 	Animation();
 
 	//Damege();
@@ -61,7 +65,7 @@ void Player::Update()
 
 void Player::Move()
 {
-	m_animationState = enAnimationClip_Idle;
+	m_playerState = enPlayerState_Idle;
 	if (m_moveFlag == true) {
 		m_moveSpeed.x = 0.0f;
 		m_moveSpeed.z = 0.0f;
@@ -108,12 +112,12 @@ void Player::Dash()
 			m_moveSpeed.x *= CHARACTER_DASHSPEED_MAGNIFICATION;
 			m_moveSpeed.z *= CHARACTER_DASHSPEED_MAGNIFICATION;
 			m_dashFlag = true;
-			m_animationState = enAnimationClip_Run;
+			m_playerState = enPlayerState_Run;
 		}
 		else 
 		{
 			m_dashFlag = false;
-			m_animationState = enAnimationClip_Walk;
+			m_playerState = enPlayerState_Walk;
 		}
 	}
 	else if (m_dashFlag == true)
@@ -135,8 +139,21 @@ void Player::Jump()
 	else
 	{
 		m_moveSpeed.y -= GRAVITY;
-		m_animationState = enAnimationClip_Jump;
+		m_playerState = enPlayerState_Jump;
 	}
+}
+
+void Player::JumpAttack()
+{
+	auto collisionObject = NewGO<CollisionObject>(0);
+	Vector3 collisionPosition = m_position;
+	collisionPosition -= m_down ;
+	collisionObject->CreateCapsule(collisionPosition,
+		Quaternion::Identity,
+		JUMP_ATTACK_RADIUS,
+		JUMP_ATTACK_HEIGHT
+	);
+	collisionObject->SetName("player_jumpAttack");
 }
 
 void Player::Damege()
@@ -147,7 +164,7 @@ void Player::Damege()
 	}
 	if (m_life <= 0)
 	{
-		m_animationState = enAnimationClip_Death;
+		m_playerState = enPlayerState_Death;
 		m_moveFlag = false;
 	}
 
@@ -163,27 +180,56 @@ void Player::Rotation()
 	}
 }
 
+void Player::PlayerState()
+{
+	switch (m_playerState)
+	{
+	case enPlayerState_Idle:
+		
+		break;
+	case enPlayerState_Walk:
+		
+		break;
+	case enPlayerState_Run:
+		
+		break;
+	case enPlayerState_Jump:
+		JumpAttack();
+
+		break;
+	case enPlayerState_Clear:
+		
+		break;
+	case enPlayerState_Death:
+		
+		break;
+	default:
+		break;
+	}
+}
+
 void Player::Animation()
 {
-	switch (m_animationState)
+	switch (m_playerState)
 	{
-	case enAnimationClip_Idle:
-		m_modelRender.PlayAnimation(enAnimationClip_Idle);
+	case enPlayerState_Idle:
+		m_modelRender.PlayAnimation(enPlayerState_Idle);
 		break;
-	case enAnimationClip_Walk:
-		m_modelRender.PlayAnimation(enAnimationClip_Walk);
+	case enPlayerState_Walk:
+		m_modelRender.PlayAnimation(enPlayerState_Walk);
 		break;
-	case enAnimationClip_Run:
-		m_modelRender.PlayAnimation(enAnimationClip_Run);
+	case enPlayerState_Run:
+		m_modelRender.PlayAnimation(enPlayerState_Run);
 		break;
-	case enAnimationClip_Jump:
-		m_modelRender.PlayAnimation(enAnimationClip_Jump);
+	case enPlayerState_Jump:
+		m_modelRender.PlayAnimation(enPlayerState_Jump);
+
 		break;
-	case enAnimationClip_Clear:
-		m_modelRender.PlayAnimation(enAnimationClip_Clear);
+	case enPlayerState_Clear:
+		m_modelRender.PlayAnimation(enPlayerState_Clear);
 		break;
-	case enAnimationClip_Death:
-		m_modelRender.PlayAnimation(enAnimationClip_Death);
+	case enPlayerState_Death:
+		m_modelRender.PlayAnimation(enPlayerState_Death);
 		break;
 	default:
 		break;

@@ -31,6 +31,11 @@ StageNo1::~StageNo1()
 	{
 		DeleteGO(stageNo1Level);
 	}
+	const auto& enemy1s = FindGOs<Enemy1>("enemy1");
+	for (auto enemy1 : enemy1s)
+	{
+		DeleteGO(enemy1);
+	}
 }
 
 bool StageNo1::Start()

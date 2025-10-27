@@ -11,8 +11,10 @@ public:
 	void Jump();
 	void JumpAttack();
 	void Damege();
-	//void LifeZeroDeath();
+	void Invincible();
+	void Collision();
 	void Rotation();
+	void DispStatus();
 	void PlayerState();
 	void Animation();
 	void Render(RenderContext& rc);
@@ -73,13 +75,7 @@ public:
 	Vector3					m_down = Vector3::AxisY;
 	Vector3					m_moveSpeed;
 
-	bool m_moveFlag = true;
-	bool m_dashFlag = false;
-	int m_life = 3;
 
-private:
-
-	SoundSource* m_jumpSe;
 
 	enum EnPlayerState {
 		enPlayerState_Idle,
@@ -92,7 +88,22 @@ private:
 	};
 	EnPlayerState m_playerState = enPlayerState_Idle;
 	AnimationClip m_animationClips[enPlayerState_Num];
+private:
+
+	bool m_moveFlag = true;
+	bool m_dashFlag = false;
+	bool m_damege = false;
+	float m_invincibleTimer = 0.0f;
+	float m_invincibleLimit = 2.0f;
+	float m_tripleJumpTime = 0.2f;
+	float m_tripleJumpTimer = 0.0f;
+	int m_jumpState = 0;
+	int m_life = 3;
+
+	SoundSource* m_jumpSe;
+
 	ModelRender m_modelRender;
+	FontRender  m_lifeRender;
 	//bool m_renderFlag = true;
 };
 

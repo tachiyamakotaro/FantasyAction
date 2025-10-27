@@ -87,12 +87,16 @@ void StageNo1::MakeLevel()
 
 void StageNo1::Update()
 {
-	FallDeath();
+	Death();
 }
 
-void StageNo1::FallDeath()
+void StageNo1::Death()
 {
 	if (m_player->m_position.y < -500.0f)
+	{
+		DeleteGO(this);
+	}
+	if (m_player->m_playerState == m_player->enPlayerState_Death)
 	{
 		DeleteGO(this);
 	}

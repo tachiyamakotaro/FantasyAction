@@ -6,7 +6,9 @@
 namespace
 {
 	const float CHARACON_RADIUS = 50.0f;
-	const float CHARACON_HEIGHT = 15.0f;
+	const float CHARACON_HEIGHT = 10.0f;
+	const float ATTACK_COLLISION_RADIUS = 50.0f;
+	const float ATTACK_COLLISION_HEIGHT = 5.0f;
 	const float GRAVITY = 200.0f;
 	const float HIGHER =  30.0f;
 }
@@ -37,16 +39,11 @@ bool Enemy1::Start()
 		CHARACON_HEIGHT,
 		m_position
 	);
-	MakeStepOnJudge();
+
 	// 初期状態・初期向き・プレイヤー参照の確保（エンジン側の探し方に合わせてください）
 	m_enemyState = enEnemyState_Idle;
 	m_forward = Vector3::AxisZ; // 初期前ベクトル
 	return true;
-}
-
-void Enemy1::MakeStepOnJudge()
-{
-	m_stepOnJudge.CreateBox(Vector3(m_position.x,HIGHER,m_position.z), Quaternion(m_rotation), Vector3(m_scale));
 }
 
 void Enemy1::Update()
@@ -59,22 +56,11 @@ void Enemy1::Update()
 
 	Collision();
 
-	UpdateStepOnJudge();
+	MakeAttackCollision();
 
 	ManageState();
 
 	m_modelRender.Update();
-}
-
-void Enemy1::UpdateStepOnJudge()
-{
-	PhysicsWorld::GetInstance()->ContactTest(m_player->m_characterController, [&](const btCollisionObject& co)
-	{
-		if (m_stepOnJudge.IsSelf(co) == true)
-		{
-
-		}
-	});
 }
 
 void Enemy1::Gravity()
@@ -91,6 +77,8 @@ void Enemy1::Chase()
 	m_modelRender.SetPosition(modelPos);
 	if (m_enemyState != enEnemyState_Chase || !m_player)
 	{
+		m_moveSpeed.x = 0.0f;
+		m_moveSpeed.z = 0.0f;
 		return;
 	}
 
@@ -135,7 +123,6 @@ void Enemy1::Chase()
 
 void Enemy1::Rotation()
 {
-
 	if (fabsf(m_moveSpeed.x) < 0.001f && fabsf(m_moveSpeed.z) < 0.001f)
 	{
 		//m_moveSpeed.xとm_moveSpeed.zの絶対値がともに0.001以下ということは
@@ -166,13 +153,31 @@ void Enemy1::Collision()
 		return;
 	}
 
-	const auto& collisions = g_collisionObjectManager->FindCollisionObjects("player_jumpAttack");
+	const auto& collisions = g_collisionObjectManager->FindCollisionObjects("player_jump_attack");
 	for (auto collision : collisions)
 	{
 		if (collision->IsHit(m_charaCon))
 		{
 			m_enemyState = enEnemyState_Dead;
 		}
+	}
+}
+
+void Enemy1::MakeAttackCollision()
+{
+	if (m_enemyState != enEnemyState_Dead) {
+
+		//コリジョンオブジェクトを作成する
+		auto collisionObject = NewGO<CollisionObject>(0);
+		Vector3 collisionPosition = m_position;
+		collisionPosition += m_up*50.0f;
+		collisionObject->CreateCapsule(collisionPosition,
+			Quaternion::Identity,
+			ATTACK_COLLISION_RADIUS,
+			ATTACK_COLLISION_HEIGHT
+		);
+		collisionObject->SetName("enemy_body_collision");
+		m_bodyCollisions.push_back(collisionObject);
 	}
 }
 
@@ -241,11 +246,20 @@ void Enemy1::ProcessIdleStateTransition()
 
 void Enemy1::ProcessDeadStateTransition()
 {
+	m_deleteTimer += g_gameTime->GetFrameDeltaTime();
 	m_moveSpeed.x = 0.0f;
 	m_moveSpeed.y = 0.0f;
 	m_moveSpeed.z = 0.0f;
 	m_modelRender.SetScale(m_scale.x, 0.3f, m_scale.z);
 	m_charaCon.RemoveRigidBoby();
+	for (auto bodyCollision : m_bodyCollisions)
+	{
+		DeleteGO(bodyCollision);
+	}
+	if (m_deleteTimer >= 1.0f)
+	{
+		DeleteGO(this);
+	}
 }
 
 void Enemy1::ManageState()

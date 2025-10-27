@@ -17,7 +17,7 @@ public:
 	bool Start();
 	void MakeLevel();
 	void Update();
-	void FallDeath();
+	void Death();
 	void Render(RenderContext& rc);
 
 private:

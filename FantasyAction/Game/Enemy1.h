@@ -21,9 +21,8 @@ public:
 	bool Start();
 	void Update();
 	void Render(RenderContext& rc);
-	void MakeStepOnJudge();
-	void UpdateStepOnJudge();
 	void Gravity();
+	void MakeAttackCollision();
 	/// <summary>
 	/// 座標を設定する。
 	/// </summary>
@@ -97,11 +96,13 @@ public:
 	Vector3						m_forward = Vector3::AxisZ;					//エネミーの正面ベクトル。
 	Quaternion					m_rotation;									//回転。
 	Vector3						m_scale = Vector3::One;						//大きさ。
+	Vector3						m_up = Vector3::AxisY;
 	CharacterController			m_charaCon;									//キャラコン。
 	EnEnemyState				m_enemyState = enEnemyState_Idle;			//エネミーステート。
-	PhysicsGhostObject			m_stepOnJudge;								//踏んだ時の判定。
 
 	Player* m_player = nullptr;							//プレイヤー。
+
+	std::vector<CollisionObject*>m_bodyCollisions;
 
 	float						m_chaseTimer = 0.0f;						//追跡タイマー。
 	float						m_idleTimer = 0.0f;

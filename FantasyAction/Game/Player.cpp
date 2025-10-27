@@ -6,13 +6,20 @@ namespace
 	const float CAPSULE_COLLIDER_RADIUS = 25.0f;
 	const float CAPSULE_COLLIDER_HEIGHT = 75.0f;
 	const float CHARACTER_MOVESPEED = 250.0f;
-	const float CHARACTER_JUMPSPEED = 800.0f;
+	const float CHARACTER_FIRST_JUMPSPEED = 800.0f;
+	const float CHARACTER_SECOND_JUMPSPEED = 1200.0f;
+	const float CHARACTER_THIRD_JUMPSPEED = 1600.0f;
 	//ダッシュの倍率
 	const float CHARACTER_DASHSPEED_MAGNIFICATION = 2.0f;
 	const float GRAVITY = 40.0f;
 	const float STICK_INPUT = 0.001f;
 	const float JUMP_ATTACK_RADIUS = 10.0f;
 	const float JUMP_ATTACK_HEIGHT = 10.0f;
+
+	const float   LIFE_TEXT_SCALE = 1.5f;
+	const Vector3 LIFE_TEXT_POSITION = { 600.0f,400.0f,0.0f };
+	const Vector4 LIFE_COLOR_BLUE = { 0.0f,0.0f,1.0f,1.0f };
+	const Vector4 LIFE_COLOR_RED = { 1.0f,0.0f,0.0f,1.0f };
 }
 
 Player::Player()
@@ -54,11 +61,15 @@ void Player::Update()
 
 	Rotation();
 
+	Collision();
+
+	Invincible();
+
+	DispStatus();
+
 	PlayerState();
 
 	Animation();
-
-	//Damege();
 
 	m_modelRender.Update();
 }
@@ -132,7 +143,7 @@ void Player::Jump()
 	if (m_characterController.IsOnGround()) 
 	{
 		if (g_pad[0]->IsTrigger(enButtonA)) {
-			m_moveSpeed.y = CHARACTER_JUMPSPEED;
+			m_moveSpeed.y = CHARACTER_FIRST_JUMPSPEED;
 			
 		}
 	}
@@ -153,21 +164,50 @@ void Player::JumpAttack()
 		JUMP_ATTACK_RADIUS,
 		JUMP_ATTACK_HEIGHT
 	);
-	collisionObject->SetName("player_jumpAttack");
+	collisionObject->SetName("player_jump_attack");
 }
 
 void Player::Damege()
 {
-	if (g_pad[0]->IsTrigger(enButtonA))
+	if (m_damege == false)
 	{
 		m_life--;
+		m_damege = true;
 	}
 	if (m_life <= 0)
 	{
 		m_playerState = enPlayerState_Death;
-		m_moveFlag = false;
+	}
+}
+
+void Player::Invincible()
+{
+	if (m_damege == true)
+	{
+		m_invincibleTimer += g_gameTime->GetFrameDeltaTime();
+		if (m_invincibleTimer >= m_invincibleLimit)
+		{
+			m_invincibleTimer = 0.0f;
+			m_damege = false;
+		}
+	}
+}
+
+void Player::Collision()
+{
+	if (m_playerState == enPlayerState_Death)
+	{
+		return;
 	}
 
+	const auto& collisions = g_collisionObjectManager->FindCollisionObjects("enemy_body_collision");
+	for (auto collision : collisions)
+	{
+		if (collision->IsHit(m_characterController))
+		{
+			Damege();
+		}
+	}
 }
 
 void Player::Rotation()
@@ -177,6 +217,25 @@ void Player::Rotation()
 		m_rotation.SetRotationYFromDirectionXZ(m_moveSpeed);
 
 		m_modelRender.SetRotation(m_rotation);
+	}
+}
+
+void Player::DispStatus()
+{
+	wchar_t wcsbuf[256];
+	swprintf_s(wcsbuf, 256, L"残りHP：%d", m_life);
+	m_lifeRender.SetText(wcsbuf);
+	m_lifeRender.SetPosition(LIFE_TEXT_POSITION);
+	m_lifeRender.SetScale(LIFE_TEXT_SCALE);
+	if (m_life == 3) {
+		m_lifeRender.SetColor(LIFE_COLOR_BLUE);
+	}
+	if (m_life == 2) {
+		m_lifeRender.SetColor(g_vec4Yellow);
+	}
+	if (m_life == 1)
+	{
+		m_lifeRender.SetColor(LIFE_COLOR_RED);
 	}
 }
 
@@ -239,4 +298,6 @@ void Player::Animation()
 void Player::Render(RenderContext& rc)
 {
 	m_modelRender.Draw(rc);
+
+	m_lifeRender.Draw(rc);
 }

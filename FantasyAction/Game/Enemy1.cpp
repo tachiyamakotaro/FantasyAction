@@ -12,7 +12,7 @@ namespace
 	const float GRAVITY = 200.0f;
 	const float HIGHER =  30.0f;
 	const float PLAYER_BOUNCE = 1000.0f;
-	const float PLAYER_JUMPSPEED_LIMIT = 1200.0f;
+	//const float PLAYER_JUMPSPEED_LIMIT = 900.0f;
 }
 
 Enemy1::Enemy1()
@@ -261,7 +261,7 @@ void Enemy1::ProcessDeadStateTransition()
 	{
 		DeleteGO(bodyCollision);
 	}
-	if (m_deleteTimer >= 1.0f)
+	if (m_deleteTimer >= m_deleteTime)
 	{
 		DeleteGO(this);
 	}

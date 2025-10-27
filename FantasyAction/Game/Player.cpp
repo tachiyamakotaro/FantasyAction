@@ -6,23 +6,26 @@ namespace
 	const float CAPSULE_COLLIDER_RADIUS = 25.0f;
 	const float CAPSULE_COLLIDER_HEIGHT = 75.0f;
 	const float CHARACTER_MOVESPEED = 250.0f;
-	const float CHARACTER_FIRST_JUMPSPEED = 800.0f;
-	const float CHARACTER_SECOND_JUMPSPEED = 1000.0f;
+	const float CHARACTER_FIRST_JUMPSPEED = 700.0f;
+	const float CHARACTER_SECOND_JUMPSPEED = 900.0f;
 	const float CHARACTER_THIRD_JUMPSPEED = 1200.0f;
 	const float JUMPSPEED_LIMIT = 1200.0f;
 	//ダッシュの倍率
 	const float CHARACTER_DASHSPEED_MAGNIFICATION = 2.0f;
-	const float GRAVITY = 40.0f;
+	const float GRAVITY = 32.0f;
 	const float STICK_INPUT = 0.001f;
 	//ジャンプの攻撃判定
 	const float JUMP_ATTACK_RADIUS = 10.0f;
 	const float JUMP_ATTACK_HEIGHT = 10.0f;
-	const Vector3 JUMP_ATTACK_SIZE = { 50.0f,30.0f,50.0f };
+	const Vector3 JUMP_ATTACK_SIZE = { 50.0f,50.0f,50.0f };
 
 	const float   LIFE_TEXT_SCALE = 1.5f;
 	const Vector3 LIFE_TEXT_POSITION = { 600.0f,400.0f,0.0f };
 	const Vector4 LIFE_COLOR_BLUE = { 0.0f,0.0f,1.0f,1.0f };
 	const Vector4 LIFE_COLOR_RED = { 1.0f,0.0f,0.0f,1.0f };
+
+	const float SWITCH_DISP_TIME = 1.0f;
+	const float SWITCH_DISP_TIMER = 0.1f;
 }
 
 Player::Player()
@@ -158,8 +161,7 @@ void Player::Jump()
 	}
 	if (m_moveSpeed.y >= JUMPSPEED_LIMIT)
 	{
-		/*m_moveSpeed.y += JUMPSPEED_LIMIT;
-		m_moveSpeed.y = JUMPSPEED_LIMIT;*/
+		m_moveSpeed.y = JUMPSPEED_LIMIT;
 	}
 }
 
@@ -173,6 +175,23 @@ void Player::JumpAttack()
 		JUMP_ATTACK_SIZE
 	);
 	collisionObject->SetName("player_jump_attack");
+}
+
+void Player::Collision()
+{
+	if (m_playerState == enPlayerState_Death)
+	{
+		return;
+	}
+
+	const auto& collisions = g_collisionObjectManager->FindCollisionObjects("enemy_body_collision");
+	for (auto collision : collisions)
+	{
+		if (collision->IsHit(m_characterController))
+		{
+			Damege();
+		}
+	}
 }
 
 void Player::Damege()
@@ -193,28 +212,37 @@ void Player::Invincible()
 	if (m_damege == true)
 	{
 		m_invincibleTimer += g_gameTime->GetFrameDeltaTime();
+		ModelBlink();
 		if (m_invincibleTimer >= m_invincibleLimit)
 		{
 			m_invincibleTimer = 0.0f;
+			m_dispModel = true;
 			m_damege = false;
 		}
 	}
 }
 
-void Player::Collision()
+void Player::ModelBlink()
 {
-	if (m_playerState == enPlayerState_Death)
+	switch (m_dispModel)
 	{
-		return;
-	}
-
-	const auto& collisions = g_collisionObjectManager->FindCollisionObjects("enemy_body_collision");
-	for (auto collision : collisions)
-	{
-		if (collision->IsHit(m_characterController))
+	case true:
+		m_dispModelTimer += SWITCH_DISP_TIMER;
+		if (m_dispModelTimer >= 1.0f)
 		{
-			Damege();
+			m_dispModelTimer = 1.0f;
+			m_dispModel = false;
 		}
+		break;
+
+	case false:
+		m_dispModel -= SWITCH_DISP_TIMER;
+		if (m_dispModelTimer <= 0.0f)
+		{
+			m_dispModelTimer = 0.0f;
+			m_dispModel = true;		
+		}
+		break;
 	}
 }
 
@@ -305,7 +333,10 @@ void Player::Animation()
 
 void Player::Render(RenderContext& rc)
 {
-	m_modelRender.Draw(rc);
+	if (m_dispModel == true)
+	{
+		m_modelRender.Draw(rc);
+	}
 
 	m_lifeRender.Draw(rc);
 }

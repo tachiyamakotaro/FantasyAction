@@ -18,8 +18,7 @@ public:
 	~Game();
 	bool Start();
 	void Update();
-	void FallDeath();
-	void HpZeroDeath();
+	void ReStart();
 	void Render(RenderContext& rc);
 
 private:

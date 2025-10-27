@@ -12,6 +12,7 @@ public:
 	void JumpAttack();
 	void Damege();
 	void Invincible();
+	void ModelBlink();
 	void Collision();
 	void Rotation();
 	void DispStatus();
@@ -93,10 +94,12 @@ private:
 	bool m_moveFlag = true;
 	bool m_dashFlag = false;
 	bool m_damege = false;
+	bool m_dispModel = true;
 	float m_invincibleTimer = 0.0f;
 	float m_invincibleLimit = 2.0f;
 	float m_tripleJumpTime = 0.2f;
 	float m_tripleJumpTimer = 0.0f;
+	float m_dispModelTimer = 0.0f;
 	int m_jumpState = 0;
 	int m_life = 3;
 

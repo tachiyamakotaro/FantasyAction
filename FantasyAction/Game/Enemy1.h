@@ -107,5 +107,6 @@ public:
 	float						m_chaseTimer = 0.0f;						//追跡タイマー。
 	float						m_idleTimer = 0.0f;
 	float						m_deleteTimer = 0.0f;
+	float						m_deleteTime = 1.5f;
 };
 

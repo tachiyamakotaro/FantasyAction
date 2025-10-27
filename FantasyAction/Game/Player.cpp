@@ -7,14 +7,17 @@ namespace
 	const float CAPSULE_COLLIDER_HEIGHT = 75.0f;
 	const float CHARACTER_MOVESPEED = 250.0f;
 	const float CHARACTER_FIRST_JUMPSPEED = 800.0f;
-	const float CHARACTER_SECOND_JUMPSPEED = 1200.0f;
-	const float CHARACTER_THIRD_JUMPSPEED = 1600.0f;
+	const float CHARACTER_SECOND_JUMPSPEED = 1000.0f;
+	const float CHARACTER_THIRD_JUMPSPEED = 1200.0f;
+	const float JUMPSPEED_LIMIT = 1200.0f;
 	//ダッシュの倍率
 	const float CHARACTER_DASHSPEED_MAGNIFICATION = 2.0f;
 	const float GRAVITY = 40.0f;
 	const float STICK_INPUT = 0.001f;
+	//ジャンプの攻撃判定
 	const float JUMP_ATTACK_RADIUS = 10.0f;
 	const float JUMP_ATTACK_HEIGHT = 10.0f;
+	const Vector3 JUMP_ATTACK_SIZE = { 50.0f,30.0f,50.0f };
 
 	const float   LIFE_TEXT_SCALE = 1.5f;
 	const Vector3 LIFE_TEXT_POSITION = { 600.0f,400.0f,0.0f };
@@ -152,6 +155,10 @@ void Player::Jump()
 		m_moveSpeed.y -= GRAVITY;
 		m_playerState = enPlayerState_Jump;
 	}
+	if (m_moveSpeed.y >= JUMPSPEED_LIMIT)
+	{
+		m_moveSpeed.y = JUMPSPEED_LIMIT;
+	}
 }
 
 void Player::JumpAttack()
@@ -159,10 +166,9 @@ void Player::JumpAttack()
 	auto collisionObject = NewGO<CollisionObject>(0);
 	Vector3 collisionPosition = m_position;
 	collisionPosition -= m_down ;
-	collisionObject->CreateCapsule(collisionPosition,
+	collisionObject->CreateBox(collisionPosition,
 		Quaternion::Identity,
-		JUMP_ATTACK_RADIUS,
-		JUMP_ATTACK_HEIGHT
+		JUMP_ATTACK_SIZE
 	);
 	collisionObject->SetName("player_jump_attack");
 }

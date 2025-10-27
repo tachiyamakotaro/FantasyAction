@@ -11,6 +11,8 @@ namespace
 	const float ATTACK_COLLISION_HEIGHT = 5.0f;
 	const float GRAVITY = 200.0f;
 	const float HIGHER =  30.0f;
+	const float PLAYER_BOUNCE = 1000.0f;
+	const float PLAYER_JUMPSPEED_LIMIT = 1200.0f;
 }
 
 Enemy1::Enemy1()
@@ -159,6 +161,9 @@ void Enemy1::Collision()
 		if (collision->IsHit(m_charaCon))
 		{
 			m_enemyState = enEnemyState_Dead;
+
+			m_player->m_moveSpeed.y = PLAYER_BOUNCE;
+		
 		}
 	}
 }

@@ -145,6 +145,7 @@ void Player::Jump()
 {
 	if (m_characterController.IsOnGround()) 
 	{
+		m_moveSpeed.y = 0.0f;
 		if (g_pad[0]->IsTrigger(enButtonA)) {
 			m_moveSpeed.y = CHARACTER_FIRST_JUMPSPEED;
 			
@@ -157,7 +158,8 @@ void Player::Jump()
 	}
 	if (m_moveSpeed.y >= JUMPSPEED_LIMIT)
 	{
-		m_moveSpeed.y = JUMPSPEED_LIMIT;
+		/*m_moveSpeed.y += JUMPSPEED_LIMIT;
+		m_moveSpeed.y = JUMPSPEED_LIMIT;*/
 	}
 }
 

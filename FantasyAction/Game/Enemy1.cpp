@@ -42,7 +42,6 @@ bool Enemy1::Start()
 		m_position
 	);
 
-	// 初期状態・初期向き・プレイヤー参照の確保（エンジン側の探し方に合わせてください）
 	m_enemyState = enEnemyState_Idle;
 	m_forward = Vector3::AxisZ; // 初期前ベクトル
 	return true;

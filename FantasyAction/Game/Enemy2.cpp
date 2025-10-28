@@ -2,6 +2,7 @@
 #include <algorithm>
 #include "Enemy2.h"
 #include "Player.h"
+#include "Item.h"
 
 namespace
 {
@@ -244,6 +245,9 @@ void Enemy2::ProcessDeadStateTransition()
 	m_moveSpeed.z = 0.0f;
 	m_modelRender.SetScale(m_scale.x, 0.3f, m_scale.z);
 	m_charaCon.RemoveRigidBoby();
+
+	ProduceShell();
+
 	for (auto bodyCollision : m_bodyCollisions)
 	{
 		DeleteGO(bodyCollision);
@@ -251,6 +255,14 @@ void Enemy2::ProcessDeadStateTransition()
 	if (m_deleteTimer >= m_deleteTime)
 	{
 		DeleteGO(this);
+	}
+}
+
+void Enemy2::ProduceShell()
+{
+	if (m_shell == nullptr)
+	{
+		m_shell = NewGO<Shell>(0, "shell");
 	}
 }
 

@@ -10,6 +10,7 @@ public:
 	void Dash();
 	void Jump();
 	void JumpAttack();
+	//void AcqRange();
 	void Damege();
 	void Invincible();
 	void ModelBlink();

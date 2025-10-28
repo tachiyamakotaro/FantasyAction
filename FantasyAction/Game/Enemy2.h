@@ -1,6 +1,7 @@
 #pragma once
 
 class Player;
+class Shell;
 
 class Enemy2:public IGameObject
 {
@@ -86,6 +87,10 @@ public:
 	/// 死亡ステートの遷移処理。
 	/// </summary>
 	void ProcessDeadStateTransition();
+	/// <summary>
+	/// 甲羅を生み出す処理。
+	/// </summary>
+	void ProduceShell();
 
 	ModelRender					m_modelRender;								//モデルレンダー。
 	Vector3						m_position;									//座標。
@@ -98,6 +103,7 @@ public:
 	EnEnemyState				m_enemyState = enEnemyState_Idle;			//エネミーステート。
 
 	Player* m_player = nullptr;							//プレイヤー。
+	Shell* m_shell = nullptr;
 
 	std::vector<CollisionObject*>m_bodyCollisions;
 

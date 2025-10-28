@@ -21,6 +21,7 @@
     <ClCompile Include="SoftFloor.cpp" />
     <ClCompile Include="ConeWall.cpp" />
     <ClCompile Include="StageNo1Level.cpp" />
+    <ClCompile Include="Enemy2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -37,5 +38,6 @@
     <ClInclude Include="SoftFloor.h" />
     <ClInclude Include="ConeWall.h" />
     <ClInclude Include="StageNo1Level.h" />
+    <ClInclude Include="Enemy2.h" />
   </ItemGroup>
 </Project>

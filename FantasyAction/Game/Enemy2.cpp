@@ -17,12 +17,40 @@ namespace
 
 bool Enemy2::Start()
 {
+	m_modelRender.Init("Assets/modelData/nokonoko.tkm");
 
+	m_player = FindGO<Player>("player");
+
+	m_modelRender.SetPosition(m_position);
+	m_modelRender.SetRotation(m_rotation);
+	m_modelRender.SetScale(m_scale);
+
+	m_charaCon.Init(
+		CHARACON_RADIUS,
+		CHARACON_HEIGHT,
+		m_position
+	);
+
+	m_enemyState = enEnemyState_Idle;
+	m_forward = Vector3::AxisZ; // 初期前ベクトル
+	return true;
 }
 
 void Enemy2::Update()
 {
+	Gravity();
 
+	Chase();
+
+	Rotation();
+
+	Collision();
+
+	MakeAttackCollision();
+
+	ManageState();
+
+	m_modelRender.Update();
 }
 
 void Enemy2::Gravity()

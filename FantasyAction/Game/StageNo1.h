@@ -5,6 +5,7 @@
 class Player;
 class GameCamera;
 class Enemy1;
+class Enemy2;
 class SoftFloor;
 class ConeWall;
 class StageNo1Level;
@@ -28,12 +29,12 @@ private:
 	int m_numEnemy1 = 0;
 
 	Player* m_player = nullptr;
-	Enemy1* m_enemy1 = nullptr;
 	GameCamera* m_gameCamera = nullptr;
 
 	std::vector<SoftFloor*> m_softFloors;
 	std::vector<ConeWall*> m_coneWalls;
 	std::vector<StageNo1Level*> m_stageNo1Levels;
 	std::vector<Enemy1*> m_enemy1s;
+	std::vector<Enemy2*> m_enemy2s;
 };
 

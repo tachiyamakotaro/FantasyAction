@@ -2,6 +2,7 @@
 #include "StageNo1.h"
 #include "Player.h"
 #include "Enemy1.h"
+#include "Enemy2.h"
 #include "GameCamera.h"
 #include "SoftFloor.h"
 #include "ConeWall.h"
@@ -35,6 +36,12 @@ StageNo1::~StageNo1()
 	for (auto enemy1 : enemy1s)
 	{
 		DeleteGO(enemy1);
+	}
+
+	const auto& enemy2s = FindGOs<Enemy2>("enemy2");
+	for (auto enemy2 : enemy2s)
+	{
+		DeleteGO(enemy2);
 	}
 }
 
@@ -80,6 +87,15 @@ void StageNo1::MakeLevel()
 				enemy1->SetPosition(objData.position);
 				enemy1->SetRotation(objData.rotation);
 				m_enemy1s.push_back(enemy1);
+				return true;
+			}
+
+			if (objData.EqualObjectName(L"nokonoko") == true)
+			{
+				auto enemy2 = NewGO<Enemy2>(0, "enemy2");
+				enemy2->SetPosition(objData.position);
+				enemy2->SetRotation(objData.rotation);
+				m_enemy2s.push_back(enemy2);
 				return true;
 			}
 

@@ -223,7 +223,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ConeWall.cpp" />
     <ClCompile Include="Enemy1.cpp" />
     <ClCompile Include="Enemy2.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -232,7 +231,6 @@
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Player.cpp" />
-    <ClCompile Include="SoftFloor.cpp" />
     <ClCompile Include="SoundManager.cpp" />
     <ClCompile Include="StageNo1.cpp" />
     <ClCompile Include="StageNo1Level.cpp" />
@@ -244,7 +242,6 @@
     <ClCompile Include="system\system.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ConeWall.h" />
     <ClInclude Include="Enemy1.h" />
     <ClInclude Include="Enemy2.h" />
     <ClInclude Include="Game.h" />
@@ -252,7 +249,6 @@
     <ClInclude Include="GameOver.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="Player.h" />
-    <ClInclude Include="SoftFloor.h" />
     <ClInclude Include="SoundManager.h" />
     <ClInclude Include="StageNo1.h" />
     <ClInclude Include="StageNo1Level.h" />

@@ -15,6 +15,8 @@ bool Item::Start()
 void Item::Update()
 {
 	Rotation();
+
+	m_shellRender.Update();
 }
 
 void Item::Rotation()

@@ -263,6 +263,7 @@ void Enemy2::ProduceShell()
 	if (m_shell == nullptr)
 	{
 		m_shell = NewGO<Shell>(0, "shell");
+		m_shell->SetPosition(m_position);
 	}
 }
 

@@ -4,9 +4,8 @@
 #include "Enemy1.h"
 #include "Enemy2.h"
 #include "GameCamera.h"
-#include "SoftFloor.h"
-#include "ConeWall.h"
 #include "StageNo1Level.h"
+#include "Item.h"
 
 StageNo1::StageNo1()
 {
@@ -17,16 +16,6 @@ StageNo1::~StageNo1()
 {
 	DeleteGO(m_player);
 	DeleteGO(m_gameCamera);
-
-	for (auto softFloor : m_softFloors)
-	{
-		DeleteGO(softFloor);
-	}
-
-	for (auto coneWall : m_coneWalls)
-	{
-		DeleteGO(coneWall);
-	}
 
 	for (auto stageNo1Level : m_stageNo1Levels)
 	{
@@ -42,6 +31,12 @@ StageNo1::~StageNo1()
 	for (auto enemy2 : enemy2s)
 	{
 		DeleteGO(enemy2);
+	}
+
+	auto totalShells = FindGOs<Shell>("shell");
+	for (auto shells : totalShells)
+	{
+		DeleteGO(shells);
 	}
 }
 

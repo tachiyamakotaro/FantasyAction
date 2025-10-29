@@ -18,6 +18,10 @@ class Shell : public Item
 public:
 	bool Start();
 	void Collision();
+	void SetPosition(const Vector3& position)
+	{
+		m_position = position;
+	}
 
 	Vector3     m_moveSpeed;
 };

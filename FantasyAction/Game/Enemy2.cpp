@@ -239,14 +239,16 @@ void Enemy2::ProcessIdleStateTransition()
 
 void Enemy2::ProcessDeadStateTransition()
 {
+	if (m_deleteTimer == 0.0f)
+	{
+		ProduceShell();
+	}
 	m_deleteTimer += g_gameTime->GetFrameDeltaTime();
 	m_moveSpeed.x = 0.0f;
 	m_moveSpeed.y = 0.0f;
 	m_moveSpeed.z = 0.0f;
 	m_modelRender.SetScale(m_scale.x, 0.3f, m_scale.z);
 	m_charaCon.RemoveRigidBoby();
-
-	ProduceShell();
 
 	for (auto bodyCollision : m_bodyCollisions)
 	{
@@ -260,11 +262,8 @@ void Enemy2::ProcessDeadStateTransition()
 
 void Enemy2::ProduceShell()
 {
-	if (m_shell == nullptr)
-	{
-		m_shell = NewGO<Shell>(0, "shell");
-		m_shell->SetPosition(m_position);
-	}
+	m_shell = NewGO<Shell>(0, "shell");
+	m_shell->SetPosition(m_position);
 }
 
 void Enemy2::ManageState()

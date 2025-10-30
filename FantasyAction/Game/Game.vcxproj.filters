@@ -18,9 +18,10 @@
     <ClCompile Include="StageNo1.cpp" />
     <ClCompile Include="GameOver.cpp" />
     <ClCompile Include="Enemy1.cpp" />
-    <ClCompile Include="SoftFloor.cpp" />
-    <ClCompile Include="ConeWall.cpp" />
     <ClCompile Include="StageNo1Level.cpp" />
+    <ClCompile Include="Enemy2.cpp" />
+    <ClCompile Include="Item.cpp" />
+    <ClCompile Include="Boss.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -34,8 +35,9 @@
     <ClInclude Include="StageNo1.h" />
     <ClInclude Include="GameOver.h" />
     <ClInclude Include="Enemy1.h" />
-    <ClInclude Include="SoftFloor.h" />
-    <ClInclude Include="ConeWall.h" />
     <ClInclude Include="StageNo1Level.h" />
+    <ClInclude Include="Enemy2.h" />
+    <ClInclude Include="Item.h" />
+    <ClInclude Include="Boss.h" />
   </ItemGroup>
 </Project>

@@ -19,38 +19,24 @@ Game::~Game()
 
 bool Game::Start()
 {
-	//m_modelRender.Init("Assets/modelData/unityChan.tkm");
-
-	//m_player=NewGO<Player>(0, "player");
-	//m_player=FindGO<Player>("player");
-
-	//m_gameCamera=NewGO<GameCamera>(1, "gameCamera");
-
 	m_stageNo1=NewGO<StageNo1>(0, "stageNo1");
 
-	//PhysicsWorld::GetInstance()->EnableDrawDebugWireFrame();
-	
 	return true;
 }
 
 void Game::Update()
 {
-	// g_renderingEngine->DisableRaytracing();
-	//FallDeath();
-
-	//HpZeroDeath();
+	ReStart();
 
 	m_modelRender.Update();
 }
 
-void Game::FallDeath()
+void Game::ReStart()
 {
-	
-}
-
-void Game::HpZeroDeath()
-{
-	
+	if (g_pad[0]->IsTrigger(enButtonSelect)) {
+		DeleteGO(m_stageNo1);
+		m_stageNo1 = NewGO<StageNo1>(0, "stageNo1");
+	}
 }
 
 void Game::Render(RenderContext& rc)

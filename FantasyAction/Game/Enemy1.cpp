@@ -1,12 +1,18 @@
 #include "stdafx.h"
+#include <algorithm>
 #include "Enemy1.h"
 #include "Player.h"
 
 namespace
 {
-	const float CHARACON_RADIUS = 20.0f;
-	const float CHARACON_HEIGHT = 100.0f;
-
+	const float CHARACON_RADIUS = 50.0f;
+	const float CHARACON_HEIGHT = 10.0f;
+	const float ATTACK_COLLISION_RADIUS = 50.0f;
+	const float ATTACK_COLLISION_HEIGHT = 5.0f;
+	const float GRAVITY = 200.0f;
+	const float HIGHER =  30.0f;
+	const float PLAYER_BOUNCE = 1000.0f;
+	//const float PLAYER_JUMPSPEED_LIMIT = 900.0f;
 }
 
 Enemy1::Enemy1()
@@ -16,7 +22,7 @@ Enemy1::Enemy1()
 
 Enemy1::~Enemy1()
 {
-
+	
 }
 
 bool Enemy1::Start()
@@ -35,7 +41,7 @@ bool Enemy1::Start()
 		CHARACON_HEIGHT,
 		m_position
 	);
-	// 初期状態・初期向き・プレイヤー参照の確保（エンジン側の探し方に合わせてください）
+
 	m_enemyState = enEnemyState_Idle;
 	m_forward = Vector3::AxisZ; // 初期前ベクトル
 	return true;
@@ -43,32 +49,77 @@ bool Enemy1::Start()
 
 void Enemy1::Update()
 {
-	ManageState();
+	Gravity();
 
 	Chase();
 
 	Rotation();
 
+	Collision();
+
+	MakeAttackCollision();
+
+	ManageState();
+
 	m_modelRender.Update();
+}
+
+void Enemy1::Gravity()
+{
+	m_moveSpeed.y -= GRAVITY;
 }
 
 void Enemy1::Chase()
 {
-	//追跡ステートでないなら、追跡処理はしない。
-	if (m_enemyState != enEnemyState_Chase)
+	//m_moveSpeed.y -= GRAVITY;
+	m_position = m_charaCon.Execute(m_moveSpeed, g_gameTime->GetFrameDeltaTime());
+	Vector3 modelPos = m_position;
+	modelPos.y += 2.5f;
+	m_modelRender.SetPosition(modelPos);
+	if (m_enemyState != enEnemyState_Chase || !m_player)
 	{
+		m_moveSpeed.x = 0.0f;
+		m_moveSpeed.z = 0.0f;
 		return;
 	}
 
-	m_position = m_charaCon.Execute(m_moveSpeed, g_gameTime->GetFrameDeltaTime());
-	if (m_charaCon.IsOnGround()) {
-		//地面についた。
+	Vector3 diff = m_player->GetPosition() - m_position;
+	diff.y = 0.0f;
+	if (diff.LengthSq() > 700.0f * 700.0f)// 距離外ならIdleへ
+	{
+		m_moveSpeed = Vector3::Zero;
+		m_enemyState = enEnemyState_Idle;
+		return;
+	}
+
+	diff.Normalize();
+	float cosv = m_forward.Dot(diff);
+	if (cosv > 1.0f)
+	{
+		cosv = 1.0f;
+	}
+	else if (cosv < -1.0f)
+	{
+		cosv = -1.0f;
+	}
+	if (acosf(cosv) > Math::PI / 180.0f * 120.0f) // 視界外なら停止
+	{
+		m_moveSpeed = Vector3::Zero;
+		m_enemyState = enEnemyState_Idle;
+	}
+
+	m_moveSpeed = diff * 250.0f;
+	m_moveSpeed.y -= GRAVITY;
+
+	//m_position = m_charaCon.Execute(m_moveSpeed, g_gameTime->GetFrameDeltaTime());
+	if (m_charaCon.IsOnGround())
+	{
 		m_moveSpeed.y = 0.0f;
 	}
-	Vector3 modelPosition = m_position;
-	//ちょっとだけモデルの座標を挙げる。
-	modelPosition.y += 2.5f;
-	m_modelRender.SetPosition(modelPosition);
+
+	/*Vector3 modelPos = m_position;
+	modelPos.y += 2.5f;*/
+	m_modelRender.SetPosition(modelPos);
 }
 
 void Enemy1::Rotation()
@@ -98,7 +149,40 @@ void Enemy1::Rotation()
 
 void Enemy1::Collision()
 {
+	if (m_enemyState == enEnemyState_Dead)
+	{
+		return;
+	}
 
+	const auto& collisions = g_collisionObjectManager->FindCollisionObjects("player_jump_attack");
+	for (auto collision : collisions)
+	{
+		if (collision->IsHit(m_charaCon))
+		{
+			m_enemyState = enEnemyState_Dead;
+
+			m_player->m_moveSpeed.y = PLAYER_BOUNCE;
+		
+		}
+	}
+}
+
+void Enemy1::MakeAttackCollision()
+{
+	if (m_enemyState != enEnemyState_Dead) {
+
+		//コリジョンオブジェクトを作成する
+		auto collisionObject = NewGO<CollisionObject>(0);
+		Vector3 collisionPosition = m_position;
+		collisionPosition += m_up*50.0f;
+		collisionObject->CreateCapsule(collisionPosition,
+			Quaternion::Identity,
+			ATTACK_COLLISION_RADIUS,
+			ATTACK_COLLISION_HEIGHT
+		);
+		collisionObject->SetName("enemy_body_collision");
+		m_bodyCollisions.push_back(collisionObject);
+	}
 }
 
 const bool Enemy1::SearchPlayer() const
@@ -151,6 +235,7 @@ void Enemy1::ProcessCommonStateTransition()
 		return;
 	}
 }
+
 void Enemy1::ProcessIdleStateTransition()
 {
 	m_idleTimer += g_gameTime->GetFrameDeltaTime();
@@ -163,16 +248,22 @@ void Enemy1::ProcessIdleStateTransition()
 
 }
 
-void Enemy1::ProcessWalkStateTransition()
+void Enemy1::ProcessDeadStateTransition()
 {
-	//他のステートに遷移する。
-	ProcessCommonStateTransition();
-}
-
-void Enemy1::ProcessRunStateTransition()
-{
-	//他のステートに遷移する。
-	ProcessCommonStateTransition();
+	m_deleteTimer += g_gameTime->GetFrameDeltaTime();
+	m_moveSpeed.x = 0.0f;
+	m_moveSpeed.y = 0.0f;
+	m_moveSpeed.z = 0.0f;
+	m_modelRender.SetScale(m_scale.x, 0.3f, m_scale.z);
+	m_charaCon.RemoveRigidBoby();
+	for (auto bodyCollision : m_bodyCollisions)
+	{
+		DeleteGO(bodyCollision);
+	}
+	if (m_deleteTimer >= m_deleteTime)
+	{
+		DeleteGO(this);
+	}
 }
 
 void Enemy1::ManageState()
@@ -184,12 +275,11 @@ void Enemy1::ManageState()
 		ProcessIdleStateTransition();
 		break;
 	case enEnemyState_Chase:
-		//追跡ステートの遷移処理。
-		//ProcessChaseStateTransition();
+		
 		break;
 	case enEnemyState_Dead:
 		//死亡ステートの遷移処理。
-		//ProcessDeadStateTransition();
+		ProcessDeadStateTransition();
 		break;
 	}
 }

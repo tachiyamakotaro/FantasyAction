@@ -2,10 +2,10 @@
 #include "StageNo1.h"
 #include "Player.h"
 #include "Enemy1.h"
+#include "Enemy2.h"
 #include "GameCamera.h"
-#include "SoftFloor.h"
-#include "ConeWall.h"
 #include "StageNo1Level.h"
+#include "Item.h"
 
 StageNo1::StageNo1()
 {
@@ -17,19 +17,26 @@ StageNo1::~StageNo1()
 	DeleteGO(m_player);
 	DeleteGO(m_gameCamera);
 
-	for (auto softFloor : m_softFloors)
-	{
-		DeleteGO(softFloor);
-	}
-
-	for (auto coneWall : m_coneWalls)
-	{
-		DeleteGO(coneWall);
-	}
-
 	for (auto stageNo1Level : m_stageNo1Levels)
 	{
 		DeleteGO(stageNo1Level);
+	}
+	const auto& enemy1s = FindGOs<Enemy1>("enemy1");
+	for (auto enemy1 : enemy1s)
+	{
+		DeleteGO(enemy1);
+	}
+
+	const auto& enemy2s = FindGOs<Enemy2>("enemy2");
+	for (auto enemy2 : enemy2s)
+	{
+		DeleteGO(enemy2);
+	}
+
+	auto totalShells = FindGOs<Shell>("shell");
+	for (auto shells : totalShells)
+	{
+		DeleteGO(shells);
 	}
 }
 
@@ -38,6 +45,8 @@ bool StageNo1::Start()
 	//m_player = FindGO<Player>("player");
 
 	m_gameCamera = NewGO<GameCamera>(0, "gameCamera");
+
+	//PhysicsWorld::GetInstance()->EnableDrawDebugWireFrame();
 
 	MakeLevel();
 
@@ -76,18 +85,31 @@ void StageNo1::MakeLevel()
 				return true;
 			}
 
+			if (objData.EqualObjectName(L"nokonoko") == true)
+			{
+				auto enemy2 = NewGO<Enemy2>(0, "enemy2");
+				enemy2->SetPosition(objData.position);
+				enemy2->SetRotation(objData.rotation);
+				m_enemy2s.push_back(enemy2);
+				return true;
+			}
+
 			return false;
 		});
 }
 
 void StageNo1::Update()
 {
-	FallDeath();
+	Death();
 }
 
-void StageNo1::FallDeath()
+void StageNo1::Death()
 {
 	if (m_player->m_position.y < -500.0f)
+	{
+		DeleteGO(this);
+	}
+	if (m_player->m_playerState == m_player->enPlayerState_Death)
 	{
 		DeleteGO(this);
 	}

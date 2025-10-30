@@ -6,11 +6,26 @@ namespace
 	const float CAPSULE_COLLIDER_RADIUS = 25.0f;
 	const float CAPSULE_COLLIDER_HEIGHT = 75.0f;
 	const float CHARACTER_MOVESPEED = 250.0f;
-	const float CHARACTER_JUMPSPEED = 800.0f;
+	const float CHARACTER_FIRST_JUMPSPEED = 700.0f;
+	const float CHARACTER_SECOND_JUMPSPEED = 900.0f;
+	const float CHARACTER_THIRD_JUMPSPEED = 1200.0f;
+	const float JUMPSPEED_LIMIT = 1200.0f;
 	//ダッシュの倍率
 	const float CHARACTER_DASHSPEED_MAGNIFICATION = 2.0f;
-	const float GRAVITY = 40.0f;
+	const float GRAVITY = 32.0f;
 	const float STICK_INPUT = 0.001f;
+	//ジャンプの攻撃判定
+	const float JUMP_ATTACK_RADIUS = 10.0f;
+	const float JUMP_ATTACK_HEIGHT = 10.0f;
+	const Vector3 JUMP_ATTACK_SIZE = { 50.0f,50.0f,50.0f };
+
+	const float   LIFE_TEXT_SCALE = 1.5f;
+	const Vector3 LIFE_TEXT_POSITION = { 600.0f,400.0f,0.0f };
+	const Vector4 LIFE_COLOR_BLUE = { 0.0f,0.0f,1.0f,1.0f };
+	const Vector4 LIFE_COLOR_RED = { 1.0f,0.0f,0.0f,1.0f };
+
+	const float SWITCH_DISP_TIME = 1.0f;
+	const float SWITCH_DISP_TIMER = 0.1f;
 }
 
 Player::Player()
@@ -25,21 +40,21 @@ Player::~Player()
 
 bool Player::Start()
 {
-	m_animationClips[enAnimationClip_Idle].Load("Assets/animData/idle.tka");
-	m_animationClips[enAnimationClip_Idle].SetLoopFlag(true);
-	m_animationClips[enAnimationClip_Walk].Load("Assets/animData/walk.tka");
-	m_animationClips[enAnimationClip_Walk].SetLoopFlag(true);
-	m_animationClips[enAnimationClip_Run].Load("Assets/animData/run.tka");
-	m_animationClips[enAnimationClip_Run].SetLoopFlag(true);
-	m_animationClips[enAnimationClip_Jump].Load("Assets/animData/jump.tka");
-	m_animationClips[enAnimationClip_Jump].SetLoopFlag(false);
-	m_animationClips[enAnimationClip_Clear].Load("Assets/animData/clear.tka");
-	m_animationClips[enAnimationClip_Clear].SetLoopFlag(false);
-	m_animationClips[enAnimationClip_Death].Load("Assets/animData/KneelDown.tka");
-	m_animationClips[enAnimationClip_Death].SetLoopFlag(false);
+	m_animationClips[enPlayerState_Idle].Load("Assets/animData/idle.tka");
+	m_animationClips[enPlayerState_Idle].SetLoopFlag(true);
+	m_animationClips[enPlayerState_Walk].Load("Assets/animData/walk.tka");
+	m_animationClips[enPlayerState_Walk].SetLoopFlag(true);
+	m_animationClips[enPlayerState_Run].Load("Assets/animData/run.tka");
+	m_animationClips[enPlayerState_Run].SetLoopFlag(true);
+	m_animationClips[enPlayerState_Jump].Load("Assets/animData/jump.tka");
+	m_animationClips[enPlayerState_Jump].SetLoopFlag(false);
+	m_animationClips[enPlayerState_Clear].Load("Assets/animData/clear.tka");
+	m_animationClips[enPlayerState_Clear].SetLoopFlag(false);
+	m_animationClips[enPlayerState_Death].Load("Assets/animData/KneelDown.tka");
+	m_animationClips[enPlayerState_Death].SetLoopFlag(false);
 
 	m_modelRender.Init("Assets/modelData/unityChan.tkm", m_animationClips,
-		enAnimationClip_Num, enModelUpAxisY);
+		enPlayerState_Num, enModelUpAxisY);
 
 	m_characterController.Init(CAPSULE_COLLIDER_RADIUS, CAPSULE_COLLIDER_HEIGHT, m_position);
 
@@ -52,16 +67,22 @@ void Player::Update()
 
 	Rotation();
 
-	Animation();
+	Collision();
 
-	//Damege();
+	Invincible();
+
+	DispStatus();
+
+	PlayerState();
+
+	Animation();
 
 	m_modelRender.Update();
 }
 
 void Player::Move()
 {
-	m_animationState = enAnimationClip_Idle;
+	m_playerState = enPlayerState_Idle;
 	if (m_moveFlag == true) {
 		m_moveSpeed.x = 0.0f;
 		m_moveSpeed.z = 0.0f;
@@ -108,12 +129,12 @@ void Player::Dash()
 			m_moveSpeed.x *= CHARACTER_DASHSPEED_MAGNIFICATION;
 			m_moveSpeed.z *= CHARACTER_DASHSPEED_MAGNIFICATION;
 			m_dashFlag = true;
-			m_animationState = enAnimationClip_Run;
+			m_playerState = enPlayerState_Run;
 		}
 		else 
 		{
 			m_dashFlag = false;
-			m_animationState = enAnimationClip_Walk;
+			m_playerState = enPlayerState_Walk;
 		}
 	}
 	else if (m_dashFlag == true)
@@ -127,30 +148,102 @@ void Player::Jump()
 {
 	if (m_characterController.IsOnGround()) 
 	{
+		m_moveSpeed.y = 0.0f;
 		if (g_pad[0]->IsTrigger(enButtonA)) {
-			m_moveSpeed.y = CHARACTER_JUMPSPEED;
+			m_moveSpeed.y = CHARACTER_FIRST_JUMPSPEED;
 			
 		}
 	}
 	else
 	{
 		m_moveSpeed.y -= GRAVITY;
-		m_animationState = enAnimationClip_Jump;
+		m_playerState = enPlayerState_Jump;
+	}
+	if (m_moveSpeed.y >= JUMPSPEED_LIMIT)
+	{
+		m_moveSpeed.y = JUMPSPEED_LIMIT;
+	}
+}
+
+void Player::JumpAttack()
+{
+	auto collisionObject = NewGO<CollisionObject>(0);
+	Vector3 collisionPosition = m_position;
+	collisionPosition -= m_down ;
+	collisionObject->CreateBox(collisionPosition,
+		Quaternion::Identity,
+		JUMP_ATTACK_SIZE
+	);
+	collisionObject->SetName("player_jump_attack");
+}
+
+void Player::Collision()
+{
+	if (m_playerState == enPlayerState_Death)
+	{
+		return;
+	}
+
+	const auto& collisions = g_collisionObjectManager->FindCollisionObjects("enemy_body_collision");
+	for (auto collision : collisions)
+	{
+		if (collision->IsHit(m_characterController))
+		{
+			Damege();
+		}
 	}
 }
 
 void Player::Damege()
 {
-	if (g_pad[0]->IsTrigger(enButtonA))
+	if (m_damege == false)
 	{
 		m_life--;
+		m_damege = true;
 	}
 	if (m_life <= 0)
 	{
-		m_animationState = enAnimationClip_Death;
-		m_moveFlag = false;
+		m_playerState = enPlayerState_Death;
 	}
+}
 
+void Player::Invincible()
+{
+	if (m_damege == true)
+	{
+		m_invincibleTimer += g_gameTime->GetFrameDeltaTime();
+		ModelBlink();
+		if (m_invincibleTimer >= m_invincibleLimit)
+		{
+			m_invincibleTimer = 0.0f;
+			m_dispModel = true;
+			m_damege = false;
+		}
+	}
+}
+
+void Player::ModelBlink()
+{
+	switch (m_dispModel)
+	{
+	case true:
+		m_dispModelTimer += SWITCH_DISP_TIMER;
+		if (m_dispModelTimer >= 1.0f)
+		{
+			m_dispModelTimer = 1.0f;
+			m_dispModel = false;
+		}
+		break;
+
+	case false:
+		m_dispModel -= SWITCH_DISP_TIMER;
+		if (m_dispModelTimer <= 0.0f)
+		{
+			m_dispModelTimer = 0.0f;
+			m_dispModel = true;		
+		}
+		break;
+	}
 }
 
 void Player::Rotation()
@@ -163,27 +256,75 @@ void Player::Rotation()
 	}
 }
 
+void Player::DispStatus()
+{
+	wchar_t wcsbuf[256];
+	swprintf_s(wcsbuf, 256, L"残りHP：%d", m_life);
+	m_lifeRender.SetText(wcsbuf);
+	m_lifeRender.SetPosition(LIFE_TEXT_POSITION);
+	m_lifeRender.SetScale(LIFE_TEXT_SCALE);
+	if (m_life == 3) {
+		m_lifeRender.SetColor(LIFE_COLOR_BLUE);
+	}
+	if (m_life == 2) {
+		m_lifeRender.SetColor(g_vec4Yellow);
+	}
+	if (m_life == 1)
+	{
+		m_lifeRender.SetColor(LIFE_COLOR_RED);
+	}
+}
+
+void Player::PlayerState()
+{
+	switch (m_playerState)
+	{
+	case enPlayerState_Idle:
+		
+		break;
+	case enPlayerState_Walk:
+		
+		break;
+	case enPlayerState_Run:
+		
+		break;
+	case enPlayerState_Jump:
+		JumpAttack();
+
+		break;
+	case enPlayerState_Clear:
+		
+		break;
+	case enPlayerState_Death:
+		
+		break;
+	default:
+		break;
+	}
+}
+
 void Player::Animation()
 {
-	switch (m_animationState)
+	switch (m_playerState)
 	{
-	case enAnimationClip_Idle:
-		m_modelRender.PlayAnimation(enAnimationClip_Idle);
+	case enPlayerState_Idle:
+		m_modelRender.PlayAnimation(enPlayerState_Idle);
 		break;
-	case enAnimationClip_Walk:
-		m_modelRender.PlayAnimation(enAnimationClip_Walk);
+	case enPlayerState_Walk:
+		m_modelRender.PlayAnimation(enPlayerState_Walk);
 		break;
-	case enAnimationClip_Run:
-		m_modelRender.PlayAnimation(enAnimationClip_Run);
+	case enPlayerState_Run:
+		m_modelRender.PlayAnimation(enPlayerState_Run);
 		break;
-	case enAnimationClip_Jump:
-		m_modelRender.PlayAnimation(enAnimationClip_Jump);
+	case enPlayerState_Jump:
+		m_modelRender.PlayAnimation(enPlayerState_Jump);
+
 		break;
-	case enAnimationClip_Clear:
-		m_modelRender.PlayAnimation(enAnimationClip_Clear);
+	case enPlayerState_Clear:
+		m_modelRender.PlayAnimation(enPlayerState_Clear);
 		break;
-	case enAnimationClip_Death:
-		m_modelRender.PlayAnimation(enAnimationClip_Death);
+	case enPlayerState_Death:
+		m_modelRender.PlayAnimation(enPlayerState_Death);
 		break;
 	default:
 		break;
@@ -192,5 +333,10 @@ void Player::Animation()
 
 void Player::Render(RenderContext& rc)
 {
-	m_modelRender.Draw(rc);
+	if (m_dispModel == true)
+	{
+		m_modelRender.Draw(rc);
+	}
+
+	m_lifeRender.Draw(rc);
 }

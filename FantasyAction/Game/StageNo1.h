@@ -10,6 +10,8 @@ class SoftFloor;
 class ConeWall;
 class StageNo1Level;
 class Shell;
+class GoalPoint;
+class GameScene;
 
 class StageNo1:public IGameObject
 {
@@ -20,6 +22,7 @@ public:
 	void MakeLevel();
 	void Update();
 	void Death();
+	void Goal();
 	void Render(RenderContext& rc);
 
 private:
@@ -31,6 +34,8 @@ private:
 
 	Player* m_player = nullptr;
 	GameCamera* m_gameCamera = nullptr;
+	GoalPoint* m_goalPoint = nullptr;
+	GameScene* m_gameScene = nullptr;
 
 	std::vector<StageNo1Level*> m_stageNo1Levels;
 	std::vector<Enemy1*> m_enemy1s;

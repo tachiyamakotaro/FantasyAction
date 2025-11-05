@@ -10,7 +10,6 @@ public:
 	void Dash();
 	void Jump();
 	void JumpAttack();
-	//void AcqRange();
 	void Damege();
 	void Invincible();
 	void ModelBlink();
@@ -20,6 +19,8 @@ public:
 	void PlayerState();
 	void Animation();
 	void Render(RenderContext& rc);
+
+	const bool IsMove()const;
 
 	/// <summary>
 	/// À•W‚ğİ’èB

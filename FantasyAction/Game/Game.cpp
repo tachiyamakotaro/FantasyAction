@@ -4,6 +4,7 @@
 #include "GameCamera.h"
 #include "StageNo1.h"
 #include "GameOver.h"
+#include "GameScene.h"
 
 Game::Game()
 {
@@ -12,8 +13,6 @@ Game::Game()
 
 Game::~Game()
 {
-	DeleteGO(m_player);
-	DeleteGO(m_gameCamera);
 	DeleteGO(m_stageNo1);
 }
 

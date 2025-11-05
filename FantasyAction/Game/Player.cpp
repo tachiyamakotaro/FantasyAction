@@ -11,7 +11,7 @@ namespace
 	const float CHARACTER_THIRD_JUMPSPEED = 1200.0f;
 	const float JUMPSPEED_LIMIT = 1200.0f;
 	//ダッシュの倍率
-	const float CHARACTER_DASHSPEED_MAGNIFICATION = 2.0f;
+	const float CHARACTER_DASHSPEED = 2.0f;
 	const float GRAVITY = 32.0f;
 	const float STICK_INPUT = 0.001f;
 	//ジャンプの攻撃判定
@@ -107,7 +107,7 @@ void Player::Move()
 
 		m_moveSpeed += right + forward;
 
-		if (fabsf(m_moveSpeed.x) >= STICK_INPUT || fabsf(m_moveSpeed.z) >= STICK_INPUT)
+		if (IsMove())
 		{
 			Dash();
 		}
@@ -126,8 +126,8 @@ void Player::Dash()
 	{
 		
 		if (g_pad[0]->IsPress(enButtonX)) {
-			m_moveSpeed.x *= CHARACTER_DASHSPEED_MAGNIFICATION;
-			m_moveSpeed.z *= CHARACTER_DASHSPEED_MAGNIFICATION;
+			m_moveSpeed.x *= CHARACTER_DASHSPEED;
+			m_moveSpeed.z *= CHARACTER_DASHSPEED;
 			m_dashFlag = true;
 			m_playerState = enPlayerState_Run;
 		}
@@ -139,8 +139,8 @@ void Player::Dash()
 	}
 	else if (m_dashFlag == true)
 	{
-		m_moveSpeed.x *= CHARACTER_DASHSPEED_MAGNIFICATION;
-		m_moveSpeed.z *= CHARACTER_DASHSPEED_MAGNIFICATION;
+		m_moveSpeed.x *= CHARACTER_DASHSPEED;
+		m_moveSpeed.z *= CHARACTER_DASHSPEED;
 	}
 }
 
@@ -248,7 +248,7 @@ void Player::ModelBlink()
 
 void Player::Rotation()
 {
-	if (fabsf(m_moveSpeed.x) >= STICK_INPUT || fabsf(m_moveSpeed.z) >= STICK_INPUT)
+	if (IsMove())
 	{
 		m_rotation.SetRotationYFromDirectionXZ(m_moveSpeed);
 
@@ -339,4 +339,13 @@ void Player::Render(RenderContext& rc)
 	}
 
 	m_lifeRender.Draw(rc);
+}
+
+
+const bool Player::IsMove() const {
+	if (fabsf(m_moveSpeed.x) >= STICK_INPUT || fabsf(m_moveSpeed.z) >= STICK_INPUT)
+	{
+		return true;
+	}
+	return false;
 }

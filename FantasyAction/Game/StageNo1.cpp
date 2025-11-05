@@ -6,6 +6,8 @@
 #include "GameCamera.h"
 #include "StageNo1Level.h"
 #include "Item.h"
+#include "GoalPoint.h"
+#include "GameScene.h"
 
 StageNo1::StageNo1()
 {
@@ -14,6 +16,7 @@ StageNo1::StageNo1()
 
 StageNo1::~StageNo1()
 {
+	DeleteGO(m_goalPoint);
 	DeleteGO(m_player);
 	DeleteGO(m_gameCamera);
 
@@ -44,6 +47,8 @@ bool StageNo1::Start()
 {
 	//m_player = FindGO<Player>("player");
 
+	m_gameScene = FindGO<GameClear>("gameClear");
+
 	m_gameCamera = NewGO<GameCamera>(0, "gameCamera");
 
 	//PhysicsWorld::GetInstance()->EnableDrawDebugWireFrame();
@@ -69,7 +74,7 @@ void StageNo1::MakeLevel()
 
 			if (objData.EqualObjectName(L"unityChan") == true)
 			{
-				m_player = NewGO<Player>(0, "player");
+				m_player = NewGO<Player>(1, "player");
 				m_player->SetPosition(objData.position);
 				m_player->SetStartPosition(objData.position);
 				m_player->m_rotation = objData.rotation;
@@ -78,7 +83,7 @@ void StageNo1::MakeLevel()
 
 			if (objData.EqualObjectName(L"kuribo-") == true)
 			{
-				auto enemy1 = NewGO<Enemy1>(0,"enemy1");
+				auto enemy1 = NewGO<Enemy1>(2,"enemy1");
 				enemy1->SetPosition(objData.position);
 				enemy1->SetRotation(objData.rotation);
 				m_enemy1s.push_back(enemy1);
@@ -87,10 +92,19 @@ void StageNo1::MakeLevel()
 
 			if (objData.EqualObjectName(L"nokonoko") == true)
 			{
-				auto enemy2 = NewGO<Enemy2>(0, "enemy2");
+				auto enemy2 = NewGO<Enemy2>(3, "enemy2");
 				enemy2->SetPosition(objData.position);
 				enemy2->SetRotation(objData.rotation);
 				m_enemy2s.push_back(enemy2);
+				return true;
+			}
+
+			if (objData.EqualObjectName(L"GoalPoint") == true)
+			{
+				m_goalPoint = NewGO<GoalPoint>(4, "goalPoint");
+				m_goalPoint->SetPosition(objData.position);
+				m_goalPoint->SetRotation(objData.rotation);
+				m_goalPoint->SetScale(objData.scale);
 				return true;
 			}
 
@@ -101,6 +115,8 @@ void StageNo1::MakeLevel()
 void StageNo1::Update()
 {
 	Death();
+
+	Goal();
 }
 
 void StageNo1::Death()
@@ -111,6 +127,16 @@ void StageNo1::Death()
 	}
 	if (m_player->m_playerState == m_player->enPlayerState_Death)
 	{
+		DeleteGO(this);
+	}
+}
+
+void StageNo1::Goal()
+{
+	bool a = m_goalPoint->IsGoal();
+	if (a == true)
+	{
+		m_gameScene = NewGO<GameClear>(0, "gameClear");
 		DeleteGO(this);
 	}
 }

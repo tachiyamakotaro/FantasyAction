@@ -9,6 +9,12 @@
 #include "GoalPoint.h"
 #include "GameScene.h"
 
+namespace
+{
+	const Vector3 TIME_POSITION = { 100.0f,100.0f,100.0f };
+	const float TIME_SCALE = 2.0f;
+}
+
 StageNo1::StageNo1()
 {
 
@@ -114,6 +120,8 @@ void StageNo1::MakeLevel()
 
 void StageNo1::Update()
 {
+	DispTime();
+
 	Death();
 
 	Goal();
@@ -147,8 +155,32 @@ void StageNo1::SceneTransition()
 	DeleteGO(this);
 }
 
+void StageNo1::DispTime()
+{
+	int sec = (int)m_timer;
+	m_timer -= g_gameTime->GetFrameDeltaTime();
+
+	wchar_t text[256];
+	swprintf_s(text, 256, L"écÇËéûä‘ÅF%02d", sec);
+	m_timeRender.SetText(text);
+	m_timeRender.SetPosition(TIME_POSITION);
+	m_timeRender.SetScale(TIME_SCALE);
+	m_timeRender.SetColor(g_vec4Black);
+
+	TimeUp();
+}
+
+void StageNo1::TimeUp()
+{
+	if (m_timer <= 0.0f)
+	{
+		SceneTransition();
+	}
+}
+
 void StageNo1::Render(RenderContext& rc)
 {
 	m_levelRender.Draw(rc);
+	m_timeRender.Draw(rc);
 	//m_modelRender.Draw(rc);
 }

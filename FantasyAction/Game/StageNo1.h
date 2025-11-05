@@ -24,12 +24,15 @@ public:
 	void Death();
 	void Goal();
 	void SceneTransition();
+	void DispTime();
+	void TimeUp();
 	void Render(RenderContext& rc);
 
 private:
 	PhysicsStaticObject m_physicsStaticObject;
 	ModelRender m_modelRender;
 	LevelRender m_levelRender;
+	FontRender m_timeRender;
 
 	//int m_numEnemy1 = 0;
 	float m_timer = 120.0f;

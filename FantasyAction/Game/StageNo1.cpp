@@ -131,11 +131,11 @@ void StageNo1::Death()
 {
 	if (m_player->m_position.y < -500.0f)
 	{
-		SceneTransition();
+		GameOverScene();
 	}
 	if (m_player->GetLife()<=0)
 	{
-		SceneTransition();
+		GameOverScene();
 	}
 }
 
@@ -144,14 +144,21 @@ void StageNo1::Goal()
 	bool a = m_goalPoint->IsGoal();
 	if (a == true)
 	{
-		SceneTransition();
+		ClearScene();
 	}
 }
 
-void StageNo1::SceneTransition()
+void StageNo1::ClearScene()
 {
 	//ゲームシーンに遷移する。
 	m_gameScene = NewGO<GameClear>(0, "gameClear");
+	DeleteGO(this);
+}
+
+void StageNo1::GameOverScene()
+{
+	//ゲームシーンに遷移する。
+	m_gameScene = NewGO<GameOver>(0, "gameOver");
 	DeleteGO(this);
 }
 
@@ -174,7 +181,7 @@ void StageNo1::TimeUp()
 {
 	if (m_timer <= 0.0f)
 	{
-		SceneTransition();
+		GameOverScene();
 	}
 }
 

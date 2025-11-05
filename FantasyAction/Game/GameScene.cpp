@@ -101,3 +101,14 @@ void GameClear::InGameTransition()
 	//ゲームシーンに遷移する。
 	m_stageNo1 = NewGO<StageNo1>(0,"stageNo1");
 }
+
+/// <summary>
+/// ここからゲームオーバーの設定
+/// </summary>
+bool GameOver::Start()
+{
+	int scene = ClearScene;
+	SetSprite(scene);
+	SetText(scene);
+	return true;
+}

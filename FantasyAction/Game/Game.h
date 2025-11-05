@@ -9,7 +9,6 @@
 class Player;
 class GameCamera;
 class StageNo1;
-class GameOver;
 class GameScene;
 
 class Game : public IGameObject
@@ -30,7 +29,6 @@ private:
 	Player* m_player;
 	GameCamera* m_gameCamera;
 	StageNo1* m_stageNo1;
-	GameOver* m_gameOver;
 	GameScene* m_gameScene;
 };
 

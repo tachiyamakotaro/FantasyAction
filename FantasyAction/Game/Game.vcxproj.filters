@@ -16,13 +16,13 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="GameCamera.cpp" />
     <ClCompile Include="StageNo1.cpp" />
-    <ClCompile Include="GameOver.cpp" />
     <ClCompile Include="Enemy1.cpp" />
     <ClCompile Include="StageNo1Level.cpp" />
     <ClCompile Include="Enemy2.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="Boss.cpp" />
     <ClCompile Include="GameScene.cpp" />
+    <ClCompile Include="GoalPoint.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -34,12 +34,12 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="GameCamera.h" />
     <ClInclude Include="StageNo1.h" />
-    <ClInclude Include="GameOver.h" />
     <ClInclude Include="Enemy1.h" />
     <ClInclude Include="StageNo1Level.h" />
     <ClInclude Include="Enemy2.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="Boss.h" />
     <ClInclude Include="GameScene.h" />
+    <ClInclude Include="GoalPoint.h" />
   </ItemGroup>
 </Project>

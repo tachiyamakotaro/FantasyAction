@@ -9,6 +9,12 @@
 #include "GoalPoint.h"
 #include "GameScene.h"
 
+namespace
+{
+	const Vector3 TIME_POSITION = { 100.0f,100.0f,100.0f };
+	const float TIME_SCALE = 2.0f;
+}
+
 StageNo1::StageNo1()
 {
 
@@ -114,6 +120,8 @@ void StageNo1::MakeLevel()
 
 void StageNo1::Update()
 {
+	DispTime();
+
 	Death();
 
 	Goal();
@@ -123,11 +131,11 @@ void StageNo1::Death()
 {
 	if (m_player->m_position.y < -500.0f)
 	{
-		DeleteGO(this);
+		SceneTransition();
 	}
-	if (m_player->m_playerState == m_player->enPlayerState_Death)
+	if (m_player->GetLife()<=0)
 	{
-		DeleteGO(this);
+		SceneTransition();
 	}
 }
 
@@ -136,13 +144,43 @@ void StageNo1::Goal()
 	bool a = m_goalPoint->IsGoal();
 	if (a == true)
 	{
-		m_gameScene = NewGO<GameClear>(0, "gameClear");
-		DeleteGO(this);
+		SceneTransition();
+	}
+}
+
+void StageNo1::SceneTransition()
+{
+	//ゲームシーンに遷移する。
+	m_gameScene = NewGO<GameClear>(0, "gameClear");
+	DeleteGO(this);
+}
+
+void StageNo1::DispTime()
+{
+	int sec = (int)m_timer;
+	m_timer -= g_gameTime->GetFrameDeltaTime();
+
+	wchar_t text[256];
+	swprintf_s(text, 256, L"残り時間：%02d", sec);
+	m_timeRender.SetText(text);
+	m_timeRender.SetPosition(TIME_POSITION);
+	m_timeRender.SetScale(TIME_SCALE);
+	m_timeRender.SetColor(g_vec4Black);
+
+	TimeUp();
+}
+
+void StageNo1::TimeUp()
+{
+	if (m_timer <= 0.0f)
+	{
+		SceneTransition();
 	}
 }
 
 void StageNo1::Render(RenderContext& rc)
 {
 	m_levelRender.Draw(rc);
+	m_timeRender.Draw(rc);
 	//m_modelRender.Draw(rc);
 }

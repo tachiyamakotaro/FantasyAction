@@ -3,7 +3,6 @@
 #include "Player.h"
 #include "GameCamera.h"
 #include "StageNo1.h"
-#include "GameOver.h"
 #include "GameScene.h"
 
 Game::Game()

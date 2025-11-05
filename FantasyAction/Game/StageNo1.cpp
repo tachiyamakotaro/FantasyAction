@@ -123,11 +123,11 @@ void StageNo1::Death()
 {
 	if (m_player->m_position.y < -500.0f)
 	{
-		DeleteGO(this);
+		SceneTransition();
 	}
-	if (m_player->m_playerState == m_player->enPlayerState_Death)
+	if (m_player->GetLife()<=0)
 	{
-		DeleteGO(this);
+		SceneTransition();
 	}
 }
 
@@ -136,9 +136,15 @@ void StageNo1::Goal()
 	bool a = m_goalPoint->IsGoal();
 	if (a == true)
 	{
-		m_gameScene = NewGO<GameClear>(0, "gameClear");
-		DeleteGO(this);
+		SceneTransition();
 	}
+}
+
+void StageNo1::SceneTransition()
+{
+	//ゲームシーンに遷移する。
+	m_gameScene = NewGO<GameClear>(0, "gameClear");
+	DeleteGO(this);
 }
 
 void StageNo1::Render(RenderContext& rc)

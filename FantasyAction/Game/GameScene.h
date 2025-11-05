@@ -3,6 +3,7 @@
 enum
 {
 	ClearScene,
+	GameOverScene,
 	GameScene_num
 };
 
@@ -32,5 +33,14 @@ public:
 
 private:
 	StageNo1* m_stageNo1 = nullptr;
+};
+
+class GameOver :public GameScene
+{
+public:
+	bool Start();
+	void Update();
+	void Transition();
+	void InGameTransition();
 };
 

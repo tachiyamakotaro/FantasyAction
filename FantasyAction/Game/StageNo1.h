@@ -23,6 +23,7 @@ public:
 	void Update();
 	void Death();
 	void Goal();
+	void SceneTransition();
 	void Render(RenderContext& rc);
 
 private:
@@ -30,7 +31,8 @@ private:
 	ModelRender m_modelRender;
 	LevelRender m_levelRender;
 
-	int m_numEnemy1 = 0;
+	//int m_numEnemy1 = 0;
+	float m_timer = 120.0f;
 
 	Player* m_player = nullptr;
 	GameCamera* m_gameCamera = nullptr;

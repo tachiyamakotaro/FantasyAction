@@ -71,6 +71,16 @@ public:
 		return m_characterController;
 	}
 
+	/*const void GetPlayerState()const
+	{
+		return m_playerState=enPlayerState_Num;
+	}*/
+
+	const int GetLife()const
+	{
+		return m_life;
+	}
+
 	CharacterController		m_characterController;
 	Quaternion				m_rotation;
 	Vector3					m_position;

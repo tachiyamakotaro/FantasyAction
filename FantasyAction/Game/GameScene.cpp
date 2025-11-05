@@ -29,7 +29,8 @@ namespace
 	};
 
 	SceanInfo sceanInfo[GameScene_num] = {
-		{"GoalPedestal", u8"ステージクリア！\nスタートボタンで次のステージ"}
+		{"GoalPedestal", u8"ステージクリア！\nスタートボタンで次のステージ"},
+		{"gameOver", u8"ゲームオーバー\nスタートボタンでリトライ"},
 	};
 }
 
@@ -40,14 +41,14 @@ void GameScene::Update()
 
 void GameScene::SetText(int scenenum)
 {
-	std::string str = sceanInfo[ClearScene].sceanText;
+	std::string str = sceanInfo[scenenum].sceanText;
 
 	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
 	std::wstring wstr = converter.from_bytes(str);
 	const wchar_t* text = wstr.c_str();
 	m_sceneFont.SetText(text);
 	m_sceneFont.SetPosition(0.0f, 0.0f, -10.0f);
-	m_sceneFont.SetColor(g_vec4Black);
+	m_sceneFont.SetColor(g_vec4White);
 }
 
 void GameScene::SetSprite(int spritenum)
@@ -107,8 +108,29 @@ void GameClear::InGameTransition()
 /// </summary>
 bool GameOver::Start()
 {
-	int scene = ClearScene;
+	int scene = GameOverScene;
 	SetSprite(scene);
 	SetText(scene);
 	return true;
+}
+
+void GameOver::Update()
+{
+	GameScene::Update();
+	Transition();
+}
+
+void GameOver::Transition()
+{
+	if (g_pad[0]->IsTrigger(enButtonStart))
+	{
+		InGameTransition();
+		DeleteGO(this);
+	}
+}
+
+void GameOver::InGameTransition()
+{
+	//ゲームシーンに遷移する。
+	m_stageNo1 = NewGO<StageNo1>(0, "stageNo1");
 }

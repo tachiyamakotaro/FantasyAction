@@ -23,7 +23,8 @@ public:
 	void Update();
 	void Death();
 	void Goal();
-	void SceneTransition();
+	void ClearScene();
+	void GameOverScene();
 	void DispTime();
 	void TimeUp();
 	void Render(RenderContext& rc);

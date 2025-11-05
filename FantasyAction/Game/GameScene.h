@@ -42,5 +42,8 @@ public:
 	void Update();
 	void Transition();
 	void InGameTransition();
+
+private:
+	StageNo1* m_stageNo1 = nullptr;
 };
 

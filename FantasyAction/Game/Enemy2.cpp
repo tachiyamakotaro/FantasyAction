@@ -170,7 +170,7 @@ void Enemy2::MakeAttackCollision()
 			ATTACK_COLLISION_HEIGHT
 		);
 		collisionObject->SetName("enemy_body_collision");
-		m_bodyCollisions.push_back(collisionObject);
+		//m_bodyCollisions.push_back(collisionObject);
 	}
 }
 
@@ -239,7 +239,7 @@ void Enemy2::ProcessIdleStateTransition()
 
 void Enemy2::ProcessDeadStateTransition()
 {
-	if (m_deleteTimer == 0.0f)
+	if (m_itemProduced==false)
 	{
 		ProduceShell();
 	}
@@ -264,6 +264,7 @@ void Enemy2::ProduceShell()
 {
 	m_shell = NewGO<Shell>(0, "shell");
 	m_shell->SetPosition(m_position);
+	m_itemProduced = true;
 }
 
 void Enemy2::ManageState()

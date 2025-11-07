@@ -1,19 +1,25 @@
 #pragma once
+
+class Enemy2;
+
 class Item:public IGameObject
 {
 public:
 	bool Start();
-	void Update();
+	void Update();	
 	void Rotation();
 
 	void SetPosition(const Vector3& position)
 	{
 		m_position = position;
 	}
+	void GetRoatation(Quaternion& rotation)
+	{
+		rotation = m_rotation;
+	}
 
 	void Render(RenderContext& rc);
 
-	ModelRender m_shellRender;
 private:
 	
 	Vector3     m_position;
@@ -25,8 +31,24 @@ class Shell : public Item
 {
 public:
 	bool Start();
+	void Update();
 	void Collision();
+	void Rotation();
+	void Render(RenderContext& rc);
 
+	void SetPosition(const Vector3& position)
+	{
+		m_position = position;
+	}
+
+private:
 	Vector3     m_moveSpeed;
+	Vector3     m_position;
+	Vector3     m_scale ;
+	Quaternion  m_rotation;
+	ModelRender m_shellRender;
+
+	Enemy2* m_Enemy2 = nullptr;
+
 };
 

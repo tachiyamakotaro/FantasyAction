@@ -111,5 +111,6 @@ public:
 	float						m_idleTimer = 0.0f;
 	float						m_deleteTimer = 0.0f;
 	float						m_deleteTime = 1.0f;
+	bool						m_itemProduced = false;							//アイテムを生成したかどうか。
 };
 

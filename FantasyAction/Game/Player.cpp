@@ -167,6 +167,7 @@ void Player::Jump()
 
 void Player::JumpAttack()
 {
+
 	auto collisionObject = NewGO<CollisionObject>(0);
 	Vector3 collisionPosition = m_position;
 	collisionPosition -= m_down ;

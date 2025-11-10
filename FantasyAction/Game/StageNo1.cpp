@@ -57,7 +57,7 @@ bool StageNo1::Start()
 
 	m_gameCamera = NewGO<GameCamera>(0, "gameCamera");
 
-	//PhysicsWorld::GetInstance()->EnableDrawDebugWireFrame();
+	PhysicsWorld::GetInstance()->EnableDrawDebugWireFrame();
 
 	MakeLevel();
 

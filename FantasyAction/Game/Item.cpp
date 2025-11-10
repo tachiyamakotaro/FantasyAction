@@ -54,14 +54,28 @@ void Shell::Update()
 
 void Shell::Collision()
 {
-	auto collision = NewGO<CollisionObject>(0);
-	Vector3 collisionPos = m_position;
-	collisionPos.y += 1.0f;
-	collision->CreateSphere(collisionPos,
-		Quaternion::Identity,
-		100.0f
-	);
-	collision->SetName("shellCollision");
+	if (m_coliisionProduce==false)
+	{
+		auto collision = NewGO<CollisionObject>(0);
+		m_collisionPos = m_position;
+		m_collisionPos.y += 1.0f;
+		collision->CreateSphere(m_collisionPos,
+			Quaternion::Identity,
+			10.0f
+		);
+		collision->SetName("shell_Collision");
+		collision->SetTimeLimit(m_deleteTime);
+		m_coliisionProduce = true;
+	}
+}
+
+void Shell::DeleteTimer()
+{
+	m_deleteTimer += g_gameTime->GetFrameDeltaTime();
+	if (m_deleteTimer >= m_deleteTime)
+	{
+		DeleteGO(this);
+	}
 }
 
 void Shell::Rotation()

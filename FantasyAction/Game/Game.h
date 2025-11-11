@@ -18,7 +18,6 @@ public:
 	~Game();
 	bool Start();
 	void Update();
-	void ReStart();
 	void Render(RenderContext& rc);
 
 private:

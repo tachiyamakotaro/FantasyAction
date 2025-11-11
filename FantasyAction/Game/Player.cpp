@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Player.h"
+#include "Item.h"
 
 namespace
 {
@@ -35,7 +36,7 @@ Player::Player()
 
 Player::~Player()
 {
-
+	DeleteGO(m_jumpCol);
 }
 
 bool Player::Start()
@@ -58,7 +59,24 @@ bool Player::Start()
 
 	m_characterController.Init(CAPSULE_COLLIDER_RADIUS, CAPSULE_COLLIDER_HEIGHT, m_position);
 
+	SetJumpCol();
+
 	return true;
+}
+
+void Player::SetJumpCol()
+{
+	m_jumpCol = NewGO<CollisionObject>(0);
+	m_jumpColPos = m_position;
+	m_jumpColPos.y -= 30.0f;
+	m_jumpCol->SetPosition(m_jumpColPos);
+	m_jumpCol->SetRotation(Quaternion::Identity);
+	m_jumpCol->SetIsEnableAutoDelete(false);
+	m_jumpCol->CreateBox(m_jumpColPos,
+		Quaternion::Identity,
+		JUMP_ATTACK_SIZE
+	);
+	m_jumpCol->SetName("player_jump_attack");
 }
 
 void Player::Update()
@@ -72,6 +90,8 @@ void Player::Update()
 	Invincible();
 
 	DispStatus();
+
+	DistItem();
 
 	PlayerState();
 
@@ -148,10 +168,11 @@ void Player::Jump()
 {
 	if (m_characterController.IsOnGround()) 
 	{
+		m_jumpCol->SetIsEnable(false);
 		m_moveSpeed.y = 0.0f;
 		if (g_pad[0]->IsTrigger(enButtonA)) {
 			m_moveSpeed.y = CHARACTER_FIRST_JUMPSPEED;
-			
+			m_jumpColFlag = true;
 		}
 	}
 	else
@@ -163,19 +184,30 @@ void Player::Jump()
 	{
 		m_moveSpeed.y = JUMPSPEED_LIMIT;
 	}
+	JumpAttack();
 }
 
 void Player::JumpAttack()
 {
+	if (m_playerState == enPlayerState_Jump)
+	{
+		m_jumpCol->SetIsEnable(true);
+	}
+	else
+	{
+		m_jumpCol->SetIsEnable(false);
+	}
+	m_jumpColPos = m_position;
+	m_jumpCol->SetPosition(m_jumpColPos);
+	m_jumpCol->SetRotation(Quaternion::Identity);
+	m_jumpCol->Update();
 
-	auto collisionObject = NewGO<CollisionObject>(0);
-	Vector3 collisionPosition = m_position;
-	collisionPosition -= m_down ;
-	collisionObject->CreateBox(collisionPosition,
-		Quaternion::Identity,
-		JUMP_ATTACK_SIZE
-	);
-	collisionObject->SetName("player_jump_attack");
+	m_jumpColPos = m_position;
+	m_jumpColPos.y -= 30.0f;
+	m_jumpCol->Update();
+
+	m_modelRender.SetPosition(m_jumpColPos);
+	m_modelRender.Update();
 }
 
 void Player::Collision()
@@ -247,6 +279,41 @@ void Player::ModelBlink()
 	}
 }
 
+void Player::DistItem()
+{
+	m_shell = FindGO<Shell>("shell");
+	if (m_shell == nullptr)
+	{
+		return;
+	}
+
+	Vector3 diff = m_shell->GetPosition() - m_position;
+	if (diff.Length() <= 100.0f)
+	{
+		HaveItem();
+	}
+}
+
+void Player::HaveItem()
+{
+	if (m_haveItem == false)
+	{
+		if (g_pad[0]->IsPress(enButtonX))
+		{
+			m_shell->SetPosition(m_position);
+			m_haveItem = true;
+		}
+	}
+	if (m_haveItem == true)
+	{
+		m_shell->SetPosition(m_position);
+		if (g_pad[0]->IsTrigger(enButtonX))
+		{
+			DeleteGO(m_shell);
+		}
+	}
+}
+
 void Player::Rotation()
 {
 	if (IsMove())
@@ -290,7 +357,7 @@ void Player::PlayerState()
 		
 		break;
 	case enPlayerState_Jump:
-		JumpAttack();
+		//JumpAttack();
 
 		break;
 	case enPlayerState_Clear:
@@ -345,6 +412,15 @@ void Player::Render(RenderContext& rc)
 
 const bool Player::IsMove() const {
 	if (fabsf(m_moveSpeed.x) >= STICK_INPUT || fabsf(m_moveSpeed.z) >= STICK_INPUT)
+	{
+		return true;
+	}
+	return false;
+}
+
+const bool Player::IsOnGround() const
+{
+	if (m_characterController.IsOnGround())
 	{
 		return true;
 	}

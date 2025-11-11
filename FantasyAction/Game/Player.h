@@ -1,10 +1,14 @@
 #pragma once
+
+class Shell;
+
 class Player:public IGameObject
 {
 public:
 	Player();
 	~Player();
 	bool Start();
+	void SetJumpCol();
 	void Update();
 	void Move();
 	void Dash();
@@ -18,9 +22,12 @@ public:
 	void DispStatus();
 	void PlayerState();
 	void Animation();
+	void DistItem();
+	void HaveItem();
 	void Render(RenderContext& rc);
 
 	const bool IsMove()const;
+	const bool IsOnGround() const;
 
 	/// <summary>
 	/// ç¿ïWÇê›íËÅB
@@ -106,6 +113,8 @@ private:
 	bool m_moveFlag = true;
 	bool m_dashFlag = false;
 	bool m_damege = false;
+	bool m_jumpColFlag = false;
+	bool m_haveItem = false;
 	bool m_dispModel = true;
 	float m_invincibleTimer = 0.0f;
 	float m_invincibleLimit = 2.0f;
@@ -116,7 +125,10 @@ private:
 	int m_life = 3;
 
 	SoundSource* m_jumpSe;
+	CollisionObject* m_jumpCol = nullptr;
+	Shell* m_shell = nullptr;
 
+	Vector3 m_jumpColPos;
 	ModelRender m_modelRender;
 	FontRender  m_lifeRender;
 	//bool m_renderFlag = true;

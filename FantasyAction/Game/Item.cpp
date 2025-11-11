@@ -5,6 +5,7 @@
 namespace
 {
 	const float ROTATION_SPEED = 10.0f;
+	const Vector3 COLLISION_SCALE = Vector3(75.0f, 35.0f, 75.0f);
 }
 
 bool Item::Start()
@@ -48,6 +49,7 @@ void Shell::Update()
 {
 	/*GetRoatation(m_rotation);*/
 	Rotation();
+	m_shellRender.SetPosition(m_position);
 	m_shellRender.SetRotation(m_rotation);
 	m_shellRender.Update();
 }
@@ -58,10 +60,10 @@ void Shell::Collision()
 	{
 		auto collision = NewGO<CollisionObject>(0);
 		m_collisionPos = m_position;
-		m_collisionPos.y += 1.0f;
-		collision->CreateSphere(m_collisionPos,
+		m_collisionPos.y += 10.0f;
+		collision->CreateBox(m_collisionPos,
 			Quaternion::Identity,
-			10.0f
+			COLLISION_SCALE
 		);
 		collision->SetName("shell_Collision");
 		collision->SetTimeLimit(m_deleteTime);

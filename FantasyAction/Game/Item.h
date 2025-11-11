@@ -42,6 +42,11 @@ public:
 		m_position = position;
 	}
 
+	const Vector3& GetPosition() const
+	{
+		return m_position;
+	}
+
 private:
 	Vector3     m_moveSpeed;
 	Vector3     m_position;

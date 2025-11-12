@@ -6,14 +6,14 @@ namespace
 {
 	const float CAPSULE_COLLIDER_RADIUS = 25.0f;
 	const float CAPSULE_COLLIDER_HEIGHT = 75.0f;
-	const float CHARACTER_MOVESPEED = 400.0f;
-	const float CHARACTER_FIRST_JUMPSPEED = 700.0f;
-	const float CHARACTER_SECOND_JUMPSPEED = 900.0f;
-	const float CHARACTER_THIRD_JUMPSPEED = 1200.0f;
+	const float CHARACTER_MOVESPEED = 350.0f;
+	const float CHARACTER_FIRST_JUMPSPEED = 1000.0f;
+	const float CHARACTER_SECOND_JUMPSPEED = 1200.0f;
+	const float CHARACTER_THIRD_JUMPSPEED = 1400.0f;
 	const float JUMPSPEED_LIMIT = 1200.0f;
 	//ダッシュの倍率
 	const float CHARACTER_DASHSPEED = 2.0f;
-	const float GRAVITY = 32.0f;
+	const float GRAVITY = 45.0f;
 	const float STICK_INPUT = 0.001f;
 	//ジャンプの攻撃判定
 	const float JUMP_ATTACK_RADIUS = 10.0f;

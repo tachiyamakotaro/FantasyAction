@@ -28,6 +28,8 @@ public:
 
 	const bool IsMove()const;
 	const bool IsOnGround() const;
+	const bool IsXButtonPress() const;
+	const bool IsShellIdle()const;
 
 	/// <summary>
 	/// ç¿ïWÇê›íËÅB
@@ -98,7 +100,7 @@ public:
 
 
 	enum EnPlayerState {
-		enPlayerState_Idle,
+		enPlayerState_Idle = 0,
 		enPlayerState_Walk,
 		enPlayerState_Run,
 		enPlayerState_Jump,
@@ -116,11 +118,13 @@ private:
 	bool m_jumpColFlag = false;
 	bool m_haveItem = false;
 	bool m_dispModel = true;
+
 	float m_invincibleTimer = 0.0f;
 	float m_invincibleLimit = 2.0f;
 	float m_tripleJumpTime = 0.2f;
 	float m_tripleJumpTimer = 0.0f;
 	float m_dispModelTimer = 0.0f;
+
 	int m_jumpState = 0;
 	int m_life = 3;
 

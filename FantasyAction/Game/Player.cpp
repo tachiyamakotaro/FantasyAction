@@ -6,7 +6,7 @@ namespace
 {
 	const float CAPSULE_COLLIDER_RADIUS = 25.0f;
 	const float CAPSULE_COLLIDER_HEIGHT = 75.0f;
-	const float CHARACTER_MOVESPEED = 250.0f;
+	const float CHARACTER_MOVESPEED = 400.0f;
 	const float CHARACTER_FIRST_JUMPSPEED = 700.0f;
 	const float CHARACTER_SECOND_JUMPSPEED = 900.0f;
 	const float CHARACTER_THIRD_JUMPSPEED = 1200.0f;
@@ -145,7 +145,7 @@ void Player::Dash()
 	if (m_characterController.IsOnGround())
 	{
 		
-		if (g_pad[0]->IsPress(enButtonX)) {
+		if (IsXButtonPress()) {
 			m_moveSpeed.x *= CHARACTER_DASHSPEED;
 			m_moveSpeed.z *= CHARACTER_DASHSPEED;
 			m_dashFlag = true;
@@ -168,7 +168,6 @@ void Player::Jump()
 {
 	if (m_characterController.IsOnGround()) 
 	{
-		m_jumpCol->SetIsEnable(false);
 		m_moveSpeed.y = 0.0f;
 		if (g_pad[0]->IsTrigger(enButtonA)) {
 			m_moveSpeed.y = CHARACTER_FIRST_JUMPSPEED;
@@ -298,7 +297,7 @@ void Player::HaveItem()
 {
 	if (m_haveItem == false)
 	{
-		if (g_pad[0]->IsPress(enButtonX))
+		if (IsXButtonPress())
 		{
 			m_shell->SetPosition(m_position);
 			m_haveItem = true;
@@ -309,7 +308,7 @@ void Player::HaveItem()
 		m_shell->SetPosition(m_position);
 		if (g_pad[0]->IsTrigger(enButtonX))
 		{
-			DeleteGO(m_shell);
+			m_shell->SetShellMove(Shell::Throwing);
 		}
 	}
 }
@@ -421,6 +420,24 @@ const bool Player::IsMove() const {
 const bool Player::IsOnGround() const
 {
 	if (m_characterController.IsOnGround())
+	{
+		return true;
+	}
+	return false;
+}
+
+const bool Player::IsXButtonPress() const
+{
+	if (g_pad[0]->IsPress(enButtonX))
+	{
+		return true;
+	}
+	return false;
+}
+
+const bool Player::IsShellIdle() const
+{
+	if (m_shell->Shell::Idle)
 	{
 		return true;
 	}

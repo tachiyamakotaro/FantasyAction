@@ -40,6 +40,12 @@ bool Shell::Start()
 	m_position.y += 10.0f;
 	m_shellRender.SetPosition(m_position);
 
+	m_moveSpeed = Vector3::AxisZ;
+	m_rotation.Apply(m_moveSpeed);
+	m_position += m_moveSpeed * 30.0f;
+	m_moveSpeed *= 1000.0f;
+	m_rotation.AddRotationDegY(360.0f);
+
 	Collision();
 
 	return true;
@@ -77,6 +83,19 @@ void Shell::DeleteTimer()
 	if (m_deleteTimer >= m_deleteTime)
 	{
 		DeleteGO(this);
+	}
+}
+
+void Shell::ShellMove()
+{
+	switch (m_shellState)
+	{
+	case Idle:
+		break;
+	case PlayerHas:
+		break;
+	default:
+		break;
 	}
 }
 

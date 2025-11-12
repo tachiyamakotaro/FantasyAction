@@ -8,7 +8,7 @@ namespace
 	const float CHARACON_RADIUS = 50.0f;
 	const float CHARACON_HEIGHT = 10.0f;
 	const float ATTACK_COLLISION_RADIUS = 50.0f;
-	const float ATTACK_COLLISION_HEIGHT = 5.0f;
+	const float ATTACK_COLLISION_HEIGHT = 3.0f;
 	const float GRAVITY = 200.0f;
 	const float HIGHER =  30.0f;
 	const float PLAYER_BOUNCE = 1000.0f;

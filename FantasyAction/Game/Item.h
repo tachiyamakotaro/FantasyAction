@@ -30,10 +30,18 @@ private:
 class Shell : public Item
 {
 public:
+	enum ShellState
+	{
+		Idle,
+		PlayerHas,
+		Throwing
+	};
+public:
 	bool Start();
 	void Update();
 	void Collision();
 	void DeleteTimer();
+	void ShellMove();
 	void Rotation();
 	void Render(RenderContext& rc);
 
@@ -47,6 +55,11 @@ public:
 		return m_position;
 	}
 
+	void SetShellMove(const ShellState shellState)
+	{
+		m_shellState = shellState;
+	}
+
 private:
 	Vector3     m_moveSpeed;
 	Vector3     m_position;
@@ -54,6 +67,7 @@ private:
 	Vector3     m_collisionPos;
 	Quaternion  m_rotation;
 	ModelRender m_shellRender;
+	ShellState   m_shellState = Idle;
 
 	bool m_coliisionProduce = false;
 	float m_deleteTimer = 0.0f;

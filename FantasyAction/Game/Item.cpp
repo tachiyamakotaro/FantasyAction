@@ -43,6 +43,7 @@ bool Shell::Start()
 
 	m_moveSpeed = Vector3::AxisZ;
 	m_rotation.Apply(m_moveSpeed);
+	m_moveSpeed=
 	m_position += m_moveSpeed * 30.0f;
 	m_moveSpeed *= 1000.0f;
 	m_rotation.AddRotationDegY(360.0f);
@@ -64,7 +65,7 @@ void Shell::Update()
 
 void Shell::Collision()
 {
-	if (m_coliisionProduce==false)
+	if (m_coliisionProduce == false)
 	{
 		m_collisionObj = NewGO<CollisionObject>(0);
 		m_collisionPos = m_position;
@@ -107,6 +108,7 @@ void Shell::ShellState()
 void Shell::ShellMove()
 {
 	m_position += m_moveSpeed * g_gameTime->GetFrameDeltaTime();
+	//m_position.y -= 10.0f;
 	m_collisionObj->SetPosition(m_position);
 }
 

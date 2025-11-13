@@ -290,23 +290,21 @@ void Player::DistItem()
 
 void Player::HaveItem()
 {
-	if (m_haveItem == false)
+	if (IsShellIdle())
 	{
-		if (IsShellIdle())
+		if (IsXButtonPress())
 		{
-			if (IsXButtonPress())
-			{
-				m_shell->SetPosition(m_position);
-				m_haveItem = true;
-			}
+			m_shell->SetShellMove(Shell::PlayerHas);
 		}
 	}
-	if (m_haveItem == true)
+
+	if (IsShellHas())
 	{
 		m_shell->SetPosition(m_position);
 		if (g_pad[0]->IsTrigger(enButtonX))
 		{
 			m_shell->SetShellMove(Shell::Throwing);
+			m_shell->SetMoveSpeed(m_moveSpeed);
 		}
 	}
 }
@@ -436,6 +434,15 @@ const bool Player::IsXButtonPress() const
 const bool Player::IsShellIdle() const
 {
 	if (m_shell->GetShellMove() == m_shell->Shell::Idle)
+	{
+		return true;
+	}
+	return false;
+}
+
+const bool Player::IsShellHas() const
+{
+	if (m_shell->GetShellMove() == m_shell->Shell::PlayerHas)
 	{
 		return true;
 	}

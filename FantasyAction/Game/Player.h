@@ -30,6 +30,7 @@ public:
 	const bool IsOnGround() const;
 	const bool IsXButtonPress() const;
 	const bool IsShellIdle()const;
+	const bool IsShellHas() const;
 
 	/// <summary>
 	/// À•W‚ğİ’èB

@@ -66,6 +66,11 @@ public:
 		return m_shellState;
 	}
 
+	void SetMoveSpeed(const Vector3& moveSpeed)
+	{
+		m_moveSpeed = moveSpeed;
+	}
+
 private:
 	Vector3     m_moveSpeed;
 	Vector3     m_position;

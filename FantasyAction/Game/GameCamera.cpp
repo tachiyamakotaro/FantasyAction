@@ -8,7 +8,7 @@ namespace
 	const float CAMERA_MOVE_SPEED = 1000.0f;
 	const float CAMERA_COLLISION = 5.0f;
 	const float CAMERA_NEAR = 1.0f;
-	const float CAMERA_FAR = 30000.0f;
+	const float CAMERA_FAR = 40000.0f;
 	const float CAMERA_POINT_ABOVE = 80.0f;
 	const float CAMERA_POINT_BEHIND = 50.0f;
 	const float CAMERA_DISTANCE = 50.0f;

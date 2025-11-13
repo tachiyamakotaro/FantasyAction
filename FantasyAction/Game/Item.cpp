@@ -2,6 +2,7 @@
 #include "Item.h"
 #include "Enemy2.h"
 
+
 namespace
 {
 	const float ROTATION_SPEED = 10.0f;
@@ -55,6 +56,7 @@ void Shell::Update()
 {
 	/*GetRoatation(m_rotation);*/
 	Rotation();
+	ShellState();
 	m_shellRender.SetPosition(m_position);
 	m_shellRender.SetRotation(m_rotation);
 	m_shellRender.Update();
@@ -64,15 +66,15 @@ void Shell::Collision()
 {
 	if (m_coliisionProduce==false)
 	{
-		auto collision = NewGO<CollisionObject>(0);
+		m_collisionObj = NewGO<CollisionObject>(0);
 		m_collisionPos = m_position;
 		m_collisionPos.y += 10.0f;
-		collision->CreateBox(m_collisionPos,
+		m_collisionObj->CreateBox(m_collisionPos,
 			Quaternion::Identity,
 			COLLISION_SCALE
 		);
-		collision->SetName("shell_Collision");
-		collision->SetTimeLimit(m_deleteTime);
+		m_collisionObj->SetName("shell_Collision");
+		m_collisionObj->SetTimeLimit(m_deleteTime);
 		m_coliisionProduce = true;
 	}
 }
@@ -86,7 +88,7 @@ void Shell::DeleteTimer()
 	}
 }
 
-void Shell::ShellMove()
+void Shell::ShellState()
 {
 	switch (m_shellState)
 	{
@@ -94,9 +96,18 @@ void Shell::ShellMove()
 		break;
 	case PlayerHas:
 		break;
+	case Throwing:
+		ShellMove();
+		break;
 	default:
 		break;
 	}
+}
+
+void Shell::ShellMove()
+{
+	m_position += m_moveSpeed * g_gameTime->GetFrameDeltaTime();
+	m_collisionObj->SetPosition(m_position);
 }
 
 void Shell::Rotation()

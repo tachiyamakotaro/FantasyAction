@@ -132,9 +132,8 @@ void Player::Move()
 			Dash();
 		}
 
-		Jump();
-
 		m_position = m_characterController.Execute(m_moveSpeed, 1.0f / 60.0f);
+		Jump();
 	}
 
 	m_modelRender.SetPosition(m_position);
@@ -199,10 +198,6 @@ void Player::JumpAttack()
 	m_jumpColPos = m_position;
 	m_jumpCol->SetPosition(m_jumpColPos);
 	m_jumpCol->SetRotation(Quaternion::Identity);
-	m_jumpCol->Update();
-
-	m_jumpColPos = m_position;
-	m_jumpColPos.y -= 30.0f;
 	m_jumpCol->Update();
 
 	m_modelRender.SetPosition(m_jumpColPos);
@@ -297,10 +292,13 @@ void Player::HaveItem()
 {
 	if (m_haveItem == false)
 	{
-		if (IsXButtonPress())
+		if (IsShellIdle())
 		{
-			m_shell->SetPosition(m_position);
-			m_haveItem = true;
+			if (IsXButtonPress())
+			{
+				m_shell->SetPosition(m_position);
+				m_haveItem = true;
+			}
 		}
 	}
 	if (m_haveItem == true)
@@ -437,7 +435,7 @@ const bool Player::IsXButtonPress() const
 
 const bool Player::IsShellIdle() const
 {
-	if (m_shell->Shell::Idle)
+	if (m_shell->GetShellMove() == m_shell->Shell::Idle)
 	{
 		return true;
 	}

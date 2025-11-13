@@ -13,7 +13,7 @@ public:
 	{
 		m_position = position;
 	}
-	void GetRoatation(Quaternion& rotation)
+	void GetRotation(Quaternion& rotation)
 	{
 		rotation = m_rotation;
 	}
@@ -30,7 +30,7 @@ private:
 class Shell : public Item
 {
 public:
-	enum ShellState
+	enum ShellMoveState
 	{
 		Idle,
 		PlayerHas,
@@ -41,6 +41,7 @@ public:
 	void Update();
 	void Collision();
 	void DeleteTimer();
+	void ShellState();
 	void ShellMove();
 	void Rotation();
 	void Render(RenderContext& rc);
@@ -55,9 +56,14 @@ public:
 		return m_position;
 	}
 
-	void SetShellMove(const ShellState shellState)
+	void SetShellMove(const ShellMoveState shellState)
 	{
 		m_shellState = shellState;
+	}
+
+	const ShellMoveState& GetShellMove() const
+	{
+		return m_shellState;
 	}
 
 private:
@@ -67,7 +73,8 @@ private:
 	Vector3     m_collisionPos;
 	Quaternion  m_rotation;
 	ModelRender m_shellRender;
-	ShellState   m_shellState = Idle;
+	ShellMoveState   m_shellState = Idle;
+	CollisionObject* m_collisionObj;
 
 	bool m_coliisionProduce = false;
 	float m_deleteTimer = 0.0f;

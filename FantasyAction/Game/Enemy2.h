@@ -16,11 +16,13 @@ public:
 		enEnemyState_Dead,		//死亡
 	};
 public:
+	Enemy2();
+	~Enemy2();
 	bool Start();
 	void Update();
 	void Render(RenderContext& rc);
 	void Gravity();
-	void MakeAttackCollision();
+	void MakeBodyCollision();
 	/// <summary>
 	/// 座標を設定する。
 	/// </summary>
@@ -99,13 +101,15 @@ public:
 	Quaternion					m_rotation;									//回転。
 	Vector3						m_scale = Vector3::One;						//大きさ。
 	Vector3						m_up = Vector3::AxisY;
+	Vector3						m_bodyCollPos;
 	CharacterController			m_charaCon;									//キャラコン。
 	EnEnemyState				m_enemyState = enEnemyState_Idle;			//エネミーステート。
 
 	Player* m_player = nullptr;							//プレイヤー。
 	Shell* m_shell = nullptr;
+	CollisionObject* m_bodyColl;
 
-	std::vector<CollisionObject*>m_bodyCollisions;
+	//std::vector<CollisionObject*>m_bodyCollisions;
 
 	float						m_chaseTimer = 0.0f;						//追跡タイマー。
 	float						m_idleTimer = 0.0f;

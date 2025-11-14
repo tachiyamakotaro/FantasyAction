@@ -1,5 +1,6 @@
 #pragma once
 
+class Player;
 class Enemy2;
 
 class Item:public IGameObject
@@ -43,6 +44,7 @@ public:
 	void DeleteTimer();
 	void ShellState();
 	void ShellMove();
+	void PlayerFollow();
 	void Rotation();
 	void Render(RenderContext& rc);
 
@@ -79,13 +81,14 @@ private:
 	Quaternion  m_rotation;
 	ModelRender m_shellRender;
 	ShellMoveState   m_shellState = Idle;
-	CollisionObject* m_collisionObj;
 
 	bool m_coliisionProduce = false;
 	float m_deleteTimer = 0.0f;
 	float m_deleteTime = 20.0f;
 
+	Player* m_player = nullptr;
 	Enemy2* m_Enemy2 = nullptr;
+	CollisionObject* m_collObj;
 
 };
 

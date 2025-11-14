@@ -36,7 +36,7 @@ Player::Player()
 
 Player::~Player()
 {
-	DeleteGO(m_jumpCol);
+	//DeleteGO(m_jumpCol);
 }
 
 bool Player::Start()
@@ -200,8 +200,8 @@ void Player::JumpAttack()
 	m_jumpCol->SetRotation(Quaternion::Identity);
 	m_jumpCol->Update();
 
-	m_modelRender.SetPosition(m_jumpColPos);
-	m_modelRender.Update();
+	/*m_modelRender.SetPosition(m_jumpColPos);
+	m_modelRender.Update();*/
 }
 
 void Player::Collision()
@@ -300,7 +300,6 @@ void Player::HaveItem()
 
 	if (IsShellHas())
 	{
-		m_shell->SetPosition(m_position);
 		if (g_pad[0]->IsTrigger(enButtonX))
 		{
 			m_shell->SetShellMove(Shell::Throwing);

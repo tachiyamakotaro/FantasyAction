@@ -108,7 +108,8 @@ void Enemy1::Chase()
 		m_enemyState = enEnemyState_Idle;
 	}
 
-	m_moveSpeed = diff * 250.0f;
+	//移動速度
+	m_moveSpeed = diff * 430.0f;
 	m_moveSpeed.y -= GRAVITY;
 
 	//m_position = m_charaCon.Execute(m_moveSpeed, g_gameTime->GetFrameDeltaTime());
@@ -223,7 +224,7 @@ void Enemy1::ProcessCommonStateTransition()
 		//ベクトルを正規化する。
 		diff.Normalize();
 		//移動速度を設定する。
-		m_moveSpeed = diff * 300.0f;
+		m_moveSpeed = diff * 200.0f;
 		//追跡ステートへ遷移する。
 		m_enemyState = enEnemyState_Chase;
 		return;

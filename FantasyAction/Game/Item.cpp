@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Item.h"
 #include "Enemy2.h"
-
+#include "Player.h"
 
 namespace
 {
@@ -34,6 +34,7 @@ void Item::Render(RenderContext& rc)
 //çbóÖÇÃÉAÉCÉeÉÄ
 bool Shell::Start()
 {
+	m_player = FindGO<Player>("player");
 	//m_Enemy2 = FindGO<Enemy2>("enemy2");
 	m_shellRender.Init("Assets/modelData/koura.tkm");
 	//m_position = m_Enemy2->GetPosition();
@@ -43,8 +44,7 @@ bool Shell::Start()
 
 	m_moveSpeed = Vector3::AxisZ;
 	m_rotation.Apply(m_moveSpeed);
-	m_moveSpeed=
-	m_position += m_moveSpeed * 30.0f;
+	m_moveSpeed=m_position += m_moveSpeed * 30.0f;
 	m_moveSpeed *= 1000.0f;
 	m_rotation.AddRotationDegY(360.0f);
 
@@ -67,15 +67,15 @@ void Shell::Collision()
 {
 	if (m_coliisionProduce == false)
 	{
-		m_collisionObj = NewGO<CollisionObject>(0);
+		m_collObj = NewGO<CollisionObject>(0);
 		m_collisionPos = m_position;
 		m_collisionPos.y += 10.0f;
-		m_collisionObj->CreateBox(m_collisionPos,
+		m_collObj->CreateBox(m_collisionPos,
 			Quaternion::Identity,
 			COLLISION_SCALE
 		);
-		m_collisionObj->SetName("shell_Collision");
-		m_collisionObj->SetTimeLimit(m_deleteTime);
+		m_collObj->SetName("shell_Collision");
+		m_collObj->SetTimeLimit(m_deleteTime);
 		m_coliisionProduce = true;
 	}
 }
@@ -96,6 +96,7 @@ void Shell::ShellState()
 	case Idle:
 		break;
 	case PlayerHas:
+		PlayerFollow();
 		break;
 	case Throwing:
 		ShellMove();
@@ -105,11 +106,18 @@ void Shell::ShellState()
 	}
 }
 
+void Shell::PlayerFollow()
+{
+	m_position = m_player->GetPosition();
+	m_collisionPos = m_position;
+	m_collObj->SetPosition(m_collisionPos);
+}
+
 void Shell::ShellMove()
 {
 	m_position += m_moveSpeed * g_gameTime->GetFrameDeltaTime();
 	//m_position.y -= 10.0f;
-	m_collisionObj->SetPosition(m_position);
+	m_collObj->SetPosition(m_position);
 }
 
 void Shell::Rotation()

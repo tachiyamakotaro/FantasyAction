@@ -27,6 +27,12 @@ namespace
 
 	const float SWITCH_DISP_TIME = 1.0f;
 	const float SWITCH_DISP_TIMER = 0.1f;
+
+	//アイテム関係の定数
+	//プレイヤーの少し前方に配置する
+	const float HOLD_OFFSET = 50.0f;
+	//投げる速度
+	const float THROW_SPEED = 1200.0f;
 }
 
 Player::Player()
@@ -36,7 +42,7 @@ Player::Player()
 
 Player::~Player()
 {
-	//DeleteGO(m_jumpCol);
+	DeleteGO(m_jumpCol);
 }
 
 bool Player::Start()
@@ -90,8 +96,6 @@ void Player::Update()
 	Invincible();
 
 	DispStatus();
-
-	DistItem();
 
 	PlayerState();
 
@@ -273,39 +277,22 @@ void Player::ModelBlink()
 	}
 }
 
-void Player::DistItem()
+Vector3 Player::GetForwardXZ()
 {
-	m_shell = FindGO<Shell>("shell");
-	if (m_shell == nullptr)
-	{
-		return;
-	}
 
-	Vector3 diff = m_shell->GetPosition() - m_position;
-	if (diff.Length() <= 100.0f)
-	{
-		HaveItem();
-	}
-}
-
-void Player::HaveItem()
-{
-	if (IsShellIdle())
-	{
-		if (IsXButtonPress())
+		Vector3 forward = Vector3::AxisZ;
+		Quaternion rot = m_rotation;
+		rot.Apply(forward);
+		forward.y = 0.0f;
+		//ベクトルの長さがほぼ０かのチェック
+		//ほぼ０だったら正規化しない
+		if (forward.Length() > 1e-5f)
 		{
-			m_shell->SetShellMove(Shell::PlayerHas);
+			forward.Normalize();
+			return forward;
 		}
-	}
 
-	if (IsShellHas())
-	{
-		if (g_pad[0]->IsTrigger(enButtonX))
-		{
-			m_shell->SetShellMove(Shell::Throwing);
-			m_shell->SetMoveSpeed(m_moveSpeed);
-		}
-	}
+
 }
 
 void Player::Rotation()

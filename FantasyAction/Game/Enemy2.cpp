@@ -172,14 +172,24 @@ void Enemy2::Collision()
 		return;
 	}
 
-	const auto& collisions = g_collisionObjectManager->FindCollisionObjects("player_jump_attack");
-	for (auto collision : collisions)
+	const auto& playerColl = g_collisionObjectManager->FindCollisionObjects("player_jump_attack");
+	for (auto collision : playerColl)
 	{
 		if (collision->IsHit(m_charaCon))
 		{
 			m_enemyState = enEnemyState_Dead;
 
 			m_player->m_moveSpeed.y = PLAYER_BOUNCE;
+
+		}
+	}
+
+	const auto& ShellColl = g_collisionObjectManager->FindCollisionObjects("shell_Collision");
+	for (auto collision : ShellColl)
+	{
+		if (collision->IsHit(m_charaCon))
+		{
+			m_enemyState = enEnemyState_Dead;
 
 		}
 	}

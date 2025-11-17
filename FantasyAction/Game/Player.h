@@ -22,9 +22,9 @@ public:
 	void DispStatus();
 	void PlayerState();
 	void Animation();
-	void DistItem();
-	void HaveItem();
 	void Render(RenderContext& rc);
+	//プレイヤーの前方ベクトルを返す
+	Vector3 GetForwardXZ();
 
 	const bool IsMove()const;
 	const bool IsOnGround() const;
@@ -89,6 +89,16 @@ public:
 	const int GetLife()const
 	{
 		return m_life;
+	}
+
+	void SetHaveItem(const bool& haveItem)
+	{
+		m_haveItem = haveItem;
+	}
+
+	bool GetHaveItem()const
+	{
+		return m_haveItem;
 	}
 
 	CharacterController		m_characterController;

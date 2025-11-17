@@ -2,6 +2,7 @@
 #include <algorithm>
 #include "Enemy1.h"
 #include "Player.h"
+#include "Item.h"
 
 namespace
 {
@@ -155,8 +156,8 @@ void Enemy1::Collision()
 		return;
 	}
 
-	const auto& collisions = g_collisionObjectManager->FindCollisionObjects("player_jump_attack");
-	for (auto collision : collisions)
+	const auto& playerColl = g_collisionObjectManager->FindCollisionObjects("player_jump_attack");
+	for (auto collision :playerColl)
 	{
 		if (collision->IsHit(m_charaCon))
 		{
@@ -164,6 +165,15 @@ void Enemy1::Collision()
 
 			m_player->m_moveSpeed.y = PLAYER_BOUNCE;
 		
+		}
+	}
+
+	const auto& shellColl = g_collisionObjectManager->FindCollisionObjects("shell_Collision");
+	for (auto collision : shellColl)
+	{
+		if (collision->IsHit(m_charaCon))
+		{
+			m_enemyState = enEnemyState_Dead;
 		}
 	}
 }

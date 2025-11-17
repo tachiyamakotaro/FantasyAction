@@ -38,12 +38,15 @@ public:
 		Throwing
 	};
 public:
+	Shell();
+	~Shell();
 	bool Start();
 	void Update();
 	void Collision();
 	void DeleteTimer();
 	void ShellState();
 	void ShellMove();
+	void ItemGet();
 	void PlayerFollow();
 	void Rotation();
 	void Render(RenderContext& rc);
@@ -56,6 +59,11 @@ public:
 	const Vector3& GetPosition() const
 	{
 		return m_position;
+	}
+
+	void SetRotation(const Quaternion& rotation)
+	{
+		m_rotation = rotation;
 	}
 
 	void SetShellMove(const ShellMoveState shellState)
@@ -73,6 +81,7 @@ public:
 		m_moveSpeed = moveSpeed;
 	}
 
+
 private:
 	Vector3     m_moveSpeed;
 	Vector3     m_position;
@@ -83,12 +92,16 @@ private:
 	ShellMoveState   m_shellState = Idle;
 
 	bool m_coliisionProduce = false;
+	bool m_haveItem = false;
 	float m_deleteTimer = 0.0f;
 	float m_deleteTime = 20.0f;
 
 	Player* m_player = nullptr;
 	Enemy2* m_Enemy2 = nullptr;
+
+	CharacterController m_shellCon;
 	CollisionObject* m_collObj;
+
 
 };
 

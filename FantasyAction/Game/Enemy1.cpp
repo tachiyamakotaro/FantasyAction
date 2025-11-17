@@ -2,13 +2,14 @@
 #include <algorithm>
 #include "Enemy1.h"
 #include "Player.h"
+#include "Item.h"
 
 namespace
 {
 	const float CHARACON_RADIUS = 50.0f;
 	const float CHARACON_HEIGHT = 10.0f;
 	const float ATTACK_COLLISION_RADIUS = 50.0f;
-	const float ATTACK_COLLISION_HEIGHT = 5.0f;
+	const float ATTACK_COLLISION_HEIGHT = 3.0f;
 	const float GRAVITY = 200.0f;
 	const float HIGHER =  30.0f;
 	const float PLAYER_BOUNCE = 1000.0f;
@@ -108,7 +109,8 @@ void Enemy1::Chase()
 		m_enemyState = enEnemyState_Idle;
 	}
 
-	m_moveSpeed = diff * 250.0f;
+	//移動速度
+	m_moveSpeed = diff * 430.0f;
 	m_moveSpeed.y -= GRAVITY;
 
 	//m_position = m_charaCon.Execute(m_moveSpeed, g_gameTime->GetFrameDeltaTime());
@@ -154,8 +156,8 @@ void Enemy1::Collision()
 		return;
 	}
 
-	const auto& collisions = g_collisionObjectManager->FindCollisionObjects("player_jump_attack");
-	for (auto collision : collisions)
+	const auto& playerColl = g_collisionObjectManager->FindCollisionObjects("player_jump_attack");
+	for (auto collision :playerColl)
 	{
 		if (collision->IsHit(m_charaCon))
 		{
@@ -163,6 +165,15 @@ void Enemy1::Collision()
 
 			m_player->m_moveSpeed.y = PLAYER_BOUNCE;
 		
+		}
+	}
+
+	const auto& shellColl = g_collisionObjectManager->FindCollisionObjects("shell_Collision");
+	for (auto collision : shellColl)
+	{
+		if (collision->IsHit(m_charaCon))
+		{
+			m_enemyState = enEnemyState_Dead;
 		}
 	}
 }
@@ -223,7 +234,7 @@ void Enemy1::ProcessCommonStateTransition()
 		//ベクトルを正規化する。
 		diff.Normalize();
 		//移動速度を設定する。
-		m_moveSpeed = diff * 250.0f;
+		m_moveSpeed = diff * 200.0f;
 		//追跡ステートへ遷移する。
 		m_enemyState = enEnemyState_Chase;
 		return;

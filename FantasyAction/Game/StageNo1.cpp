@@ -51,13 +51,18 @@ StageNo1::~StageNo1()
 
 bool StageNo1::Start()
 {
-	//m_player = FindGO<Player>("player");
-
 	m_gameScene = FindGO<GameClear>("gameClear");
 
 	m_gameCamera = NewGO<GameCamera>(0, "gameCamera");
 
 	//PhysicsWorld::GetInstance()->EnableDrawDebugWireFrame();
+
+	m_skyCube = NewGO<SkyCube>(0, "skyCube");
+	m_skyCube->SetType(enSkyCubeType_DayToon_3);
+	m_skyCube->SetScale(3000.0f);
+	m_skyCube->SetLuminance(0.7f);
+
+	g_renderingEngine->DisableTonemap();
 
 	MakeLevel();
 

@@ -31,6 +31,8 @@ void GoalPoint::Update()
 	m_goalPointModel.SetRotation(m_rotation);
 	m_goalPointModel.SetScale(m_scale);
 	m_goalPointModel.Update();
+
+	m_player = FindGO<Player>("player");
 }
 
 void GoalPoint::Render(RenderContext& rc)
@@ -40,10 +42,9 @@ void GoalPoint::Render(RenderContext& rc)
 
 const bool GoalPoint::IsGoal() const
 {
-	if (!m_player)
-	{
+	/*if (m_player == nullptr) {
 		return false;
-	}
+	}*/
 
 	if (m_goalCollisionObject.IsHit(m_player->GetCharacterController()))
 	{

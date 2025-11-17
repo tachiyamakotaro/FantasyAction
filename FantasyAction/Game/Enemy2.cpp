@@ -16,6 +16,16 @@ namespace
 	//const float PLAYER_JUMPSPEED_LIMIT = 900.0f;
 }
 
+Enemy2::Enemy2()
+{
+
+}
+
+Enemy2::~Enemy2()
+{
+	DeleteGO(m_bodyColl);
+}
+
 bool Enemy2::Start()
 {
 	m_modelRender.Init("Assets/modelData/nokonoko.tkm");
@@ -32,9 +42,26 @@ bool Enemy2::Start()
 		m_position
 	);
 
+	MakeBodyCollision();
+
 	m_enemyState = enEnemyState_Idle;
 	m_forward = Vector3::AxisZ; // 初期前ベクトル
 	return true;
+}
+
+void Enemy2::MakeBodyCollision()
+{
+	//コリジョンオブジェクトを作成する
+	m_bodyColl = NewGO<CollisionObject>(0);
+	m_bodyCollPos = m_position;
+	m_bodyCollPos += m_up * 50.0f;
+	m_bodyColl->SetIsEnableAutoDelete(false);
+	m_bodyColl->CreateCapsule(m_bodyCollPos,
+		Quaternion::Identity,
+		ATTACK_COLLISION_RADIUS,
+		ATTACK_COLLISION_HEIGHT
+	);
+	m_bodyColl->SetName("enemy_body_collision");
 }
 
 void Enemy2::Update()
@@ -47,10 +74,12 @@ void Enemy2::Update()
 
 	Collision();
 
-	MakeAttackCollision();
-
 	ManageState();
 
+	m_bodyCollPos = m_charaCon.GetPosition();
+	m_bodyCollPos.y += 50.0f;
+	m_bodyColl->SetPosition(m_bodyCollPos);
+	
 	m_modelRender.Update();
 }
 
@@ -61,7 +90,7 @@ void Enemy2::Gravity()
 
 void Enemy2::Chase()
 {
-	m_position = m_charaCon.Execute(m_moveSpeed, g_gameTime->GetFrameDeltaTime());
+	m_position = m_charaCon.Execute(m_moveSpeed, /*g_gameTime->GetFrameDeltaTime()*/1.0f/60.0f);
 	Vector3 modelPos = m_position;
 	modelPos.y += 2.5f;
 	m_modelRender.SetPosition(modelPos);
@@ -143,8 +172,8 @@ void Enemy2::Collision()
 		return;
 	}
 
-	const auto& collisions = g_collisionObjectManager->FindCollisionObjects("player_jump_attack");
-	for (auto collision : collisions)
+	const auto& playerColl = g_collisionObjectManager->FindCollisionObjects("player_jump_attack");
+	for (auto collision : playerColl)
 	{
 		if (collision->IsHit(m_charaCon))
 		{
@@ -154,23 +183,15 @@ void Enemy2::Collision()
 
 		}
 	}
-}
 
-void Enemy2::MakeAttackCollision()
-{
-	if (m_enemyState != enEnemyState_Dead) {
+	const auto& ShellColl = g_collisionObjectManager->FindCollisionObjects("shell_Collision");
+	for (auto collision : ShellColl)
+	{
+		if (collision->IsHit(m_charaCon))
+		{
+			m_enemyState = enEnemyState_Dead;
 
-		//コリジョンオブジェクトを作成する
-		auto collisionObject = NewGO<CollisionObject>(0);
-		Vector3 collisionPosition = m_position;
-		collisionPosition += m_up * 50.0f;
-		collisionObject->CreateCapsule(collisionPosition,
-			Quaternion::Identity,
-			ATTACK_COLLISION_RADIUS,
-			ATTACK_COLLISION_HEIGHT
-		);
-		collisionObject->SetName("enemy_body_collision");
-		m_bodyCollisions.push_back(collisionObject);
+		}
 	}
 }
 
@@ -212,7 +233,7 @@ void Enemy2::ProcessCommonStateTransition()
 		//ベクトルを正規化する。
 		diff.Normalize();
 		//移動速度を設定する。
-		m_moveSpeed = diff * 250.0f;
+		m_moveSpeed = diff * 300.0f;
 		//追跡ステートへ遷移する。
 		m_enemyState = enEnemyState_Chase;
 		return;
@@ -239,7 +260,7 @@ void Enemy2::ProcessIdleStateTransition()
 
 void Enemy2::ProcessDeadStateTransition()
 {
-	if (m_deleteTimer == 0.0f)
+	if (m_itemProduced==false)
 	{
 		ProduceShell();
 	}
@@ -250,10 +271,8 @@ void Enemy2::ProcessDeadStateTransition()
 	m_modelRender.SetScale(m_scale.x, 0.3f, m_scale.z);
 	m_charaCon.RemoveRigidBoby();
 
-	for (auto bodyCollision : m_bodyCollisions)
-	{
-		DeleteGO(bodyCollision);
-	}
+	DeleteGO(m_bodyColl);
+
 	if (m_deleteTimer >= m_deleteTime)
 	{
 		DeleteGO(this);
@@ -264,6 +283,7 @@ void Enemy2::ProduceShell()
 {
 	m_shell = NewGO<Shell>(0, "shell");
 	m_shell->SetPosition(m_position);
+	m_itemProduced = true;
 }
 
 void Enemy2::ManageState()

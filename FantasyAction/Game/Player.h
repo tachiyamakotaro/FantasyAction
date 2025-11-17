@@ -1,10 +1,14 @@
 #pragma once
+
+class Shell;
+
 class Player:public IGameObject
 {
 public:
 	Player();
 	~Player();
 	bool Start();
+	void SetJumpCol();
 	void Update();
 	void Move();
 	void Dash();
@@ -19,8 +23,14 @@ public:
 	void PlayerState();
 	void Animation();
 	void Render(RenderContext& rc);
+	//プレイヤーの前方ベクトルを返す
+	Vector3 GetForwardXZ();
 
 	const bool IsMove()const;
+	const bool IsOnGround() const;
+	const bool IsXButtonPress() const;
+	const bool IsShellIdle()const;
+	const bool IsShellHas() const;
 
 	/// <summary>
 	/// 座標を設定。
@@ -81,6 +91,16 @@ public:
 		return m_life;
 	}
 
+	void SetHaveItem(const bool& haveItem)
+	{
+		m_haveItem = haveItem;
+	}
+
+	bool GetHaveItem()const
+	{
+		return m_haveItem;
+	}
+
 	CharacterController		m_characterController;
 	Quaternion				m_rotation;
 	Vector3					m_position;
@@ -91,7 +111,7 @@ public:
 
 
 	enum EnPlayerState {
-		enPlayerState_Idle,
+		enPlayerState_Idle = 0,
 		enPlayerState_Walk,
 		enPlayerState_Run,
 		enPlayerState_Jump,
@@ -106,17 +126,24 @@ private:
 	bool m_moveFlag = true;
 	bool m_dashFlag = false;
 	bool m_damege = false;
+	bool m_jumpColFlag = false;
+	bool m_haveItem = false;
 	bool m_dispModel = true;
+
 	float m_invincibleTimer = 0.0f;
 	float m_invincibleLimit = 2.0f;
 	float m_tripleJumpTime = 0.2f;
 	float m_tripleJumpTimer = 0.0f;
 	float m_dispModelTimer = 0.0f;
+
 	int m_jumpState = 0;
 	int m_life = 3;
 
 	SoundSource* m_jumpSe;
+	CollisionObject* m_jumpCol = nullptr;
+	Shell* m_shell = nullptr;
 
+	Vector3 m_jumpColPos;
 	ModelRender m_modelRender;
 	FontRender  m_lifeRender;
 	//bool m_renderFlag = true;

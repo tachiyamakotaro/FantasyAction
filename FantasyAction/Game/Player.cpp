@@ -1,18 +1,19 @@
 #include "stdafx.h"
 #include "Player.h"
+#include "Item.h"
 
 namespace
 {
 	const float CAPSULE_COLLIDER_RADIUS = 25.0f;
 	const float CAPSULE_COLLIDER_HEIGHT = 75.0f;
-	const float CHARACTER_MOVESPEED = 250.0f;
-	const float CHARACTER_FIRST_JUMPSPEED = 700.0f;
-	const float CHARACTER_SECOND_JUMPSPEED = 900.0f;
-	const float CHARACTER_THIRD_JUMPSPEED = 1200.0f;
+	const float CHARACTER_MOVESPEED = 350.0f;
+	const float CHARACTER_FIRST_JUMPSPEED = 1000.0f;
+	const float CHARACTER_SECOND_JUMPSPEED = 1200.0f;
+	const float CHARACTER_THIRD_JUMPSPEED = 1400.0f;
 	const float JUMPSPEED_LIMIT = 1200.0f;
 	//ダッシュの倍率
 	const float CHARACTER_DASHSPEED = 2.0f;
-	const float GRAVITY = 32.0f;
+	const float GRAVITY = 45.0f;
 	const float STICK_INPUT = 0.001f;
 	//ジャンプの攻撃判定
 	const float JUMP_ATTACK_RADIUS = 10.0f;
@@ -26,6 +27,12 @@ namespace
 
 	const float SWITCH_DISP_TIME = 1.0f;
 	const float SWITCH_DISP_TIMER = 0.1f;
+
+	//アイテム関係の定数
+	//プレイヤーの少し前方に配置する
+	const float HOLD_OFFSET = 50.0f;
+	//投げる速度
+	const float THROW_SPEED = 1200.0f;
 }
 
 Player::Player()
@@ -35,7 +42,7 @@ Player::Player()
 
 Player::~Player()
 {
-
+	DeleteGO(m_jumpCol);
 }
 
 bool Player::Start()
@@ -58,7 +65,24 @@ bool Player::Start()
 
 	m_characterController.Init(CAPSULE_COLLIDER_RADIUS, CAPSULE_COLLIDER_HEIGHT, m_position);
 
+	SetJumpCol();
+
 	return true;
+}
+
+void Player::SetJumpCol()
+{
+	m_jumpCol = NewGO<CollisionObject>(0);
+	m_jumpColPos = m_position;
+	m_jumpColPos.y -= 30.0f;
+	m_jumpCol->SetPosition(m_jumpColPos);
+	m_jumpCol->SetRotation(Quaternion::Identity);
+	m_jumpCol->SetIsEnableAutoDelete(false);
+	m_jumpCol->CreateBox(m_jumpColPos,
+		Quaternion::Identity,
+		JUMP_ATTACK_SIZE
+	);
+	m_jumpCol->SetName("player_jump_attack");
 }
 
 void Player::Update()
@@ -112,9 +136,8 @@ void Player::Move()
 			Dash();
 		}
 
-		Jump();
-
 		m_position = m_characterController.Execute(m_moveSpeed, 1.0f / 60.0f);
+		Jump();
 	}
 
 	m_modelRender.SetPosition(m_position);
@@ -125,7 +148,7 @@ void Player::Dash()
 	if (m_characterController.IsOnGround())
 	{
 		
-		if (g_pad[0]->IsPress(enButtonX)) {
+		if (IsXButtonPress()) {
 			m_moveSpeed.x *= CHARACTER_DASHSPEED;
 			m_moveSpeed.z *= CHARACTER_DASHSPEED;
 			m_dashFlag = true;
@@ -151,7 +174,7 @@ void Player::Jump()
 		m_moveSpeed.y = 0.0f;
 		if (g_pad[0]->IsTrigger(enButtonA)) {
 			m_moveSpeed.y = CHARACTER_FIRST_JUMPSPEED;
-			
+			m_jumpColFlag = true;
 		}
 	}
 	else
@@ -163,18 +186,26 @@ void Player::Jump()
 	{
 		m_moveSpeed.y = JUMPSPEED_LIMIT;
 	}
+	JumpAttack();
 }
 
 void Player::JumpAttack()
 {
-	auto collisionObject = NewGO<CollisionObject>(0);
-	Vector3 collisionPosition = m_position;
-	collisionPosition -= m_down ;
-	collisionObject->CreateBox(collisionPosition,
-		Quaternion::Identity,
-		JUMP_ATTACK_SIZE
-	);
-	collisionObject->SetName("player_jump_attack");
+	if (m_playerState == enPlayerState_Jump)
+	{
+		m_jumpCol->SetIsEnable(true);
+	}
+	else
+	{
+		m_jumpCol->SetIsEnable(false);
+	}
+	m_jumpColPos = m_position;
+	m_jumpCol->SetPosition(m_jumpColPos);
+	m_jumpCol->SetRotation(Quaternion::Identity);
+	m_jumpCol->Update();
+
+	/*m_modelRender.SetPosition(m_jumpColPos);
+	m_modelRender.Update();*/
 }
 
 void Player::Collision()
@@ -246,6 +277,24 @@ void Player::ModelBlink()
 	}
 }
 
+Vector3 Player::GetForwardXZ()
+{
+
+		Vector3 forward = Vector3::AxisZ;
+		Quaternion rot = m_rotation;
+		rot.Apply(forward);
+		forward.y = 0.0f;
+		//ベクトルの長さがほぼ０かのチェック
+		//ほぼ０だったら正規化しない
+		if (forward.Length() > 1e-5f)
+		{
+			forward.Normalize();
+			return forward;
+		}
+
+
+}
+
 void Player::Rotation()
 {
 	if (IsMove())
@@ -289,7 +338,7 @@ void Player::PlayerState()
 		
 		break;
 	case enPlayerState_Jump:
-		JumpAttack();
+		//JumpAttack();
 
 		break;
 	case enPlayerState_Clear:
@@ -344,6 +393,42 @@ void Player::Render(RenderContext& rc)
 
 const bool Player::IsMove() const {
 	if (fabsf(m_moveSpeed.x) >= STICK_INPUT || fabsf(m_moveSpeed.z) >= STICK_INPUT)
+	{
+		return true;
+	}
+	return false;
+}
+
+const bool Player::IsOnGround() const
+{
+	if (m_characterController.IsOnGround())
+	{
+		return true;
+	}
+	return false;
+}
+
+const bool Player::IsXButtonPress() const
+{
+	if (g_pad[0]->IsPress(enButtonX))
+	{
+		return true;
+	}
+	return false;
+}
+
+const bool Player::IsShellIdle() const
+{
+	if (m_shell->GetShellMove() == m_shell->Shell::Idle)
+	{
+		return true;
+	}
+	return false;
+}
+
+const bool Player::IsShellHas() const
+{
+	if (m_shell->GetShellMove() == m_shell->Shell::PlayerHas)
 	{
 		return true;
 	}

@@ -2,6 +2,7 @@
 #include "physics/PhysicsGhostObject.h"
 
 class Player;
+class Shell;
 
 class Enemy1 :public IGameObject
 {
@@ -90,6 +91,7 @@ public:
 	/// </summary>
 	void ProcessDeadStateTransition();
 	
+private:
 	ModelRender					m_modelRender;								//モデルレンダー。
 	Vector3						m_position;									//座標。
 	Vector3						m_moveSpeed;								//移動速度。
@@ -101,6 +103,7 @@ public:
 	EnEnemyState				m_enemyState = enEnemyState_Idle;			//エネミーステート。
 
 	Player* m_player = nullptr;							//プレイヤー。
+	Shell* m_shell = nullptr;
 
 	std::vector<CollisionObject*>m_bodyCollisions;
 

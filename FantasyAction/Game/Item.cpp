@@ -70,7 +70,7 @@ bool Shell::Start()
 
 	m_rotation = Quaternion::Identity;
 
-	Collision();
+	//Collision();
 
 	return true;
 }
@@ -80,7 +80,7 @@ void Shell::Update()
 	/*GetRoatation(m_rotation);*/
 	Rotation();
 	ShellState();
-	DeleteTimer();
+	
 	m_shellRender.SetPosition(m_position);
 	m_shellRender.SetRotation(m_rotation);
 	m_shellRender.Update();
@@ -98,7 +98,7 @@ void Shell::Collision()
 			COLLISION_SCALE
 		);
 		m_collObj->SetName("shell_Collision");
-		m_collObj->SetTimeLimit(m_deleteTime);
+		m_collObj->SetIsEnableAutoDelete(false);
 		m_coliisionProduce = true;
 	}
 }
@@ -109,6 +109,7 @@ void Shell::DeleteTimer()
 	if (m_deleteTimer >= m_deleteTime)
 	{
 		DeleteGO(this);
+
 	}
 }
 
@@ -132,8 +133,8 @@ void Shell::ShellState()
 
 void Shell::ItemGet()
 {
+	DeleteTimer();
 	m_haveItem = m_player->GetHaveItem();
-	m_collObj->SetIsEnable(false);
 	Vector3 diff = m_player->GetPosition() - m_position;
 	if (diff.Length() <= 100.0f)
 	{
@@ -150,28 +151,31 @@ void Shell::ItemGet()
 
 void Shell::PlayerFollow()
 {
+
 	m_position = m_player->GetPosition();
 	m_position.y += 150.0f;
 	m_shellCon.SetPosition(m_position);
 	m_position = m_shellCon.Execute(m_moveSpeed, g_gameTime->GetFrameDeltaTime());
-	m_collisionPos = m_position;
-	m_collObj->SetPosition(m_collisionPos);
+	
 	if (g_pad[0]->IsTrigger(enButtonX))
 	{
 		Vector3 forward = m_player->GetForwardXZ();
 		m_moveSpeed = forward * THROW_SPEED;
-		m_collObj->SetIsEnable(true);
+		
 		m_player->SetHaveItem(false);
+		m_deleteTimer = 10.0f;
 		m_shellState = Throwing;
 	}
 }
 
 void Shell::ShellMove()
 {
+	Collision();
 	m_moveSpeed.y -= 50.0f;
 	m_position = m_shellCon.Execute(m_moveSpeed, g_gameTime->GetFrameDeltaTime());
 	//m_position.y -= 10.0f;
 	m_collObj->SetPosition(m_position);
+	DeleteTimer();
 }
 
 void Shell::Rotation()

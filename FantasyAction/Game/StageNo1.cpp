@@ -59,7 +59,7 @@ bool StageNo1::Start()
 
 	m_skyCube = NewGO<SkyCube>(0, "skyCube");
 	m_skyCube->SetType(enSkyCubeType_DayToon_3);
-	m_skyCube->SetScale(3000.0f);
+	m_skyCube->SetScale(2500.0f);
 	m_skyCube->SetLuminance(0.7f);
 
 	g_renderingEngine->DisableTonemap();

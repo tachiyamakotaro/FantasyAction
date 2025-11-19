@@ -99,13 +99,13 @@ private:
 	Quaternion					m_rotation;									//回転。
 	Vector3						m_scale = Vector3::One;						//大きさ。
 	Vector3						m_up = Vector3::AxisY;
+	Vector3						m_bodyCollPos;
 	CharacterController			m_charaCon;									//キャラコン。
 	EnEnemyState				m_enemyState = enEnemyState_Idle;			//エネミーステート。
 
 	Player* m_player = nullptr;							//プレイヤー。
 	Shell* m_shell = nullptr;
-
-	std::vector<CollisionObject*>m_bodyCollisions;
+	CollisionObject* m_bodyColl=nullptr;
 
 	float						m_chaseTimer = 0.0f;						//追跡タイマー。
 	float						m_idleTimer = 0.0f;

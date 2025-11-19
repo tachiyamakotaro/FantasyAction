@@ -46,6 +46,7 @@ bool Enemy2::Start()
 
 	m_enemyState = enEnemyState_Idle;
 	m_forward = Vector3::AxisZ; // 初期前ベクトル
+	
 	return true;
 }
 

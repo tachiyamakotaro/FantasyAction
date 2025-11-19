@@ -45,6 +45,9 @@ bool Enemy1::Start()
 
 	m_enemyState = enEnemyState_Idle;
 	m_forward = Vector3::AxisZ; // 初期前ベクトル
+
+	MakeAttackCollision();
+
 	return true;
 }
 
@@ -58,9 +61,11 @@ void Enemy1::Update()
 
 	Collision();
 
-	MakeAttackCollision();
-
 	ManageState();
+
+	m_bodyCollPos = m_charaCon.GetPosition();
+	m_bodyCollPos.y += 50.0f;
+	m_bodyColl->SetPosition(m_bodyCollPos);
 
 	m_modelRender.Update();
 }
@@ -183,16 +188,16 @@ void Enemy1::MakeAttackCollision()
 	if (m_enemyState != enEnemyState_Dead) {
 
 		//コリジョンオブジェクトを作成する
-		auto collisionObject = NewGO<CollisionObject>(0);
-		Vector3 collisionPosition = m_position;
-		collisionPosition += m_up*50.0f;
-		collisionObject->CreateCapsule(collisionPosition,
+		m_bodyColl = NewGO<CollisionObject>(0);
+		m_bodyCollPos = m_position;
+		m_bodyCollPos += m_up*50.0f;
+		m_bodyColl->SetIsEnableAutoDelete(false);
+		m_bodyColl->CreateCapsule(m_bodyCollPos,
 			Quaternion::Identity,
 			ATTACK_COLLISION_RADIUS,
 			ATTACK_COLLISION_HEIGHT
 		);
-		collisionObject->SetName("enemy_body_collision");
-		m_bodyCollisions.push_back(collisionObject);
+		m_bodyColl->SetName("enemy_body_collision");
 	}
 }
 
@@ -267,10 +272,9 @@ void Enemy1::ProcessDeadStateTransition()
 	m_moveSpeed.z = 0.0f;
 	m_modelRender.SetScale(m_scale.x, 0.3f, m_scale.z);
 	m_charaCon.RemoveRigidBoby();
-	for (auto bodyCollision : m_bodyCollisions)
-	{
-		DeleteGO(bodyCollision);
-	}
+
+	DeleteGO(m_bodyColl);
+
 	if (m_deleteTimer >= m_deleteTime)
 	{
 		DeleteGO(this);

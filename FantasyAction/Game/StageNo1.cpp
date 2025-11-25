@@ -11,7 +11,7 @@
 
 namespace
 {
-	const Vector3 TIME_POSITION = { 100.0f,100.0f,100.0f };
+	const Vector3 TIME_POSITION = { -200.0f,475.0f,0.0f };
 	const float TIME_SCALE = 2.0f;
 }
 
@@ -173,7 +173,7 @@ void StageNo1::DispTime()
 	m_timer -= g_gameTime->GetFrameDeltaTime();
 
 	wchar_t text[256];
-	swprintf_s(text, 256, L"écÇËéûä‘ÅF%02d", sec);
+	swprintf_s(text, 256, L"TIMEÅF%02d", sec);
 	m_timeRender.SetText(text);
 	m_timeRender.SetPosition(TIME_POSITION);
 	m_timeRender.SetScale(TIME_SCALE);

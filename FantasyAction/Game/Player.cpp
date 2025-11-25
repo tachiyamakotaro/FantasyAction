@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Player.h"
 #include "Item.h"
+#include "UI.h"
 
 namespace
 {
@@ -43,6 +44,7 @@ Player::Player()
 Player::~Player()
 {
 	DeleteGO(m_jumpCol);
+	DeleteGO(m_hpUI);
 }
 
 bool Player::Start()
@@ -67,6 +69,8 @@ bool Player::Start()
 
 	SetJumpCol();
 
+	SetUI();
+
 	return true;
 }
 
@@ -83,6 +87,12 @@ void Player::SetJumpCol()
 		JUMP_ATTACK_SIZE
 	);
 	m_jumpCol->SetName("player_jump_attack");
+}
+
+void Player::SetUI()
+{
+	m_hpUI = NewGO<Hp>(0,"hp");
+	m_hpUI->SetHP(m_life);
 }
 
 void Player::Update()
@@ -302,25 +312,6 @@ void Player::Rotation()
 		m_rotation.SetRotationYFromDirectionXZ(m_moveSpeed);
 
 		m_modelRender.SetRotation(m_rotation);
-	}
-}
-
-void Player::DispStatus()
-{
-	wchar_t wcsbuf[256];
-	swprintf_s(wcsbuf, 256, L"écÇËHPÅF%d", m_life);
-	m_lifeRender.SetText(wcsbuf);
-	m_lifeRender.SetPosition(LIFE_TEXT_POSITION);
-	m_lifeRender.SetScale(LIFE_TEXT_SCALE);
-	if (m_life == 3) {
-		m_lifeRender.SetColor(LIFE_COLOR_BLUE);
-	}
-	if (m_life == 2) {
-		m_lifeRender.SetColor(g_vec4Yellow);
-	}
-	if (m_life == 1)
-	{
-		m_lifeRender.SetColor(LIFE_COLOR_RED);
 	}
 }
 

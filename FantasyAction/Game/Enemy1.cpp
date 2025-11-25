@@ -23,7 +23,7 @@ Enemy1::Enemy1()
 
 Enemy1::~Enemy1()
 {
-	
+	DeleteGO(m_bodyColl);
 }
 
 bool Enemy1::Start()

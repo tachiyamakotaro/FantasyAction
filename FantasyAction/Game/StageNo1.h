@@ -27,6 +27,7 @@ public:
 	void GameOverScene();
 	void DispTime();
 	void TimeUp();
+	void Active();
 	void Render(RenderContext& rc);
 
 private:
@@ -43,6 +44,7 @@ private:
 	GoalPoint* m_goalPoint = nullptr;
 	GameScene* m_gameScene = nullptr;
 	SkyCube* m_skyCube = nullptr;
+
 
 	std::vector<StageNo1Level*> m_stageNo1Levels;
 	std::vector<Enemy1*> m_enemy1s;

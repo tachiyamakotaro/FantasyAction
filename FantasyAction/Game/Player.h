@@ -1,6 +1,7 @@
 #pragma once
 
 class Shell;
+class Hp;
 
 class Player:public IGameObject
 {
@@ -9,6 +10,7 @@ public:
 	~Player();
 	bool Start();
 	void SetJumpCol();
+	void SetUI();
 	void Update();
 	void Move();
 	void Dash();
@@ -19,7 +21,6 @@ public:
 	void ModelBlink();
 	void Collision();
 	void Rotation();
-	void DispStatus();
 	void PlayerState();
 	void Animation();
 	void Render(RenderContext& rc);
@@ -91,6 +92,11 @@ public:
 		return m_life;
 	}
 
+	const int GetMaxLife()const
+	{
+		return m_maxLife;
+	}
+
 	void SetHaveItem(const bool& haveItem)
 	{
 		m_haveItem = haveItem;
@@ -100,6 +106,7 @@ public:
 	{
 		return m_haveItem;
 	}
+
 
 	CharacterController		m_characterController;
 	Quaternion				m_rotation;
@@ -138,10 +145,12 @@ private:
 
 	int m_jumpState = 0;
 	int m_life = 3;
+	int m_maxLife = 3;
 
 	SoundSource* m_jumpSe;
 	CollisionObject* m_jumpCol = nullptr;
 	Shell* m_shell = nullptr;
+	Hp* m_hpUI = nullptr;
 
 	Vector3 m_jumpColPos;
 	ModelRender m_modelRender;

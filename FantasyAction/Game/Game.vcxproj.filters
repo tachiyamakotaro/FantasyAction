@@ -24,6 +24,9 @@
     <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="GoalPoint.cpp" />
     <ClCompile Include="UI.cpp" />
+    <ClCompile Include="BossStage.cpp" />
+    <ClCompile Include="BossStageLevel.cpp" />
+    <ClCompile Include="StageCount.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -43,5 +46,8 @@
     <ClInclude Include="GameScene.h" />
     <ClInclude Include="GoalPoint.h" />
     <ClInclude Include="UI.h" />
+    <ClInclude Include="BossStage.h" />
+    <ClInclude Include="BossStageLevel.h" />
+    <ClInclude Include="StageCount.h" />
   </ItemGroup>
 </Project>

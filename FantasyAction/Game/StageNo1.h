@@ -12,6 +12,7 @@ class StageNo1Level;
 class Shell;
 class GoalPoint;
 class GameScene;
+class StageCount;
 
 class StageNo1:public IGameObject
 {
@@ -27,7 +28,6 @@ public:
 	void GameOverScene();
 	void DispTime();
 	void TimeUp();
-	void Active();
 	void Render(RenderContext& rc);
 
 private:
@@ -44,6 +44,7 @@ private:
 	GoalPoint* m_goalPoint = nullptr;
 	GameScene* m_gameScene = nullptr;
 	SkyCube* m_skyCube = nullptr;
+	StageCount* m_stageCount = nullptr;
 
 
 	std::vector<StageNo1Level*> m_stageNo1Levels;

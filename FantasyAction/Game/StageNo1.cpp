@@ -8,6 +8,7 @@
 #include "Item.h"
 #include "GoalPoint.h"
 #include "GameScene.h"
+#include "StageCount.h"
 
 namespace
 {
@@ -25,6 +26,7 @@ StageNo1::~StageNo1()
 	DeleteGO(m_goalPoint);
 	DeleteGO(m_player);
 	DeleteGO(m_gameCamera);
+	DeleteGO(m_skyCube);
 
 	for (auto stageNo1Level : m_stageNo1Levels)
 	{
@@ -51,7 +53,7 @@ StageNo1::~StageNo1()
 
 bool StageNo1::Start()
 {
-	m_gameScene = FindGO<GameClear>("gameClear");
+	//m_gameScene = FindGO<GameClear>("gameClear");
 
 	m_gameCamera = NewGO<GameCamera>(0, "gameCamera");
 
@@ -155,6 +157,8 @@ void StageNo1::Goal()
 
 void StageNo1::ClearScene()
 {
+	m_stageCount = FindGO<StageCount>("stageCount");
+	m_stageCount->AddStageCount();
 	//ゲームシーンに遷移する。
 	m_gameScene = NewGO<GameClear>(0, "gameClear");
 	DeleteGO(this);

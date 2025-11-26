@@ -5,6 +5,8 @@
 #include<dxgidebug.h>
 
 #include "Game.h"
+#include"StageCount.h"
+#include "GameScene.h"
 
 
 
@@ -35,6 +37,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 	//Gameクラスのオブジェクトを作成。
 	NewGO<Game>(0, "game");
+	NewGO<StageCount>(0, "stageCount");
+	//NewGO<GameScene>(0, "gameScene");
 
 	//////////////////////////////////////
 	// 初期化を行うコードを書くのはここまで！！！

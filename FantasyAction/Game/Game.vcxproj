@@ -224,6 +224,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Boss.cpp" />
+    <ClCompile Include="BossStage.cpp" />
+    <ClCompile Include="BossStageLevel.cpp" />
     <ClCompile Include="Enemy1.cpp" />
     <ClCompile Include="Enemy2.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -234,6 +236,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="SoundManager.cpp" />
+    <ClCompile Include="StageCount.cpp" />
     <ClCompile Include="StageNo1.cpp" />
     <ClCompile Include="StageNo1Level.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -246,6 +249,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Boss.h" />
+    <ClInclude Include="BossStage.h" />
+    <ClInclude Include="BossStageLevel.h" />
     <ClInclude Include="Enemy1.h" />
     <ClInclude Include="Enemy2.h" />
     <ClInclude Include="Game.h" />
@@ -255,6 +260,7 @@
     <ClInclude Include="Item.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="SoundManager.h" />
+    <ClInclude Include="StageCount.h" />
     <ClInclude Include="StageNo1.h" />
     <ClInclude Include="StageNo1Level.h" />
     <ClInclude Include="stdafx.h" />

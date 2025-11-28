@@ -148,8 +148,8 @@ void StageNo1::Death()
 
 void StageNo1::Goal()
 {
-	bool a = m_goalPoint->IsGoal();
-	if (a == true)
+	bool goal = m_goalPoint->IsGoal();
+	if (goal == true)
 	{
 		ClearScene();
 	}

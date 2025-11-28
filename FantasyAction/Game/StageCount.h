@@ -10,11 +10,16 @@ public:
 		return m_stageCount;
 	}
 
+	void SetStageCount(const int& stageCount)
+	{
+		m_stageCount = stageCount;
+	}
+
 private:
 	~StageCount() {};
 	bool Start();
 
 private:
-	int m_stageCount=0;
+	int m_stageCount=1;
 };
 

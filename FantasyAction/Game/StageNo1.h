@@ -6,8 +6,6 @@ class Player;
 class GameCamera;
 class Enemy1;
 class Enemy2;
-class SoftFloor;
-class ConeWall;
 class StageNo1Level;
 class Shell;
 class GoalPoint;

@@ -10,6 +10,7 @@ class Player;
 class GameCamera;
 class StageNo1;
 class GameScene;
+class BossStage;
 
 class Game : public IGameObject
 {
@@ -29,5 +30,6 @@ private:
 	GameCamera* m_gameCamera;
 	StageNo1* m_stageNo1;
 	GameScene* m_gameScene;
+	BossStage* m_bossStage;
 };
 

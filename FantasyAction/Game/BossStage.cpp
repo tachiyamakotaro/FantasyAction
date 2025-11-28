@@ -60,12 +60,12 @@ bool BossStage::Start()
 	m_gameCamera = NewGO<GameCamera>(0, "gameCamera");
 
 	m_skyCube = NewGO<SkyCube>(0, "skyCube");
-	//m_skyCube->SetType(enSkyCubeType_NightToon);
+	
 	m_skyCube->SetType(enSkyCubeType_NightToon_2);
 	m_skyCube->SetScale(2500.0f);
 	m_skyCube->SetLuminance(0.5f);
 
-	//PhysicsWorld::GetInstance()->EnableDrawDebugWireFrame();
+	PhysicsWorld::GetInstance()->EnableDrawDebugWireFrame();
 
 	MakeLevel();
 	return true;

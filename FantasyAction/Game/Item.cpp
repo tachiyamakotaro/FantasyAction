@@ -10,7 +10,7 @@ namespace
 	//çbóÖÇÃíËêî
 	const float SHELLCON_RADIUS = 10.0f;
 	const float SHELLCON_HEIGHT = 10.0f;
-	const Vector3 COLLISION_SCALE = Vector3(75.0f, 35.0f, 75.0f);
+	const Vector3 COLLISION_SCALE = Vector3(100.0f, 50.0f, 100.0f);
 	const float THROW_SPEED = 1200.0f;
 	
 }

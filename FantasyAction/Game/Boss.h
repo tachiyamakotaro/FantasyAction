@@ -6,12 +6,23 @@ class Shell;
 class Boss:public IGameObject
 {
 public:
+	//ボスステート
+	enum EnBossState
+	{
+		enBossState_Idle,
+		enBossState_Chase,
+		enBossState_Attack,
+		enBossState_Dead,
+		enBossState_Num
+	};
+public:
 	Boss();
 	~Boss();
 	bool Start() override;
 	void Update() override;
 	void Render(RenderContext& rc)override;
-	//void Gravity();
+
+	void AnimClips();
 	void MakeBodyColl();
 
 	void SetPosition(const Vector3& position)
@@ -29,7 +40,7 @@ public:
 		m_scale = scale;
 	}
 
-	void Move();
+	//void Move();
 
 	void Chase();
 	
@@ -44,6 +55,8 @@ public:
 	void ProcessCommonStateTransition();
 	
 	void ProcessIdleStateTransition();
+
+	void ProcessAttackStateTransition();
 	
 	void ProcessDeadStateTransition();
 
@@ -58,10 +71,16 @@ private:
 	Vector3						m_bodyCollPos;
 	CharacterController			m_charaCon;
 
+	EnBossState m_bossState = enBossState_Idle;
+	AnimationClip m_animClips[enBossState_Num];
+
 	Player* m_player = nullptr;
 	Shell* m_shell = nullptr;
 	CollisionObject* m_bodyColl = nullptr;
 
-	
+	float						m_idleTimer = 0.0f;
+	float						m_deleteTimer = 0.0f;
+	float						m_deleteTime = 1.5f;
+	int m_hp = 3;	
 };
 

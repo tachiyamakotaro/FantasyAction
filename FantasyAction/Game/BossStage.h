@@ -3,49 +3,53 @@
 #include "level3DRender/LevelRender.h"
 
 class Player;
+//class BossStageLevel;
 class GameCamera;
 class Enemy1;
 class Enemy2;
-class StageNo1Level;
+class Boss;
 class Shell;
 class GoalPoint;
 class GameScene;
 class StageCount;
+class CastleWall;
+class CastleFloor;
 
-class StageNo1:public IGameObject
+class BossStage:public IGameObject
 {
 public:
-	StageNo1();
-	~StageNo1();
-	bool Start();
+	BossStage();
+	~BossStage();
+	bool Start() override;
+	void Update()override;
 	void MakeLevel();
-	void Update();
 	void Death();
 	void Goal();
 	void ClearScene();
 	void GameOverScene();
 	void DispTime();
 	void TimeUp();
-	void Render(RenderContext& rc);
+	void Render(RenderContext& rc) override;
 
 private:
-	PhysicsStaticObject m_physicsStaticObject;
-	ModelRender m_modelRender;
-	LevelRender m_levelRender;
+	PhysicsStaticObject m_staticObj;
 	FontRender m_timeRender;
+	LevelRender m_levelRender;
 
-	//int m_numEnemy1 = 0;
 	float m_timer = 120.0f;
 
-	Player* m_player = nullptr;
+	//BossStageLevel* m_bossStage;
+	Player* m_player;
+	SkyCube* m_skyCube = nullptr;
 	GameCamera* m_gameCamera = nullptr;
 	GoalPoint* m_goalPoint = nullptr;
 	GameScene* m_gameScene = nullptr;
-	SkyCube* m_skyCube = nullptr;
 	StageCount* m_stageCount = nullptr;
+	Boss* m_boss = nullptr;
 
+	std::vector<CastleFloor*> m_castleFloors;
+	std::vector<CastleWall*> m_castleWalls;
 
-	std::vector<StageNo1Level*> m_stageNo1Levels;
 	std::vector<Enemy1*> m_enemy1s;
 	std::vector<Enemy2*> m_enemy2s;
 	std::vector<Shell*>	 m_shells;

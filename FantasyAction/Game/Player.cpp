@@ -105,8 +105,6 @@ void Player::Update()
 
 	Invincible();
 
-	DispStatus();
-
 	PlayerState();
 
 	Animation();

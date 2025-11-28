@@ -3,6 +3,8 @@
 #include "StageNo1.h"
 #include <codecvt>
 #include <locale>
+#include "StageCount.h"
+#include "BossStage.h"
 
 namespace
 {
@@ -34,6 +36,12 @@ namespace
 	};
 }
 
+bool GameScene::Start()
+{
+	m_stageCount = FindGO<StageCount>("stageCount");
+	return true;
+}
+
 void GameScene::Update()
 {
 	m_sceneSprite.Update();
@@ -62,10 +70,32 @@ void GameScene::BlinkFont()
 
 }
 
+//void GameScene::InGameTransition()
+//{
+//	//ゲームシーンに遷移する。
+//	if (m_stageCount->GetStageCount() == 0)
+//	{
+//		m_stageNo1 = NewGO<StageNo1>(0, "stageNo1");
+//	}
+//	if (m_stageCount->GetStageCount() == 1)
+//	{
+//		m_bossStage = NewGO<BossStage>(0, "bossStage");
+//	}
+//}
+
 void GameScene::Render(RenderContext& rc)
 {
 	m_sceneSprite.Draw(rc);
 	m_sceneFont.Draw(rc);
+}
+
+const bool GameScene::IsStartTrigger() const
+{
+	if (g_pad[0]->IsTrigger(enButtonStart))
+	{
+		return true;
+	}
+	return false;
 }
 
 /// <summary>
@@ -73,10 +103,14 @@ void GameScene::Render(RenderContext& rc)
 /// </summary>
 bool GameClear::Start()
 {
-	int scene = ClearScene;
+	int scene = StageClearScene;
 	SetSprite(scene);
 
 	SetText(scene);
+
+	m_stageCount = FindGO<StageCount>("stageCount");
+
+	m_stageClearCount = m_stageCount->GetStageCount();
 
 	return true;
 }
@@ -84,12 +118,14 @@ bool GameClear::Start()
 void GameClear::Update()
 {
 	GameScene::Update();
+	m_stageClearCount = m_stageCount->GetStageCount();
 	Transition();
 }
 
 void GameClear::Transition()
 {
-	if (g_pad[0]->IsTrigger(enButtonStart))
+
+	if (GameScene::IsStartTrigger())
 	{
 		InGameTransition();
 
@@ -100,7 +136,14 @@ void GameClear::Transition()
 void GameClear::InGameTransition()
 {
 	//ゲームシーンに遷移する。
-	m_stageNo1 = NewGO<StageNo1>(0,"stageNo1");
+	if (m_stageClearCount == 0)
+	{
+		m_stageNo1 = NewGO<StageNo1>(0, "stageNo1");
+	}
+	if (m_stageClearCount == 1)
+	{
+		m_bossStage = NewGO<BossStage>(0, "bossStage");
+	}
 }
 
 /// <summary>
@@ -111,18 +154,23 @@ bool GameOver::Start()
 	int scene = GameOverScene;
 	SetSprite(scene);
 	SetText(scene);
+
+	m_stageCount = FindGO<StageCount>("stageCount");
+
+	m_stageClearCount = m_stageCount->GetStageCount();
 	return true;
 }
 
 void GameOver::Update()
 {
 	GameScene::Update();
+	m_stageClearCount = m_stageCount->GetStageCount();
 	Transition();
 }
 
 void GameOver::Transition()
 {
-	if (g_pad[0]->IsTrigger(enButtonStart))
+	if (GameScene::IsStartTrigger())
 	{
 		InGameTransition();
 		DeleteGO(this);
@@ -131,6 +179,13 @@ void GameOver::Transition()
 
 void GameOver::InGameTransition()
 {
-	//ゲームシーンに遷移する。
-	m_stageNo1 = NewGO<StageNo1>(0, "stageNo1");
+	if (m_stageClearCount == 0)
+	{
+		m_stageNo1 = NewGO<StageNo1>(0, "stageNo1");
+	}
+	if (m_stageClearCount == 1)
+	{
+		m_bossStage = NewGO<BossStage>(0, "bossStage");
+	}
 }
+

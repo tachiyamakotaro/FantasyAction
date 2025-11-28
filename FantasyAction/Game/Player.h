@@ -87,6 +87,16 @@ public:
 		return m_playerState=enPlayerState_Num;
 	}*/
 
+	void SetRotation(const Quaternion& rotation)
+	{
+		m_rotation = rotation;
+	}
+
+	//void SetScale(const Vector3& scale)
+	//{
+	//	m_scale = scale;
+	//}
+
 	const int GetLife()const
 	{
 		return m_life;
@@ -152,6 +162,7 @@ private:
 	Shell* m_shell = nullptr;
 	Hp* m_hpUI = nullptr;
 
+	Vector3 m_scale;
 	Vector3 m_jumpColPos;
 	ModelRender m_modelRender;
 	FontRender  m_lifeRender;

@@ -16,6 +16,9 @@ namespace
 {
 	const Vector3 TIME_POSITION = { -200.0f,475.0f,0.0f };
 	const float TIME_SCALE = 2.0f;
+
+	const Vector3 COLL_POS = { -2000.0f,500.0f,8750.0f };
+	const Vector3 COLL_SCALE = { 20000.0f,10000.0f,5000.0f };
 }
 
 BossStage::BossStage()
@@ -29,6 +32,11 @@ BossStage::~BossStage()
 	DeleteGO(m_gameCamera);
 	DeleteGO(m_player);
 	DeleteGO(m_boss);
+	DeleteGO(m_skyCube);
+	if (m_bossStateChangeColl != nullptr)
+	{
+		DeleteGO(m_bossStateChangeColl);
+	}
 	for (auto wall : m_castleWalls)
 	{
 		DeleteGO(wall);
@@ -60,14 +68,15 @@ bool BossStage::Start()
 	m_gameCamera = NewGO<GameCamera>(0, "gameCamera");
 
 	m_skyCube = NewGO<SkyCube>(0, "skyCube");
+
+	m_stageCount = FindGO<StageCount>("stageCount");
 	
 	m_skyCube->SetType(enSkyCubeType_NightToon_2);
 	m_skyCube->SetScale(2500.0f);
 	m_skyCube->SetLuminance(0.5f);
 
-	PhysicsWorld::GetInstance()->EnableDrawDebugWireFrame();
-
 	MakeLevel();
+	MakeColl();
 	return true;
 }
 
@@ -149,8 +158,23 @@ void BossStage::MakeLevel()
 		});
 }
 
+void BossStage::MakeColl()
+{
+	m_bossStateChangeColl = NewGO<CollisionObject>(0);
+	m_collPos = COLL_POS;
+	m_bossStateChangeColl->SetIsEnableAutoDelete(false);
+	m_bossStateChangeColl->CreateBox(
+		m_collPos,
+		Quaternion::Identity,
+		COLL_SCALE
+	);
+	m_bossStateChangeColl->SetName("boss_state_change");
+}
+
 void BossStage::Update()
 {
+	BossStateChange();
+
 	DispTime();
 
 	Death();
@@ -158,15 +182,30 @@ void BossStage::Update()
 	Goal();
 }
 
+void BossStage::BossStateChange()
+{
+	const auto& shellColl = g_collisionObjectManager->FindCollisionObjects("boss_state_change");
+	for (auto collision : shellColl)
+	{
+		if (collision->IsHit(m_player->GetCharacterController()))
+		{
+			m_boss->SetState(Boss::enBossState_App);
+			DeleteGO(m_bossStateChangeColl);
+		}
+	}
+}
+
 void BossStage::Death()
 {
 	if (m_player->m_position.y < -500.0f)
 	{
 		GameOverScene();
+		m_stageCount->SetStageCount(1);
 	}
 	if (m_player->GetLife() <= 0)
 	{
 		GameOverScene();
+		m_stageCount->SetStageCount(1);
 	}
 }
 

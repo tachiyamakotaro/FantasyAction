@@ -27,6 +27,7 @@
     <ClCompile Include="BossStage.cpp" />
     <ClCompile Include="BossStageLevel.cpp" />
     <ClCompile Include="StageCount.cpp" />
+    <ClCompile Include="FireBall.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -49,5 +50,6 @@
     <ClInclude Include="BossStage.h" />
     <ClInclude Include="BossStageLevel.h" />
     <ClInclude Include="StageCount.h" />
+    <ClInclude Include="FireBall.h" />
   </ItemGroup>
 </Project>

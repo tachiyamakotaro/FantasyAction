@@ -57,6 +57,8 @@ bool StageNo1::Start()
 
 	m_gameCamera = NewGO<GameCamera>(0, "gameCamera");
 
+	m_stageCount = FindGO<StageCount>("stageCount");
+
 	//PhysicsWorld::GetInstance()->EnableDrawDebugWireFrame();
 
 	m_skyCube = NewGO<SkyCube>(0, "skyCube");
@@ -139,10 +141,12 @@ void StageNo1::Death()
 	if (m_player->m_position.y < -500.0f)
 	{
 		GameOverScene();
+		m_stageCount->SetStageCount(0);
 	}
 	if (m_player->GetLife()<=0)
 	{
 		GameOverScene();
+		m_stageCount->SetStageCount(0);
 	}
 }
 

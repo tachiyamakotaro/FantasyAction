@@ -23,6 +23,8 @@ public:
 	bool Start() override;
 	void Update()override;
 	void MakeLevel();
+	void MakeColl();
+	void BossStateChange();
 	void Death();
 	void Goal();
 	void ClearScene();
@@ -35,6 +37,7 @@ private:
 	PhysicsStaticObject m_staticObj;
 	FontRender m_timeRender;
 	LevelRender m_levelRender;
+	Vector3 m_collPos = Vector3::Zero;
 
 	float m_timer = 120.0f;
 
@@ -46,6 +49,7 @@ private:
 	GameScene* m_gameScene = nullptr;
 	StageCount* m_stageCount = nullptr;
 	Boss* m_boss = nullptr;
+	CollisionObject* m_bossStateChangeColl = nullptr;
 
 	std::vector<CastleFloor*> m_castleFloors;
 	std::vector<CastleWall*> m_castleWalls;

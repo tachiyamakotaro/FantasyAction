@@ -2,6 +2,7 @@
 
 class Player;
 class Shell;
+class FireBall;
 
 class Boss:public IGameObject
 {
@@ -10,6 +11,7 @@ public:
 	enum EnBossState
 	{
 		enBossState_Idle,
+		enBossState_App,
 		enBossState_Chase,
 		enBossState_Attack,
 		enBossState_Dead,
@@ -24,6 +26,7 @@ public:
 
 	void AnimClips();
 	void MakeBodyColl();
+	void FireBallAttack();
 
 	void SetPosition(const Vector3& position)
 	{
@@ -40,13 +43,18 @@ public:
 		m_scale = scale;
 	}
 
-	//void Move();
+	void SetState(EnBossState state)
+	{
+		m_bossState = state;
+	}
 
 	void Chase();
 	
 	void Rotation();
 	
 	void Collision();
+
+	void Appearance();
 
 	const bool SearchPlayer() const;
 	
@@ -59,6 +67,8 @@ public:
 	void ProcessAttackStateTransition();
 	
 	void ProcessDeadStateTransition();
+
+	Vector3 GetForwardXZ();
 
 private:
 	ModelRender m_modelRender;
@@ -77,10 +87,15 @@ private:
 	Player* m_player = nullptr;
 	Shell* m_shell = nullptr;
 	CollisionObject* m_bodyColl = nullptr;
+	FireBall* m_fireBall = nullptr;
 
+
+	bool m_modelDrawFlag = true;
 	float						m_idleTimer = 0.0f;
 	float						m_deleteTimer = 0.0f;
 	float						m_deleteTime = 1.5f;
+	float m_attackCoolTime = 0.0f;
 	int m_hp = 3;	
 };
+
 

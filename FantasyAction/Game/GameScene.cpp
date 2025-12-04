@@ -5,6 +5,7 @@
 #include <locale>
 #include "StageCount.h"
 #include "BossStage.h"
+#include "Game.h"
 
 namespace
 {
@@ -31,6 +32,7 @@ namespace
 	};
 
 	SceanInfo sceanInfo[GameScene_num] = {
+		{"Title1",u8"スタートボタンでゲームスタート"},
 		{"GoalPedestal", u8"ステージクリア！\nスタートボタンで次のステージ"},
 		{"gameOver", u8"ゲームオーバー\nスタートボタンでリトライ"},
 	};
@@ -99,6 +101,48 @@ const bool GameScene::IsStartTrigger() const
 }
 
 /// <summary>
+/// ここからタイトルの設定
+/// </summary>
+bool Title::Start()
+{
+	int scene = TitleScene;
+	SetSprite(scene);
+
+	SetText(scene);
+
+	m_stageCount = FindGO<StageCount>("stageCount");
+
+	m_stageClearCount = m_stageCount->GetStageCount();
+
+	return true;
+}
+
+void Title::Update()
+{
+	GameScene::Update();
+	m_stageClearCount = m_stageCount->GetStageCount();
+	Transition();
+}
+
+void Title::Transition()
+{
+
+	if (GameScene::IsStartTrigger())
+	{
+		InGameTransition();
+
+		DeleteGO(this);
+	}
+}
+
+void Title::InGameTransition()
+{
+	//ゲームシーンに遷移する。
+	m_game = NewGO<Game>(0, "game");
+}
+
+
+/// <summary>
 /// ここからゲームクリアの設定
 /// </summary>
 bool GameClear::Start()
@@ -136,14 +180,7 @@ void GameClear::Transition()
 void GameClear::InGameTransition()
 {
 	//ゲームシーンに遷移する。
-	if (m_stageClearCount == 0)
-	{
-		m_stageNo1 = NewGO<StageNo1>(0, "stageNo1");
-	}
-	if (m_stageClearCount == 1)
-	{
-		m_bossStage = NewGO<BossStage>(0, "bossStage");
-	}
+	m_bossStage = NewGO<BossStage>(0, "bossStage");
 }
 
 /// <summary>
@@ -183,7 +220,7 @@ void GameOver::InGameTransition()
 	{
 		m_stageNo1 = NewGO<StageNo1>(0, "stageNo1");
 	}
-	if (m_stageClearCount == 1)
+	if (m_stageClearCount >= 1)
 	{
 		m_bossStage = NewGO<BossStage>(0, "bossStage");
 	}

@@ -20,6 +20,6 @@ private:
 	bool Start();
 
 private:
-	int m_stageCount=1;
+	int m_stageCount=0;
 };
 

@@ -42,6 +42,7 @@ public:
 	~Shell();
 	bool Start();
 	void Update();
+	void CharaCon();
 	void Collision();
 	void DeleteTimer();
 	void ShellState();
@@ -92,7 +93,9 @@ private:
 	ShellMoveState   m_shellState = Idle;
 
 	bool m_coliisionProduce = false;
+	bool m_charaConProduce = false;
 	bool m_haveItem = false;
+	bool m_deleteFlag = false;
 	float m_deleteTimer = 0.0f;
 	float m_deleteTime = 20.0f;
 

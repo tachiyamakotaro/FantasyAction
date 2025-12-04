@@ -2,6 +2,7 @@
 
 enum
 {
+	TitleScene,
 	StageClearScene,
 	GameOverScene,
 	GameScene_num
@@ -10,6 +11,7 @@ enum
 class StageNo1;
 class BossStage;
 class StageCount;
+class Game;
 
 class GameScene:public IGameObject
 {
@@ -24,12 +26,34 @@ public:
 
 	const bool IsStartTrigger()const;
 
+	void SetFontColor(const Vector4& color)
+	{
+		m_sceneFont.SetColor(color);
+	}
+
 private:
 	SpriteRender m_sceneSprite;
 	FontRender   m_sceneFont;
 	StageNo1* m_stageNo1 = nullptr;
 	BossStage* m_bossStage = nullptr;
 	StageCount* m_stageCount = nullptr;
+};
+
+class Title :public GameScene
+{
+public:
+	bool Start();
+	void Update();
+	void Transition();
+	void InGameTransition();
+
+private:
+	StageCount* m_stageCount = nullptr;
+	StageNo1* m_stageNo1 = nullptr;
+	BossStage* m_bossStage = nullptr;
+	Game* m_game = nullptr;
+
+	int m_stageClearCount = 0;
 };
 
 class GameClear :public GameScene

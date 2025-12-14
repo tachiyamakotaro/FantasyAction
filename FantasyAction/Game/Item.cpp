@@ -2,6 +2,8 @@
 #include "Item.h"
 #include "Enemy2.h"
 #include "Player.h"
+#include "Boss.h"
+#include "ItemSpawner.h"
 
 namespace
 {
@@ -10,7 +12,7 @@ namespace
 	//çbóÖÇÃíËêî
 	const float SHELLCON_RADIUS = 10.0f;
 	const float SHELLCON_HEIGHT = 10.0f;
-	const Vector3 COLLISION_SCALE = Vector3(75.0f, 35.0f, 75.0f);
+	const Vector3 COLLISION_SCALE = Vector3(100.0f, 50.0f, 100.0f);
 	const float THROW_SPEED = 1200.0f;
 	
 }
@@ -46,13 +48,21 @@ Shell::Shell()
 
 Shell::~Shell()
 {
-	DeleteGO(m_collObj);
+	if (m_collObj != nullptr)
+	{
+		DeleteGO(m_collObj);
+	}
+
 }
 
 bool Shell::Start()
 {
 	m_player = FindGO<Player>("player");
 	//m_Enemy2 = FindGO<Enemy2>("enemy2");
+	m_boss = FindGO<Boss>("boss");
+
+	//m_spawner = FindGO<ItemSpawner>("ItemSpawner");
+
 	m_shellRender.Init("Assets/modelData/koura.tkm");
 	//m_position = m_Enemy2->GetPosition();
 
@@ -60,30 +70,47 @@ bool Shell::Start()
 	m_position.y += 10.0f;
 	m_shellRender.SetPosition(m_position);
 
-	m_shellCon.Init(
-		SHELLCON_RADIUS,
-		SHELLCON_HEIGHT,
-		m_position
-	);
-
 	m_moveSpeed = Vector3::Zero;
 
 	m_rotation = Quaternion::Identity;
 
-	//Collision();
+	CharaCon();
+	Collision();
 
 	return true;
 }
 
 void Shell::Update()
 {
+	if (m_deleteFlag == true)
+	{
+		return;
+	}
 	/*GetRoatation(m_rotation);*/
+	DeleteItem();
 	Rotation();
 	ShellState();
+	m_position = m_shellCon.Execute(m_moveSpeed, g_gameTime->GetFrameDeltaTime());
+	//m_position.y -= 10.0f;
+	m_collObj->SetPosition(m_position);
 	
 	m_shellRender.SetPosition(m_position);
 	m_shellRender.SetRotation(m_rotation);
 	m_shellRender.Update();
+}
+
+void Shell::CharaCon()
+{
+	if (m_charaConProduce == false)
+	{
+		m_shellCon.Init(
+			SHELLCON_RADIUS,
+			SHELLCON_HEIGHT,
+			m_position
+		);
+		m_charaConProduce = true;
+	}
+
 }
 
 void Shell::Collision()
@@ -99,6 +126,7 @@ void Shell::Collision()
 		);
 		m_collObj->SetName("shell_Collision");
 		m_collObj->SetIsEnableAutoDelete(false);
+		m_collObj->SetIsEnable(false);
 		m_coliisionProduce = true;
 	}
 }
@@ -108,8 +136,26 @@ void Shell::DeleteTimer()
 	m_deleteTimer += g_gameTime->GetFrameDeltaTime();
 	if (m_deleteTimer >= m_deleteTime)
 	{
-		DeleteGO(this);
+		m_deleteFlag = true;
+		return;
+	}
+}
 
+void Shell::DeleteItem()
+{
+	const auto& shellColl = g_collisionObjectManager->FindCollisionObjects("boss_body_coll");
+	for (auto collision : shellColl)
+	{
+		if (collision->IsHit(m_collObj))
+		{
+			m_boss->Damage();
+			m_deleteFlag = true;
+		}
+	}
+
+	if (m_deleteFlag == true)
+	{
+		DeleteGO(this);
 	}
 }
 
@@ -136,6 +182,7 @@ void Shell::ItemGet()
 	DeleteTimer();
 	m_haveItem = m_player->GetHaveItem();
 	Vector3 diff = m_player->GetPosition() - m_position;
+	m_collObj->SetIsEnable(false);
 	if (diff.Length() <= 100.0f)
 	{
 		if (m_haveItem==false)
@@ -156,7 +203,7 @@ void Shell::PlayerFollow()
 	m_position.y += 150.0f;
 	m_shellCon.SetPosition(m_position);
 	m_position = m_shellCon.Execute(m_moveSpeed, g_gameTime->GetFrameDeltaTime());
-	
+	m_collObj->SetIsEnable(false);
 	if (g_pad[0]->IsTrigger(enButtonX))
 	{
 		Vector3 forward = m_player->GetForwardXZ();
@@ -170,12 +217,14 @@ void Shell::PlayerFollow()
 
 void Shell::ShellMove()
 {
-	Collision();
-	m_moveSpeed.y -= 50.0f;
-	m_position = m_shellCon.Execute(m_moveSpeed, g_gameTime->GetFrameDeltaTime());
-	//m_position.y -= 10.0f;
-	m_collObj->SetPosition(m_position);
 	DeleteTimer();
+	//CharaCon();
+	//Collision();
+	m_collObj->SetIsEnable(true);
+	
+	m_moveSpeed.y -= 50.0f;
+
+
 }
 
 void Shell::Rotation()

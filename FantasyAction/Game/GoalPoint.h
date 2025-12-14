@@ -36,13 +36,22 @@ public:
 		m_scale = scale;
 	}
 
+	bool SetAppGoal(const bool appGoal)
+	{
+		m_appGoal = appGoal;
+		return m_appGoal;
+	}
+
 private:
 	Vector3 m_position;
 	Quaternion m_rotation;
 	Vector3 m_scale;
+	Vector3 m_collisionSize;
 	ModelRender m_goalPointModel;
 	CollisionObject m_goalCollisionObject;
 
 	Player* m_player = nullptr;
+
+	bool m_appGoal = true;
 };
 

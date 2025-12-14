@@ -28,7 +28,7 @@ Enemy1::~Enemy1()
 
 bool Enemy1::Start()
 {
-	m_modelRender.Init("Assets/modelData/kuribo-.tkm");
+	m_modelRender.Init("Assets/modelData/slime.tkm");
 	//m_modelRender.Init("Assets/modelData/unityChan.tkm");
 
 	m_player = FindGO<Player>("player");
@@ -45,6 +45,7 @@ bool Enemy1::Start()
 
 	m_enemyState = enEnemyState_Idle;
 	m_forward = Vector3::AxisZ; // 初期前ベクトル
+	m_rotation.Apply(m_forward);
 
 	MakeAttackCollision();
 
@@ -110,6 +111,7 @@ void Enemy1::Chase()
 	}
 	if (acosf(cosv) > Math::PI / 180.0f * 120.0f) // 視界外なら停止
 	{
+		m_forward = m_moveSpeed;
 		m_moveSpeed = Vector3::Zero;
 		m_enemyState = enEnemyState_Idle;
 	}

@@ -231,6 +231,24 @@ void Player::Collision()
 			Damege();
 		}
 	}
+
+	const auto& fireCollision = g_collisionObjectManager->FindCollisionObjects("fire_collision");
+	for (auto collision : fireCollision)
+	{
+		if (collision->IsHit(m_characterController))
+		{
+			Damege();
+		}
+	}
+
+	const auto& bossCollision = g_collisionObjectManager->FindCollisionObjects("boss_body_coll");
+	for(auto collision : bossCollision)
+	{
+		if (collision->IsHit(m_characterController))
+		{
+			Damege();
+		}
+	}
 }
 
 void Player::Damege()
@@ -294,6 +312,7 @@ Vector3 Player::GetForwardXZ()
 		forward.y = 0.0f;
 		//ƒxƒNƒgƒ‹‚Ì’·‚³‚ª‚Ù‚Ú‚O‚©‚Ìƒ`ƒFƒbƒN
 		//‚Ù‚Ú‚O‚¾‚Á‚½‚ç³‹K‰»‚µ‚È‚¢
+		//1e-5f‚Í‚Ù‚Ú‚O‚ÌˆÓ–¡
 		if (forward.Length() > 1e-5f)
 		{
 			forward.Normalize();

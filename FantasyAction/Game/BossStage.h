@@ -14,6 +14,7 @@ class GameScene;
 class StageCount;
 class CastleWall;
 class CastleFloor;
+class ItemSpawner;
 
 class BossStage:public IGameObject
 {
@@ -23,20 +24,25 @@ public:
 	bool Start() override;
 	void Update()override;
 	void MakeLevel();
+	void MakeColl();
+	void BossStateChange();
 	void Death();
 	void Goal();
 	void ClearScene();
 	void GameOverScene();
 	void DispTime();
 	void TimeUp();
+	void AppGoal();
 	void Render(RenderContext& rc) override;
 
 private:
 	PhysicsStaticObject m_staticObj;
 	FontRender m_timeRender;
 	LevelRender m_levelRender;
+	Vector3 m_collPos = Vector3::Zero;
 
 	float m_timer = 120.0f;
+	bool m_bossDead = false;
 
 	//BossStageLevel* m_bossStage;
 	Player* m_player;
@@ -46,6 +52,7 @@ private:
 	GameScene* m_gameScene = nullptr;
 	StageCount* m_stageCount = nullptr;
 	Boss* m_boss = nullptr;
+	CollisionObject* m_bossStateChangeColl = nullptr;
 
 	std::vector<CastleFloor*> m_castleFloors;
 	std::vector<CastleWall*> m_castleWalls;
@@ -53,5 +60,6 @@ private:
 	std::vector<Enemy1*> m_enemy1s;
 	std::vector<Enemy2*> m_enemy2s;
 	std::vector<Shell*>	 m_shells;
+	std::vector<ItemSpawner*> m_itemSpawners;
 };
 

@@ -105,6 +105,15 @@ void StageNo1::MakeLevel()
 				return true;
 			}
 
+			if (objData.EqualObjectName(L"slime") == true)
+			{
+				auto enemy1 = NewGO<Enemy1>(2, "enemy1");
+				enemy1->SetPosition(objData.position);
+				enemy1->SetRotation(objData.rotation);
+				m_enemy1s.push_back(enemy1);
+				return true;
+			}
+
 			if (objData.EqualObjectName(L"nokonoko") == true)
 			{
 				auto enemy2 = NewGO<Enemy2>(3, "enemy2");
@@ -164,7 +173,7 @@ void StageNo1::ClearScene()
 	m_stageCount = FindGO<StageCount>("stageCount");
 	m_stageCount->AddStageCount();
 	//ゲームシーンに遷移する。
-	m_gameScene = NewGO<GameClear>(0, "gameClear");
+	m_gameScene = NewGO<StageClear>(0, "stageClear");
 	DeleteGO(this);
 }
 

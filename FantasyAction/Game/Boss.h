@@ -48,6 +48,16 @@ public:
 		m_bossState = state;
 	}
 
+	void Damage()
+	{
+		m_hp--;
+	}
+
+	/*CollisionObject* GetBodyColl() const
+	{
+		return m_bodyColl;
+	}*/
+
 	void Chase();
 	
 	void Rotation();
@@ -68,7 +78,11 @@ public:
 	
 	void ProcessDeadStateTransition();
 
+	const bool IsDead() const;
+
 	Vector3 GetForwardXZ();
+
+	CollisionObject* m_bodyColl = nullptr;
 
 private:
 	ModelRender m_modelRender;
@@ -86,8 +100,10 @@ private:
 
 	Player* m_player = nullptr;
 	Shell* m_shell = nullptr;
-	CollisionObject* m_bodyColl = nullptr;
 	FireBall* m_fireBall = nullptr;
+
+	
+
 
 
 	bool m_modelDrawFlag = true;

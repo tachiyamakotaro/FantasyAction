@@ -2,6 +2,8 @@
 
 class Player;
 class Enemy2;
+class Boss;
+class ItemSpawner;
 
 class Item:public IGameObject
 {
@@ -49,6 +51,7 @@ public:
 	void ShellMove();
 	void ItemGet();
 	void PlayerFollow();
+	void DeleteItem();
 	void Rotation();
 	void Render(RenderContext& rc);
 
@@ -82,6 +85,15 @@ public:
 		m_moveSpeed = moveSpeed;
 	}
 
+	void SetDeleteFlag(const bool deleteFlag)
+	{
+		m_deleteFlag = deleteFlag;
+	}
+
+	bool SetSpawnerFlag(const bool spawnerFlag)
+	{
+		m_spawnerFlag = spawnerFlag;
+	}
 
 private:
 	Vector3     m_moveSpeed;
@@ -101,10 +113,12 @@ private:
 
 	Player* m_player = nullptr;
 	Enemy2* m_Enemy2 = nullptr;
+	Boss* m_boss = nullptr;
+	ItemSpawner* m_spawner = nullptr;
 
 	CharacterController m_shellCon;
 	CollisionObject* m_collObj;
 
-
+	bool m_spawnerFlag = false;
 };
 

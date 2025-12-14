@@ -2,6 +2,7 @@
 
 class Player;
 class Shell;
+class ItemSpawner;
 
 class Enemy2:public IGameObject
 {
@@ -94,6 +95,12 @@ public:
 	/// </summary>
 	void ProduceShell();
 
+	bool SetSpawnerFlag(bool flag)
+	{
+		m_spawnerFlag = flag;
+		return m_spawnerFlag;
+	}
+
 	ModelRender					m_modelRender;								//モデルレンダー。
 	Vector3						m_position;									//座標。
 	Vector3						m_moveSpeed;								//移動速度。
@@ -108,6 +115,7 @@ public:
 	Player* m_player = nullptr;							//プレイヤー。
 	Shell* m_shell = nullptr;
 	CollisionObject* m_bodyColl;
+	ItemSpawner* m_spawner = nullptr;
 
 	//std::vector<CollisionObject*>m_bodyCollisions;
 
@@ -116,5 +124,6 @@ public:
 	float						m_deleteTimer = 0.0f;
 	float						m_deleteTime = 1.0f;
 	bool						m_itemProduced = false;							//アイテムを生成したかどうか。
+	bool m_spawnerFlag = false;
 };
 

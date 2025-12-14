@@ -37,7 +37,10 @@ void GoalPoint::Update()
 
 void GoalPoint::Render(RenderContext& rc)
 {
-	m_goalPointModel.Draw(rc);
+	if (m_appGoal == true)
+	{
+		m_goalPointModel.Draw(rc);
+	}
 }
 
 const bool GoalPoint::IsGoal() const
@@ -46,9 +49,12 @@ const bool GoalPoint::IsGoal() const
 		return false;
 	}*/
 
+	if(m_appGoal==true)
+	{
 	if (m_goalCollisionObject.IsHit(m_player->GetCharacterController()))
 	{
 		return true;
+	}
 	}
 
 	return false;

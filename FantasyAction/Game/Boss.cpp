@@ -17,6 +17,8 @@ namespace
 	const float ATTACK_COOL_TIME = 2.0f;
 	const float ATTACK_RANGE = 1000.0f;
 	const float FIRE_SPEED = 1200.0f;
+
+	const float PLAYER_BOUNCE = 1000.0f;
 }
 
 Boss::Boss()
@@ -87,6 +89,11 @@ void Boss::MakeBodyColl()
 void Boss::Update()
 {
 	//m_moveSpeed.y -= GRAVITY;
+	if (m_hp <= 0)
+	{
+		m_bossState = enBossState_Dead;
+		//return;
+	}
 
 	Chase();
 
@@ -128,7 +135,7 @@ void Boss::Chase()
 	diff.Normalize();
 
 	//ˆÚ“®‘¬“x
-	m_moveSpeed = diff * 430.0f;
+	m_moveSpeed = diff * 300.0f;
 	//m_moveSpeed.y -= GRAVITY;
 
 	//m_position = m_charaCon.Execute(m_moveSpeed, g_gameTime->GetFrameDeltaTime());
@@ -144,31 +151,34 @@ void Boss::Chase()
 
 void Boss::Rotation()
 {
-
-	Vector3 diff = m_player->GetPosition() - m_position;
-	diff.y = 0.0f;
-	if (diff.LengthSq() < 1e-6f)
+	if (m_bossState != enBossState_Dead)
 	{
-		return;
-	}
+		Vector3 diff = m_player->GetPosition() - m_position;
+		diff.y = 0.0f;
+		if (diff.LengthSq() < 1e-6f)
+		{
+			return;
+		}
 
-	diff.Normalize();
-	const float PI = 3.14159265;
-	float angle = atan2(diff.x, diff.z);
-	m_rotation.SetRotationY(angle+PI);
-	m_modelRender.SetRotation(m_rotation);
+		diff.Normalize();
+		const float PI = 3.14159265;
+		float angle = atan2(diff.x, diff.z);
+		m_rotation.SetRotationY(angle + PI);
+		m_modelRender.SetRotation(m_rotation);
+	}
 }
 
 void Boss::Collision()
 {
-	const auto& shellColl = g_collisionObjectManager->FindCollisionObjects("shell_Collision");
-	for (auto collision : shellColl)
-	{
-		if (collision->IsHit(m_bodyColl))
+		/*const auto& shellColl = g_collisionObjectManager->FindCollisionObjects("player_jump_attack");
+		for (auto collision : shellColl)
 		{
-			m_hp--;
-		}
-	}
+			if (collision->IsHit(m_bodyColl))
+			{
+				m_hp--;
+				m_player->m_moveSpeed.y = PLAYER_BOUNCE;
+			}
+		}*/
 }
 
 void Boss::Appearance()
@@ -193,11 +203,7 @@ const bool Boss::SearchPlayer() const
 void Boss::ProcessCommonStateTransition()
 {
 	m_attackCoolTime = g_gameTime->GetFrameDeltaTime();
-	if (m_hp <= 0)
-	{
-		m_bossState = enBossState_Dead;
-		return;
-	}
+	
 
 
 }
@@ -259,6 +265,8 @@ void Boss::ProcessDeadStateTransition()
 
 	DeleteGO(m_bodyColl);
 
+	
+
 	if (m_deleteTimer >= m_deleteTime)
 	{
 		DeleteGO(this);
@@ -313,4 +321,13 @@ void Boss::Render(RenderContext& rc)
 	{
 		m_modelRender.Draw(rc);
 	}
+}
+
+const bool Boss::IsDead() const
+{
+	if (m_bossState == enBossState_Dead)
+	{
+		return true;
+	}
+	return false;
 }

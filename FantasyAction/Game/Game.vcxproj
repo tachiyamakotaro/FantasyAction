@@ -234,6 +234,7 @@
     <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="GoalPoint.cpp" />
     <ClCompile Include="Item.cpp" />
+    <ClCompile Include="ItemSpawner.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="SoundManager.cpp" />
@@ -260,6 +261,7 @@
     <ClInclude Include="GameScene.h" />
     <ClInclude Include="GoalPoint.h" />
     <ClInclude Include="Item.h" />
+    <ClInclude Include="ItemSpawner.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="SoundManager.h" />
     <ClInclude Include="StageCount.h" />

@@ -10,6 +10,7 @@
 #include "GoalPoint.h"
 #include "GameScene.h"
 #include "StageCount.h"
+#include "ItemSpawner.h"
 
 
 namespace
@@ -33,6 +34,7 @@ BossStage::~BossStage()
 	DeleteGO(m_player);
 	DeleteGO(m_boss);
 	DeleteGO(m_skyCube);
+	DeleteGO(m_goalPoint);
 	if (m_bossStateChangeColl != nullptr)
 	{
 		DeleteGO(m_bossStateChangeColl);
@@ -60,6 +62,12 @@ BossStage::~BossStage()
 	{
 		DeleteGO(shells);
 	}
+	auto totalSpawners = FindGOs<ItemSpawner>("itemSpawner");
+	for (auto spawners : totalSpawners)
+	{
+		DeleteGO(spawners);
+	}
+
 
 }
 
@@ -154,6 +162,24 @@ void BossStage::MakeLevel()
 				return true;
 			}
 
+			if (objData.EqualObjectName(L"spawner"))
+			{
+				auto itemSpawner = NewGO<ItemSpawner>(1, "itemSpawner");
+				itemSpawner->SetPosition(objData.position);
+				m_itemSpawners.push_back(itemSpawner);
+				return true;
+			}
+
+			if (objData.EqualObjectName(L"GoalPoint"))
+			{
+				m_goalPoint = NewGO<GoalPoint>(0, "goalPoint");
+				m_goalPoint->SetPosition(objData.position);
+				m_goalPoint->SetRotation(objData.rotation);
+				m_goalPoint->SetScale(objData.scale);
+				m_goalPoint->SetAppGoal(false);
+				return true;
+			}
+
 			return false;
 		});
 }
@@ -174,6 +200,8 @@ void BossStage::MakeColl()
 void BossStage::Update()
 {
 	BossStateChange();
+
+	AppGoal();
 
 	DispTime();
 
@@ -211,11 +239,20 @@ void BossStage::Death()
 
 void BossStage::Goal()
 {
-	/*bool goal = m_goalPoint->IsGoal();
+	bool goal = m_goalPoint->IsGoal();
 	if (goal == true)
 	{
 		ClearScene();
-	}*/
+	}
+}
+
+void BossStage::AppGoal()
+{
+	bool goal = m_boss->IsDead();
+	if (goal == true)
+	{
+		m_goalPoint->SetAppGoal(true);
+	}
 }
 
 void BossStage::ClearScene()

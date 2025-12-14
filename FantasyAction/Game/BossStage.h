@@ -14,6 +14,7 @@ class GameScene;
 class StageCount;
 class CastleWall;
 class CastleFloor;
+class ItemSpawner;
 
 class BossStage:public IGameObject
 {
@@ -31,6 +32,7 @@ public:
 	void GameOverScene();
 	void DispTime();
 	void TimeUp();
+	void AppGoal();
 	void Render(RenderContext& rc) override;
 
 private:
@@ -40,6 +42,7 @@ private:
 	Vector3 m_collPos = Vector3::Zero;
 
 	float m_timer = 120.0f;
+	bool m_bossDead = false;
 
 	//BossStageLevel* m_bossStage;
 	Player* m_player;
@@ -57,5 +60,6 @@ private:
 	std::vector<Enemy1*> m_enemy1s;
 	std::vector<Enemy2*> m_enemy2s;
 	std::vector<Shell*>	 m_shells;
+	std::vector<ItemSpawner*> m_itemSpawners;
 };
 

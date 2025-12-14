@@ -3,6 +3,7 @@
 #include "Enemy2.h"
 #include "Player.h"
 #include "Item.h"
+#include "ItemSpawner.h"
 
 namespace
 {
@@ -31,6 +32,12 @@ bool Enemy2::Start()
 	m_modelRender.Init("Assets/modelData/nokonoko.tkm");
 
 	m_player = FindGO<Player>("player");
+
+	if (m_spawnerFlag == true)
+	{
+		/*m_spawner = FindGO<ItemSpawner>("item_spawner");
+		m_spawner->SetSpawnedEnemy(true);*/
+	}
 
 	m_modelRender.SetPosition(m_position);
 	m_modelRender.SetRotation(m_rotation);
@@ -276,6 +283,10 @@ void Enemy2::ProcessDeadStateTransition()
 
 	if (m_deleteTimer >= m_deleteTime)
 	{
+		/*if (m_spawnerFlag == true)
+		{
+			m_spawner->SetSpawnedEnemy(false);
+		}*/
 		DeleteGO(this);
 	}
 }

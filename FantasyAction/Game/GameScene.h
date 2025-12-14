@@ -5,6 +5,7 @@ enum
 	TitleScene,
 	StageClearScene,
 	GameOverScene,
+	GameClearScene,
 	GameScene_num
 };
 
@@ -56,7 +57,7 @@ private:
 	int m_stageClearCount = 0;
 };
 
-class GameClear :public GameScene
+class StageClear :public GameScene
 {
 public:
 	bool Start();
@@ -84,6 +85,21 @@ private:
 	StageCount* m_stageCount = nullptr;
 	StageNo1* m_stageNo1 = nullptr;
 	BossStage* m_bossStage = nullptr;
+
+	int m_stageClearCount = 0;
+};
+
+class GameClear :public GameScene
+{
+public:
+	bool Start();
+	void Update();
+	void Transition();
+	void TitleTransition();
+
+private:
+	Title* m_title = nullptr;
+	StageCount* m_stageCount = nullptr;
 
 	int m_stageClearCount = 0;
 };

@@ -35,6 +35,7 @@ namespace
 		{"Title1",u8"スタートボタンでゲームスタート"},
 		{"GoalPedestal", u8"ステージクリア！\nスタートボタンで次のステージ"},
 		{"gameOver", u8"ゲームオーバー\nスタートボタンでリトライ"},
+		{"GameClear", u8"ゲームクリア！\nスタートボタンでタイトルへ"},
 	};
 }
 
@@ -143,9 +144,9 @@ void Title::InGameTransition()
 
 
 /// <summary>
-/// ここからゲームクリアの設定
+/// ここからステージクリアの設定
 /// </summary>
-bool GameClear::Start()
+bool StageClear::Start()
 {
 	int scene = StageClearScene;
 	SetSprite(scene);
@@ -159,14 +160,14 @@ bool GameClear::Start()
 	return true;
 }
 
-void GameClear::Update()
+void StageClear::Update()
 {
 	GameScene::Update();
 	m_stageClearCount = m_stageCount->GetStageCount();
 	Transition();
 }
 
-void GameClear::Transition()
+void StageClear::Transition()
 {
 
 	if (GameScene::IsStartTrigger())
@@ -177,7 +178,7 @@ void GameClear::Transition()
 	}
 }
 
-void GameClear::InGameTransition()
+void StageClear::InGameTransition()
 {
 	//ゲームシーンに遷移する。
 	m_bossStage = NewGO<BossStage>(0, "bossStage");
@@ -226,3 +227,39 @@ void GameOver::InGameTransition()
 	}
 }
 
+
+/// <summary>
+/// ここからゲームクリアの設定
+/// </summary>
+bool GameClear::Start()
+{
+	int scene = GameClearScene;
+	SetSprite(scene);
+	SetText(scene);
+	m_stageCount = FindGO<StageCount>("stageCount");
+	m_stageClearCount = m_stageCount->GetStageCount();
+	return true;
+}
+
+void GameClear::Update()
+{
+	GameScene::Update();
+	m_stageClearCount = m_stageCount->GetStageCount();
+	Transition();
+}
+
+void GameClear::Transition()
+{
+	if (GameScene::IsStartTrigger())
+	{
+		TitleTransition();
+		DeleteGO(this);
+	}
+}
+
+void GameClear::TitleTransition()
+{
+	//タイトルシーンに遷移する。
+	m_title = NewGO<Title>(0, "title");
+	m_stageClearCount = 0;
+}

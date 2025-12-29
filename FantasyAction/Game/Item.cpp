@@ -63,7 +63,7 @@ bool Shell::Start()
 
 	//m_spawner = FindGO<ItemSpawner>("ItemSpawner");
 
-	m_shellRender.Init("Assets/modelData/koura.tkm");
+	m_shellRender.Init("Assets/modelData/rock.tkm");
 	//m_position = m_Enemy2->GetPosition();
 
 

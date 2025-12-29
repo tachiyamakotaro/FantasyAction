@@ -24,12 +24,15 @@ Enemy2::Enemy2()
 
 Enemy2::~Enemy2()
 {
-	DeleteGO(m_bodyColl);
+	if (m_bodyColl != nullptr)
+	{
+		DeleteGO(m_bodyColl);
+	}
 }
 
 bool Enemy2::Start()
 {
-	m_modelRender.Init("Assets/modelData/nokonoko.tkm");
+	m_modelRender.Init("Assets/modelData/golem.tkm");
 
 	m_player = FindGO<Player>("player");
 

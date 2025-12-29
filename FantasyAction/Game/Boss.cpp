@@ -135,7 +135,7 @@ void Boss::Chase()
 	diff.Normalize();
 
 	//ˆÚ“®‘¬“x
-	m_moveSpeed = diff * 300.0f;
+	m_moveSpeed = diff * 350.0f;
 	//m_moveSpeed.y -= GRAVITY;
 
 	//m_position = m_charaCon.Execute(m_moveSpeed, g_gameTime->GetFrameDeltaTime());

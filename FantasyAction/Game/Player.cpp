@@ -1,7 +1,8 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "Player.h"
 #include "Item.h"
 #include "UI.h"
+#include "SoundManager.h"
 
 namespace
 {
@@ -12,11 +13,11 @@ namespace
 	const float CHARACTER_SECOND_JUMPSPEED = 1200.0f;
 	const float CHARACTER_THIRD_JUMPSPEED = 1400.0f;
 	const float JUMPSPEED_LIMIT = 1200.0f;
-	//ƒ_ƒbƒVƒ…‚Ì”{—¦
+	//ãƒ€ãƒƒã‚·ãƒ¥ã®å€çŽ‡
 	const float CHARACTER_DASHSPEED = 2.0f;
 	const float GRAVITY = 45.0f;
 	const float STICK_INPUT = 0.001f;
-	//ƒWƒƒƒ“ƒv‚ÌUŒ‚”»’è
+	//ã‚¸ãƒ£ãƒ³ãƒ—ã®æ”»æ’ƒåˆ¤å®š
 	const float JUMP_ATTACK_RADIUS = 10.0f;
 	const float JUMP_ATTACK_HEIGHT = 10.0f;
 	const Vector3 JUMP_ATTACK_SIZE = { 50.0f,50.0f,50.0f };
@@ -29,10 +30,10 @@ namespace
 	const float SWITCH_DISP_TIME = 1.0f;
 	const float SWITCH_DISP_TIMER = 0.1f;
 
-	//ƒAƒCƒeƒ€ŠÖŒW‚Ì’è”
-	//ƒvƒŒƒCƒ„[‚Ì­‚µ‘O•û‚É”z’u‚·‚é
+	//ã‚¢ã‚¤ãƒ†ãƒ é–¢ä¿‚ã®å®šæ•°
+	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®å°‘ã—å‰æ–¹ã«é…ç½®ã™ã‚‹
 	const float HOLD_OFFSET = 50.0f;
-	//“Š‚°‚é‘¬“x
+	//æŠ•ã’ã‚‹é€Ÿåº¦
 	const float THROW_SPEED = 1200.0f;
 }
 
@@ -45,6 +46,8 @@ Player::~Player()
 {
 	DeleteGO(m_jumpCol);
 	DeleteGO(m_hpUI);
+	DeleteGO(m_jumpSe);
+	DeleteGO(m_damageSE);
 }
 
 bool Player::Start()
@@ -182,6 +185,8 @@ void Player::Jump()
 		m_moveSpeed.y = 0.0f;
 		if (g_pad[0]->IsTrigger(enButtonA)) {
 			m_moveSpeed.y = CHARACTER_FIRST_JUMPSPEED;
+			SoundManager *sound = FindGO<SoundManager>("soundManager");
+			m_jumpSe = sound->PlayingSound(Sound::enSound_JumpSE, false);
 			m_jumpColFlag = true;
 		}
 	}
@@ -256,6 +261,8 @@ void Player::Damege()
 	if (m_damege == false)
 	{
 		m_life--;
+		SoundManager* sound = FindGO<SoundManager>("soundManager");
+		m_damageSE = sound->PlayingSound(Sound::enSound_PlDamageSE, false);
 		m_damege = true;
 	}
 	if (m_life <= 0)
@@ -310,9 +317,9 @@ Vector3 Player::GetForwardXZ()
 		Quaternion rot = m_rotation;
 		rot.Apply(forward);
 		forward.y = 0.0f;
-		//ƒxƒNƒgƒ‹‚Ì’·‚³‚ª‚Ù‚Ú‚O‚©‚Ìƒ`ƒFƒbƒN
-		//‚Ù‚Ú‚O‚¾‚Á‚½‚ç³‹K‰»‚µ‚È‚¢
-		//1e-5f‚Í‚Ù‚Ú‚O‚ÌˆÓ–¡
+		//ãƒ™ã‚¯ãƒˆãƒ«ã®é•·ã•ãŒã»ã¼ï¼ã‹ã®ãƒã‚§ãƒƒã‚¯
+		//ã»ã¼ï¼ã ã£ãŸã‚‰æ­£è¦åŒ–ã—ãªã„
+		//1e-5fã¯ã»ã¼ï¼ã®æ„å‘³
 		if (forward.Length() > 1e-5f)
 		{
 			forward.Normalize();

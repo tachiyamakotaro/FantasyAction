@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "StageNo1.h"
 #include "Player.h"
 #include "Enemy1.h"
@@ -9,6 +9,7 @@
 #include "GoalPoint.h"
 #include "GameScene.h"
 #include "StageCount.h"
+#include "SoundManager.h"
 
 namespace
 {
@@ -27,6 +28,7 @@ StageNo1::~StageNo1()
 	DeleteGO(m_player);
 	DeleteGO(m_gameCamera);
 	DeleteGO(m_skyCube);
+	DeleteGO(m_stageBGM);
 
 	for (auto stageNo1Level : m_stageNo1Levels)
 	{
@@ -65,6 +67,9 @@ bool StageNo1::Start()
 	m_skyCube->SetType(enSkyCubeType_DayToon_3);
 	m_skyCube->SetScale(2500.0f);
 	m_skyCube->SetLuminance(0.7f);
+
+	SoundManager* sound = FindGO<SoundManager>("soundManager");
+	m_stageBGM = sound->PlayingSound(Sound::enSound_Stage1BGM);
 
 	g_renderingEngine->DisableTonemap();
 
@@ -172,14 +177,14 @@ void StageNo1::ClearScene()
 {
 	m_stageCount = FindGO<StageCount>("stageCount");
 	m_stageCount->AddStageCount();
-	//ƒQ[ƒ€ƒV[ƒ“‚É‘JˆÚ‚·‚éB
+	//ã‚²ãƒ¼ãƒ ã‚·ãƒ¼ãƒ³ã«é·ç§»ã™ã‚‹ã€‚
 	m_gameScene = NewGO<StageClear>(0, "stageClear");
 	DeleteGO(this);
 }
 
 void StageNo1::GameOverScene()
 {
-	//ƒQ[ƒ€ƒV[ƒ“‚É‘JˆÚ‚·‚éB
+	//ã‚²ãƒ¼ãƒ ã‚·ãƒ¼ãƒ³ã«é·ç§»ã™ã‚‹ã€‚
 	m_gameScene = NewGO<GameOver>(0, "gameOver");
 	DeleteGO(this);
 }
@@ -190,7 +195,7 @@ void StageNo1::DispTime()
 	m_timer -= g_gameTime->GetFrameDeltaTime();
 
 	wchar_t text[256];
-	swprintf_s(text, 256, L"TIMEF%02d", sec);
+	swprintf_s(text, 256, L"TIMEï¼š%02d", sec);
 	m_timeRender.SetText(text);
 	m_timeRender.SetPosition(TIME_POSITION);
 	m_timeRender.SetScale(TIME_SCALE);

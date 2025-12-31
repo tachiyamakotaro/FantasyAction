@@ -1,10 +1,21 @@
-#pragma once
+ï»¿#pragma once
 
 #include "sound/SoundSource.h"
 
 enum Sound {
-	enSound_InGameBGM,
-	enSound_Num //‚±‚ÌƒXƒe[ƒ^ƒX‚ÍAƒTƒEƒ“ƒh‚Ì‘”‚ğ•\‚µ‚Ä‚¢‚é‚½‚ßA‚±‚Ì‰º‚É‚Í’Ç‰Á‚µ‚È‚¢‚Å‚­‚¾‚³‚¢B
+	enSound_Stage1BGM,
+	enSound_BossStageBGM,
+	enSound_BossBGM,
+	enSound_Title,
+	enSound_StageClearBGM,
+	enSound_GameOverBGM,
+	enSound_GameClearBGM,
+	enSound_PlDamageSE,
+	enSound_EnDamageSE,
+	enSound_JumpSE,
+	enSound_Throw,
+	enSound_Button,
+	enSound_Num //ã“ã®ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã¯ã€ã‚µã‚¦ãƒ³ãƒ‰ã®ç·æ•°ã‚’è¡¨ã—ã¦ã„ã‚‹ãŸã‚ã€ã“ã®ä¸‹ã«ã¯è¿½åŠ ã—ãªã„ã§ãã ã•ã„ã€‚
 };
 class SoundManager :public IGameObject
 {
@@ -12,12 +23,12 @@ public:
 	SoundManager();
 	~SoundManager() {};
 	/// <summary>
-	/// w’è‚µ‚½ƒTƒEƒ“ƒh‚ğÄ¶‚µAÄ¶’†‚ÌƒTƒEƒ“ƒhƒ\[ƒX‚ğ•Ô‚µ‚Ü‚·B
+	/// æŒ‡å®šã—ãŸã‚µã‚¦ãƒ³ãƒ‰ã‚’å†ç”Ÿã—ã€å†ç”Ÿä¸­ã®ã‚µã‚¦ãƒ³ãƒ‰ã‚½ãƒ¼ã‚¹ã‚’è¿”ã—ã¾ã™ã€‚
 	/// </summary>
-	/// <param name="number">Ä¶‚·‚éƒTƒEƒ“ƒh‚ğw’è‚µ‚Ü‚·B</param>
-	/// <param name="isLoop">ƒTƒEƒ“ƒh‚ğƒ‹[ƒvÄ¶‚·‚é‚©‚Ç‚¤‚©‚ğw’è‚µ‚Ü‚·BƒfƒtƒHƒ‹ƒg‚Í true ‚Å‚·B</param>
-	/// <param name="volume">Ä¶‰¹—Ê‚ğw’è‚µ‚Ü‚·BƒfƒtƒHƒ‹ƒg‚Í 1.0f ‚Å‚·B</param>
-	/// <returns>Ä¶’†‚ÌƒTƒEƒ“ƒhƒ\[ƒX‚Ö‚Ìƒ|ƒCƒ“ƒ^B</returns>
+	/// <param name="number">å†ç”Ÿã™ã‚‹ã‚µã‚¦ãƒ³ãƒ‰ã‚’æŒ‡å®šã—ã¾ã™ã€‚</param>
+	/// <param name="isLoop">ã‚µã‚¦ãƒ³ãƒ‰ã‚’ãƒ«ãƒ¼ãƒ—å†ç”Ÿã™ã‚‹ã‹ã©ã†ã‹ã‚’æŒ‡å®šã—ã¾ã™ã€‚ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã¯ true ã§ã™ã€‚</param>
+	/// <param name="volume">å†ç”ŸéŸ³é‡ã‚’æŒ‡å®šã—ã¾ã™ã€‚ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã¯ 1.0f ã§ã™ã€‚</param>
+	/// <returns>å†ç”Ÿä¸­ã®ã‚µã‚¦ãƒ³ãƒ‰ã‚½ãƒ¼ã‚¹ã¸ã®ãƒã‚¤ãƒ³ã‚¿ã€‚</returns>
 	SoundSource* PlayingSound(Sound number, bool isLoop = true, float volume = 1.0f);
 
 };

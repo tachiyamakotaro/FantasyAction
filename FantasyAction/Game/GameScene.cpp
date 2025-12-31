@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "GameScene.h"
 #include "StageNo1.h"
 #include <codecvt>
@@ -6,6 +6,7 @@
 #include "StageCount.h"
 #include "BossStage.h"
 #include "Game.h"
+#include "SoundManager.h"
 
 namespace
 {
@@ -32,10 +33,10 @@ namespace
 	};
 
 	SceanInfo sceanInfo[GameScene_num] = {
-		{"Title1"/*,u8"ƒXƒ^[ƒgƒ{ƒ^ƒ“‚ÅƒQ[ƒ€ƒXƒ^[ƒg"*/},
-		{"GoalPedestal", u8"ƒXƒe[ƒWƒNƒŠƒAI\nƒXƒ^[ƒgƒ{ƒ^ƒ“‚ÅŸ‚ÌƒXƒe[ƒW"},
-		{"gameOver", u8"ƒQ[ƒ€ƒI[ƒo[\nƒXƒ^[ƒgƒ{ƒ^ƒ“‚ÅƒŠƒgƒ‰ƒC"},
-		{"GameClear"/*, u8"ƒQ[ƒ€ƒNƒŠƒAI\nƒXƒ^[ƒgƒ{ƒ^ƒ“‚Åƒ^ƒCƒgƒ‹‚Ö"*/},
+		{"Title1"/*,u8"ã‚¹ã‚¿ãƒ¼ãƒˆãƒœã‚¿ãƒ³ã§ã‚²ãƒ¼ãƒ ã‚¹ã‚¿ãƒ¼ãƒˆ"*/},
+		{"GoalPedestal", u8"ã‚¹ãƒ†ãƒ¼ã‚¸ã‚¯ãƒªã‚¢ï¼\nã‚¹ã‚¿ãƒ¼ãƒˆãƒœã‚¿ãƒ³ã§æ¬¡ã®ã‚¹ãƒ†ãƒ¼ã‚¸"},
+		{"gameOver", u8"ã‚²ãƒ¼ãƒ ã‚ªãƒ¼ãƒãƒ¼\nã‚¹ã‚¿ãƒ¼ãƒˆãƒœã‚¿ãƒ³ã§ãƒªãƒˆãƒ©ã‚¤"},
+		{"GameClear"/*, u8"ã‚²ãƒ¼ãƒ ã‚¯ãƒªã‚¢ï¼\nã‚¹ã‚¿ãƒ¼ãƒˆãƒœã‚¿ãƒ³ã§ã‚¿ã‚¤ãƒˆãƒ«ã¸"*/},
 	};
 }
 
@@ -75,7 +76,7 @@ void GameScene::BlinkFont()
 
 //void GameScene::InGameTransition()
 //{
-//	//ƒQ[ƒ€ƒV[ƒ“‚É‘JˆÚ‚·‚éB
+//	//ã‚²ãƒ¼ãƒ ã‚·ãƒ¼ãƒ³ã«é·ç§»ã™ã‚‹ã€‚
 //	if (m_stageCount->GetStageCount() == 0)
 //	{
 //		m_stageNo1 = NewGO<StageNo1>(0, "stageNo1");
@@ -102,8 +103,15 @@ const bool GameScene::IsStartTrigger() const
 }
 
 /// <summary>
-/// ‚±‚±‚©‚çƒ^ƒCƒgƒ‹‚Ìİ’è
+/// ã“ã“ã‹ã‚‰ã‚¿ã‚¤ãƒˆãƒ«ã®è¨­å®š
 /// </summary>
+
+Title::~Title()
+{
+	DeleteGO(m_titleBGM);
+	//DeleteGO(m_buttonSe);
+}
+
 bool Title::Start()
 {
 	int scene = TitleScene;
@@ -114,6 +122,9 @@ bool Title::Start()
 	m_stageCount = FindGO<StageCount>("stageCount");
 
 	m_stageClearCount = m_stageCount->GetStageCount();
+
+	SoundManager* sound = FindGO<SoundManager>("soundManager");
+	m_titleBGM = sound->PlayingSound(Sound::enSound_Title);
 
 	return true;
 }
@@ -131,6 +142,8 @@ void Title::Transition()
 	if (GameScene::IsStartTrigger())
 	{
 		InGameTransition();
+		SoundManager* sound = FindGO<SoundManager>("soundManager");
+		m_buttonSe = sound->PlayingSound(Sound::enSound_Button, false);
 
 		DeleteGO(this);
 	}
@@ -138,14 +151,20 @@ void Title::Transition()
 
 void Title::InGameTransition()
 {
-	//ƒQ[ƒ€ƒV[ƒ“‚É‘JˆÚ‚·‚éB
+	//ã‚²ãƒ¼ãƒ ã‚·ãƒ¼ãƒ³ã«é·ç§»ã™ã‚‹ã€‚
 	m_game = NewGO<Game>(0, "game");
 }
 
 
 /// <summary>
-/// ‚±‚±‚©‚çƒXƒe[ƒWƒNƒŠƒA‚Ìİ’è
+/// ã“ã“ã‹ã‚‰ã‚¹ãƒ†ãƒ¼ã‚¸ã‚¯ãƒªã‚¢ã®è¨­å®š
 /// </summary>
+
+StageClear::~StageClear()
+{
+	DeleteGO(m_stageClearBGM);
+}
+
 bool StageClear::Start()
 {
 	int scene = StageClearScene;
@@ -156,6 +175,9 @@ bool StageClear::Start()
 	m_stageCount = FindGO<StageCount>("stageCount");
 
 	m_stageClearCount = m_stageCount->GetStageCount();
+
+	SoundManager* sound = FindGO<SoundManager>("soundManager");
+	m_stageClearBGM = sound->PlayingSound(Sound::enSound_StageClearBGM);
 
 	return true;
 }
@@ -173,6 +195,9 @@ void StageClear::Transition()
 	if (GameScene::IsStartTrigger())
 	{
 		InGameTransition();
+		SoundManager* sound = FindGO<SoundManager>("soundManager");
+		m_buttonSe = sound->PlayingSound(Sound::enSound_Button, false);
+
 
 		DeleteGO(this);
 	}
@@ -180,13 +205,19 @@ void StageClear::Transition()
 
 void StageClear::InGameTransition()
 {
-	//ƒQ[ƒ€ƒV[ƒ“‚É‘JˆÚ‚·‚éB
+	//ã‚²ãƒ¼ãƒ ã‚·ãƒ¼ãƒ³ã«é·ç§»ã™ã‚‹ã€‚
 	m_bossStage = NewGO<BossStage>(0, "bossStage");
 }
 
 /// <summary>
-/// ‚±‚±‚©‚çƒQ[ƒ€ƒI[ƒo[‚Ìİ’è
+/// ã“ã“ã‹ã‚‰ã‚²ãƒ¼ãƒ ã‚ªãƒ¼ãƒãƒ¼ã®è¨­å®š
 /// </summary>
+
+GameOver::~GameOver()
+{
+	DeleteGO(m_gameOverBGM);
+}
+
 bool GameOver::Start()
 {
 	int scene = GameOverScene;
@@ -196,6 +227,9 @@ bool GameOver::Start()
 	m_stageCount = FindGO<StageCount>("stageCount");
 
 	m_stageClearCount = m_stageCount->GetStageCount();
+
+	SoundManager* sound = FindGO<SoundManager>("soundManager");
+	m_gameOverBGM = sound->PlayingSound(Sound::enSound_GameOverBGM);
 	return true;
 }
 
@@ -211,6 +245,9 @@ void GameOver::Transition()
 	if (GameScene::IsStartTrigger())
 	{
 		InGameTransition();
+		SoundManager* sound = FindGO<SoundManager>("soundManager");
+		m_buttonSe = sound->PlayingSound(Sound::enSound_Button, false);
+
 		DeleteGO(this);
 	}
 }
@@ -229,8 +266,14 @@ void GameOver::InGameTransition()
 
 
 /// <summary>
-/// ‚±‚±‚©‚çƒQ[ƒ€ƒNƒŠƒA‚Ìİ’è
+/// ã“ã“ã‹ã‚‰ã‚²ãƒ¼ãƒ ã‚¯ãƒªã‚¢ã®è¨­å®š
 /// </summary>
+
+GameClear::~GameClear()
+{
+	DeleteGO(m_gameClearBGM);
+}
+
 bool GameClear::Start()
 {
 	int scene = GameClearScene;
@@ -238,6 +281,9 @@ bool GameClear::Start()
 	//SetText(scene);
 	m_stageCount = FindGO<StageCount>("stageCount");
 	m_stageClearCount = m_stageCount->GetStageCount();
+
+	SoundManager* sound = FindGO<SoundManager>("soundManager");
+	m_gameClearBGM = sound->PlayingSound(Sound::enSound_GameClearBGM);
 	return true;
 }
 
@@ -253,13 +299,16 @@ void GameClear::Transition()
 	if (GameScene::IsStartTrigger())
 	{
 		TitleTransition();
+		SoundManager* sound = FindGO<SoundManager>("soundManager");
+		m_buttonSe = sound->PlayingSound(Sound::enSound_Button, false);
+
 		DeleteGO(this);
 	}
 }
 
 void GameClear::TitleTransition()
 {
-	//ƒ^ƒCƒgƒ‹ƒV[ƒ“‚É‘JˆÚ‚·‚éB
+	//ã‚¿ã‚¤ãƒˆãƒ«ã‚·ãƒ¼ãƒ³ã«é·ç§»ã™ã‚‹ã€‚
 	m_title = NewGO<Title>(0, "title");
 	m_stageClearCount = 0;
 }

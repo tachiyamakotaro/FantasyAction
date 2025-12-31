@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "level3DRender/LevelRender.h"
 
@@ -15,6 +15,7 @@ class StageCount;
 class CastleWall;
 class CastleFloor;
 class ItemSpawner;
+class SoundManager;
 
 class BossStage:public IGameObject
 {
@@ -53,6 +54,10 @@ private:
 	StageCount* m_stageCount = nullptr;
 	Boss* m_boss = nullptr;
 	CollisionObject* m_bossStateChangeColl = nullptr;
+
+	SoundManager* soundManager;
+	SoundSource* m_bossStageBGM;
+	SoundSource* m_bossBGM;
 
 	std::vector<CastleFloor*> m_castleFloors;
 	std::vector<CastleWall*> m_castleWalls;

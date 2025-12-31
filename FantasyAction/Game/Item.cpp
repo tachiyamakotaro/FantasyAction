@@ -1,15 +1,16 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "Item.h"
 #include "Enemy2.h"
 #include "Player.h"
 #include "Boss.h"
 #include "ItemSpawner.h"
+#include "SoundManager.h"
 
 namespace
 {
 	const float ROTATION_SPEED = 10.0f;
 
-	//b—…‚Ì’è”
+	//ç”²ç¾…ã®å®šæ•°
 	const float SHELLCON_RADIUS = 10.0f;
 	const float SHELLCON_HEIGHT = 10.0f;
 	const Vector3 COLLISION_SCALE = Vector3(100.0f, 50.0f, 100.0f);
@@ -39,7 +40,7 @@ void Item::Render(RenderContext& rc)
 
 }
 
-//b—…‚ÌƒAƒCƒeƒ€
+//ç”²ç¾…ã®ã‚¢ã‚¤ãƒ†ãƒ 
 
 Shell::Shell()
 {
@@ -52,6 +53,7 @@ Shell::~Shell()
 	{
 		DeleteGO(m_collObj);
 	}
+	DeleteGO(m_throwSE);
 
 }
 
@@ -211,6 +213,8 @@ void Shell::PlayerFollow()
 		
 		m_player->SetHaveItem(false);
 		m_deleteTimer = 10.0f;
+		SoundManager* sound = FindGO<SoundManager>("soundManager");
+		m_throwSE = sound->PlayingSound(Sound::enSound_Throw, false);
 		m_shellState = Throwing;
 	}
 }
@@ -218,9 +222,12 @@ void Shell::PlayerFollow()
 void Shell::ShellMove()
 {
 	DeleteTimer();
+	
+
 	//CharaCon();
 	//Collision();
 	m_collObj->SetIsEnable(true);
+	
 	
 	m_moveSpeed.y -= 50.0f;
 

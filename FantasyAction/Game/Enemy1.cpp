@@ -1,8 +1,9 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include <algorithm>
 #include "Enemy1.h"
 #include "Player.h"
 #include "Item.h"
+#include "SoundManager.h"
 
 namespace
 {
@@ -24,6 +25,7 @@ Enemy1::Enemy1()
 Enemy1::~Enemy1()
 {
 	DeleteGO(m_bodyColl);
+	DeleteGO(m_damageSE);
 }
 
 bool Enemy1::Start()
@@ -44,7 +46,7 @@ bool Enemy1::Start()
 	);
 
 	m_enemyState = enEnemyState_Idle;
-	m_forward = Vector3::AxisZ; // ‰Šú‘OƒxƒNƒgƒ‹
+	m_forward = Vector3::AxisZ; // åˆæœŸå‰ãƒ™ã‚¯ãƒˆãƒ«
 	m_rotation.Apply(m_forward);
 
 	MakeAttackCollision();
@@ -92,7 +94,7 @@ void Enemy1::Chase()
 
 	Vector3 diff = m_player->GetPosition() - m_position;
 	diff.y = 0.0f;
-	if (diff.LengthSq() > 700.0f * 700.0f)// ‹——£ŠO‚È‚çIdle‚Ö
+	if (diff.LengthSq() > 700.0f * 700.0f)// è·é›¢å¤–ãªã‚‰Idleã¸
 	{
 		m_moveSpeed = Vector3::Zero;
 		m_enemyState = enEnemyState_Idle;
@@ -109,14 +111,14 @@ void Enemy1::Chase()
 	{
 		cosv = -1.0f;
 	}
-	if (acosf(cosv) > Math::PI / 180.0f * 120.0f) // ‹ŠEŠO‚È‚ç’â~
+	if (acosf(cosv) > Math::PI / 180.0f * 120.0f) // è¦–ç•Œå¤–ãªã‚‰åœæ­¢
 	{
 		m_forward = m_moveSpeed;
 		m_moveSpeed = Vector3::Zero;
 		m_enemyState = enEnemyState_Idle;
 	}
 
-	//ˆÚ“®‘¬“x
+	//ç§»å‹•é€Ÿåº¦
 	m_moveSpeed = diff * 430.0f;
 	m_moveSpeed.y -= GRAVITY;
 
@@ -135,23 +137,23 @@ void Enemy1::Rotation()
 {
 	if (fabsf(m_moveSpeed.x) < 0.001f && fabsf(m_moveSpeed.z) < 0.001f)
 	{
-		//m_moveSpeed.x‚Æm_moveSpeed.z‚Ìâ‘Î’l‚ª‚Æ‚à‚É0.001ˆÈ‰º‚Æ‚¢‚¤‚±‚Æ‚Í
-		//‚±‚ÌƒtƒŒ[ƒ€‚Å‚ÍƒLƒƒƒ‰‚ÍˆÚ“®‚µ‚Ä‚¢‚È‚¢‚Ì‚Åù‰ñ‚·‚é•K—v‚Í‚È‚¢B
+		//m_moveSpeed.xã¨m_moveSpeed.zã®çµ¶å¯¾å€¤ãŒã¨ã‚‚ã«0.001ä»¥ä¸‹ã¨ã„ã†ã“ã¨ã¯
+		//ã“ã®ãƒ•ãƒ¬ãƒ¼ãƒ ã§ã¯ã‚­ãƒ£ãƒ©ã¯ç§»å‹•ã—ã¦ã„ãªã„ã®ã§æ—‹å›ã™ã‚‹å¿…è¦ã¯ãªã„ã€‚
 		return;
 	}
-	//atan2‚ÍtanƒÆ‚Ì’l‚ğŠp“x(ƒ‰ƒWƒAƒ“’PˆÊ)‚É•ÏŠ·‚µ‚Ä‚­‚ê‚éŠÖ”B
-	//m_moveSpeed.x / m_moveSpeed.z‚ÌŒ‹‰Ê‚ÍtanƒÆ‚É‚È‚éB
-	//atan2‚ğg—p‚µ‚ÄAŠp“x‚ğ‹‚ß‚Ä‚¢‚éB
-	//‚±‚ê‚ª‰ñ“]Šp“x‚É‚È‚éB
+	//atan2ã¯tanÎ¸ã®å€¤ã‚’è§’åº¦(ãƒ©ã‚¸ã‚¢ãƒ³å˜ä½)ã«å¤‰æ›ã—ã¦ãã‚Œã‚‹é–¢æ•°ã€‚
+	//m_moveSpeed.x / m_moveSpeed.zã®çµæœã¯tanÎ¸ã«ãªã‚‹ã€‚
+	//atan2ã‚’ä½¿ç”¨ã—ã¦ã€è§’åº¦ã‚’æ±‚ã‚ã¦ã„ã‚‹ã€‚
+	//ã“ã‚ŒãŒå›è»¢è§’åº¦ã«ãªã‚‹ã€‚
 	float angle = atan2(-m_moveSpeed.x, m_moveSpeed.z);
-	//atan‚ª•Ô‚µ‚Ä‚­‚éŠp“x‚Íƒ‰ƒWƒAƒ“’PˆÊ‚È‚Ì‚Å
-	//SetRotationDeg‚Å‚Í‚È‚­SetRotation‚ğg—p‚·‚éB
+	//atanãŒè¿”ã—ã¦ãã‚‹è§’åº¦ã¯ãƒ©ã‚¸ã‚¢ãƒ³å˜ä½ãªã®ã§
+	//SetRotationDegã§ã¯ãªãSetRotationã‚’ä½¿ç”¨ã™ã‚‹ã€‚
 	m_rotation.SetRotationY(-angle);
 
-	//‰ñ“]‚ğİ’è‚·‚éB
+	//å›è»¢ã‚’è¨­å®šã™ã‚‹ã€‚
 	m_modelRender.SetRotation(m_rotation);
 
-	//ƒvƒŒƒCƒ„[‚Ì‘OƒxƒNƒgƒ‹‚ğŒvZ‚·‚éB
+	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®å‰ãƒ™ã‚¯ãƒˆãƒ«ã‚’è¨ˆç®—ã™ã‚‹ã€‚
 	m_forward = Vector3::AxisZ;
 	m_rotation.Apply(m_forward);
 }
@@ -168,6 +170,8 @@ void Enemy1::Collision()
 	{
 		if (collision->IsHit(m_charaCon))
 		{
+			SoundManager* sound = FindGO<SoundManager>("soundManager");
+			m_damageSE = sound->PlayingSound(Sound::enSound_EnDamageSE, false);
 			m_enemyState = enEnemyState_Dead;
 
 			m_player->m_moveSpeed.y = PLAYER_BOUNCE;
@@ -180,6 +184,8 @@ void Enemy1::Collision()
 	{
 		if (collision->IsHit(m_charaCon))
 		{
+			SoundManager*sound = FindGO<SoundManager>("soundManager");
+			m_damageSE = sound->PlayingSound(Sound::enSound_EnDamageSE,false);
 			m_enemyState = enEnemyState_Dead;
 		}
 	}
@@ -189,7 +195,7 @@ void Enemy1::MakeAttackCollision()
 {
 	if (m_enemyState != enEnemyState_Dead) {
 
-		//ƒRƒŠƒWƒ‡ƒ“ƒIƒuƒWƒFƒNƒg‚ğì¬‚·‚é
+		//ã‚³ãƒªã‚¸ãƒ§ãƒ³ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’ä½œæˆã™ã‚‹
 		m_bodyColl = NewGO<CollisionObject>(0);
 		m_bodyCollPos = m_position;
 		m_bodyCollPos += m_up*50.0f;
@@ -209,17 +215,17 @@ const bool Enemy1::SearchPlayer() const
 
 	if (diff.LengthSq() <= 700.0f * 700.0f)
 	{
-		//ƒGƒlƒ~[‚©‚çƒvƒŒƒCƒ„[‚ÉŒü‚©‚¤ƒxƒNƒgƒ‹‚ğ³‹K‰»‚·‚éB
+		//ã‚¨ãƒãƒŸãƒ¼ã‹ã‚‰ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã«å‘ã‹ã†ãƒ™ã‚¯ãƒˆãƒ«ã‚’æ­£è¦åŒ–ã™ã‚‹ã€‚
 		diff.Normalize();
-		//ƒGƒlƒ~[‚Ì³–Ê‚ÌƒxƒNƒgƒ‹‚ÆAƒGƒlƒ~[‚©‚çƒvƒŒƒCƒ„[‚ÉŒü‚©‚¤ƒxƒNƒgƒ‹‚ÌB
-		//“àÏ(cosƒÆ)‚ğ‹‚ß‚éB
+		//ã‚¨ãƒãƒŸãƒ¼ã®æ­£é¢ã®ãƒ™ã‚¯ãƒˆãƒ«ã¨ã€ã‚¨ãƒãƒŸãƒ¼ã‹ã‚‰ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã«å‘ã‹ã†ãƒ™ã‚¯ãƒˆãƒ«ã®ã€‚
+		//å†…ç©(cosÎ¸)ã‚’æ±‚ã‚ã‚‹ã€‚
 		float cos = m_forward.Dot(diff);
-		//“àÏ(cosƒÆ)‚©‚çŠp“x(ƒÆ)‚ğ‹‚ß‚éB
+		//å†…ç©(cosÎ¸)ã‹ã‚‰è§’åº¦(Î¸)ã‚’æ±‚ã‚ã‚‹ã€‚
 		float angle = acosf(cos);
-		//Šp“x(ƒÆ)‚ª120‹‚æ‚è¬‚³‚¯‚ê‚ÎB
+		//è§’åº¦(Î¸)ãŒ120Â°ã‚ˆã‚Šå°ã•ã‘ã‚Œã°ã€‚
 		if (angle <= (Math::PI / 180.0f) * 120.0f)
 		{
-			//ƒvƒŒƒCƒ„[‚ğŒ©‚Â‚¯‚½I
+			//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚’è¦‹ã¤ã‘ãŸï¼
 			return true;
 		}
 	}
@@ -228,25 +234,25 @@ const bool Enemy1::SearchPlayer() const
 
 void Enemy1::ProcessCommonStateTransition()
 {
-	//Šeƒ^ƒCƒ}[‚ğ‰Šú‰»B
+	//å„ã‚¿ã‚¤ãƒãƒ¼ã‚’åˆæœŸåŒ–ã€‚
 	m_idleTimer = 0.0f;
 	m_chaseTimer = 0.0f;
 
-	//ƒGƒlƒ~[‚©‚çƒvƒŒƒCƒ„[‚ÉŒü‚©‚¤ƒxƒNƒgƒ‹‚ğŒvZ‚·‚éB
+	//ã‚¨ãƒãƒŸãƒ¼ã‹ã‚‰ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã«å‘ã‹ã†ãƒ™ã‚¯ãƒˆãƒ«ã‚’è¨ˆç®—ã™ã‚‹ã€‚
 	Vector3 diff = m_player->GetPosition() - m_position;
 
-	//ƒvƒŒƒCƒ„[‚ğŒ©‚Â‚¯‚½‚ç
+	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚’è¦‹ã¤ã‘ãŸã‚‰
 	if (SearchPlayer() == true)
 	{
-		//ƒxƒNƒgƒ‹‚ğ³‹K‰»‚·‚éB
+		//ãƒ™ã‚¯ãƒˆãƒ«ã‚’æ­£è¦åŒ–ã™ã‚‹ã€‚
 		diff.Normalize();
-		//ˆÚ“®‘¬“x‚ğİ’è‚·‚éB
+		//ç§»å‹•é€Ÿåº¦ã‚’è¨­å®šã™ã‚‹ã€‚
 		m_moveSpeed = diff * 200.0f;
-		//’ÇÕƒXƒe[ƒg‚Ö‘JˆÚ‚·‚éB
+		//è¿½è·¡ã‚¹ãƒ†ãƒ¼ãƒˆã¸é·ç§»ã™ã‚‹ã€‚
 		m_enemyState = enEnemyState_Chase;
 		return;
 	}
-	//ƒvƒŒƒCƒ„[‚ğŒ©‚Â‚¯‚ç‚ê‚È‚¯‚ê‚ÎB
+	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚’è¦‹ã¤ã‘ã‚‰ã‚Œãªã‘ã‚Œã°ã€‚
 	else
 	{
 		m_enemyState = enEnemyState_Idle;
@@ -257,10 +263,10 @@ void Enemy1::ProcessCommonStateTransition()
 void Enemy1::ProcessIdleStateTransition()
 {
 	m_idleTimer += g_gameTime->GetFrameDeltaTime();
-	//‘Ò‹@ŠÔ‚ª‚ ‚é’ö“xŒo‰ß‚µ‚½‚çB
+	//å¾…æ©Ÿæ™‚é–“ãŒã‚ã‚‹ç¨‹åº¦çµŒéã—ãŸã‚‰ã€‚
 	if (m_idleTimer >= 0.9f)
 	{
-		//‘¼‚ÌƒXƒe[ƒg‚Ö‘JˆÚ‚·‚éB
+		//ä»–ã®ã‚¹ãƒ†ãƒ¼ãƒˆã¸é·ç§»ã™ã‚‹ã€‚
 		ProcessCommonStateTransition();
 	}
 
@@ -288,14 +294,14 @@ void Enemy1::ManageState()
 	switch (m_enemyState)
 	{
 	case enEnemyState_Idle:
-		//‘Ò‹@ƒXƒe[ƒg‚Ì‘JˆÚˆ—B
+		//å¾…æ©Ÿã‚¹ãƒ†ãƒ¼ãƒˆã®é·ç§»å‡¦ç†ã€‚
 		ProcessIdleStateTransition();
 		break;
 	case enEnemyState_Chase:
 		
 		break;
 	case enEnemyState_Dead:
-		//€–SƒXƒe[ƒg‚Ì‘JˆÚˆ—B
+		//æ­»äº¡ã‚¹ãƒ†ãƒ¼ãƒˆã®é·ç§»å‡¦ç†ã€‚
 		ProcessDeadStateTransition();
 		break;
 	}

@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "SoundManager.h"
 
 #include "sound/SoundEngine.h"
@@ -6,28 +6,40 @@
 #include <iostream>
 
 namespace {
-	//ƒtƒ@ƒCƒ‹–¼‚Ì‚İ’Ç‰Á‚·‚ê‚ÎA
-	//ƒRƒ“ƒXƒgƒ‰ƒNƒ^‚É‚Ä©“®‚Åg_soundEngine‚É“o˜^‚³‚ê‚Ü‚·B
-	//—áF"Assets/sound/"+"Title"+".wav"
+	//ãƒ•ã‚¡ã‚¤ãƒ«åã®ã¿è¿½åŠ ã™ã‚Œã°ã€
+	//ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ã«ã¦è‡ªå‹•ã§g_soundEngineã«ç™»éŒ²ã•ã‚Œã¾ã™ã€‚
+	//ä¾‹ï¼š"Assets/sound/"+"Title"+".wav"
 	const char* SOUND_FILEPATH = "Assets/sound/";
 	const char* SOUND_EXTENSION = ".wav";
 	const char* soundFileNameList[enSound_Num] =
 	{
-		"InGameBGM"
+		"Stage1",
+		"BossStage",
+		"Boss",
+		"Title",
+		"StageClear",
+		"GameOver",
+		"GameClear",
+		"Damage",
+		"EnemyDamage",
+		"Jump",
+		"Throw",
+		"Button",
+
 	};
 }
 
 SoundManager::SoundManager()
 {
-	//ƒTƒEƒ“ƒh‚Ìƒtƒ@ƒCƒ‹ƒpƒX‚Ì“o˜^
-	//ƒTƒEƒ“ƒh‚ÌŒÂ”•ª(enSound_Num‚Ì”)A“o˜^‚³‚ê‚Ü‚·B
+	//ã‚µã‚¦ãƒ³ãƒ‰ã®ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‘ã‚¹ã®ç™»éŒ²
+	//ã‚µã‚¦ãƒ³ãƒ‰ã®å€‹æ•°åˆ†(enSound_Numã®æ•°)ã€ç™»éŒ²ã•ã‚Œã¾ã™ã€‚
 	for (int i = 0; i < enSound_Num; i++)
 	{
-		//std::string‚ğg—p‚µA•¶š—ñ‚ğŒ‹‡
+		//std::stringã‚’ä½¿ç”¨ã—ã€æ–‡å­—åˆ—ã‚’çµåˆ
 		std::string file = std::string(SOUND_FILEPATH) + soundFileNameList[i] + (SOUND_EXTENSION);
-		//ˆø”‚ªconst char*‚È‚Ì‚ÅAstd::string‚©‚çconst char*‚É•ÏŠ·B
+		//å¼•æ•°ãŒconst char*ãªã®ã§ã€std::stringã‹ã‚‰const char*ã«å¤‰æ›ã€‚
 		const char* filepath = file.c_str();
-		//g_soundEngine‚Ö“o˜^B
+		//g_soundEngineã¸ç™»éŒ²ã€‚
 		g_soundEngine->ResistWaveFileBank(i, filepath);
 	}
 }
@@ -35,13 +47,13 @@ SoundManager::SoundManager()
 SoundSource* SoundManager::PlayingSound(Sound number, bool isLoop, float volume)
 {
 	SoundSource* sound = NewGO<SoundSource>(0);
-	//ˆø”‚Åó‚¯æ‚Á‚½number‚ÍsoundFileNameList‚Ì—v‘f”Ô†‚É‘Î‰‚µ‚Ä‚¢‚Ü‚·B
+	//å¼•æ•°ã§å—ã‘å–ã£ãŸnumberã¯soundFileNameListã®è¦ç´ ç•ªå·ã«å¯¾å¿œã—ã¦ã„ã¾ã™ã€‚
 	sound->Init(number);
 	sound->SetVolume(volume);
 	sound->Play(isLoop);
-	//–ß‚è’l‚ÉSoundSource‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ğİ’èB
-	//ŒÄ‚Ño‚µŒ³‚ÅA
+	//æˆ»ã‚Šå€¤ã«SoundSourceã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’è¨­å®šã€‚
+	//å‘¼ã³å‡ºã—å…ƒã§ã€
 	//SoundSource* sound = sound.PlayingSound(Sound::enSound_TitleBGM);
-	//‚Æ‘‚­‚ÆƒCƒ“ƒXƒ^ƒ“ƒX‚ÌƒAƒhƒŒƒX‚ğó‚¯æ‚é‚±‚Æ‚ª‚Å‚«‚Ü‚·B
+	//ã¨æ›¸ãã¨ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã®ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’å—ã‘å–ã‚‹ã“ã¨ãŒã§ãã¾ã™ã€‚
 	return sound;
 }

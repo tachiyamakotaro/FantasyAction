@@ -1,7 +1,8 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "Boss.h"
 #include "Player.h"
 #include "FireBall.h"
+#include "SoundManager.h"
 
 namespace
 {
@@ -29,6 +30,7 @@ Boss::Boss()
 Boss::~Boss()
 {
 	DeleteGO(m_bodyColl);
+	DeleteGO(m_damageSE);
 }
 
 bool Boss::Start()
@@ -116,6 +118,14 @@ void Boss::Update()
 	m_modelRender.Update();
 }
 
+void Boss::Damage()
+{
+	m_hp--;
+	SoundManager*sound=FindGO<SoundManager>("soundManager");
+	m_damageSE = sound->PlayingSound(Sound::enSound_EnDamageSE, false);
+
+}
+
 void Boss::Chase()
 {
 	m_position = m_charaCon.Execute(m_moveSpeed, g_gameTime->GetFrameDeltaTime());
@@ -134,7 +144,7 @@ void Boss::Chase()
 
 	diff.Normalize();
 
-	//ˆÚ“®‘¬“x
+	//ç§»å‹•é€Ÿåº¦
 	m_moveSpeed = diff * 350.0f;
 	//m_moveSpeed.y -= GRAVITY;
 
@@ -243,14 +253,14 @@ void Boss::ProcessAttackStateTransition()
 	{
 		m_fireBall->SetPosition(firePos);
 
-		// ˆÚ“®‘¬“x‚Í direction * speed
+		// ç§»å‹•é€Ÿåº¦ã¯ direction * speed
 		
 		m_fireBall->SetMoveSpeed(dir * FIRE_SPEED);
 	}
 
-	m_attackCoolTime = 0.0f; // ƒN[ƒ‹ƒŠƒZƒbƒg
+	m_attackCoolTime = 0.0f; // ã‚¯ãƒ¼ãƒ«ãƒªã‚»ãƒƒãƒˆ
 
-	// ‹¤’Êó‘Ô‘JˆÚiHPƒ`ƒFƒbƒN‚È‚Çj
+	// å…±é€šçŠ¶æ…‹é·ç§»ï¼ˆHPãƒã‚§ãƒƒã‚¯ãªã©ï¼‰
 	ProcessCommonStateTransition();
 }
 

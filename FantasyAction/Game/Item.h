@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 class Player;
 class Enemy2;
@@ -115,6 +115,7 @@ private:
 	Enemy2* m_Enemy2 = nullptr;
 	Boss* m_boss = nullptr;
 	ItemSpawner* m_spawner = nullptr;
+	SoundSource* m_throwSE;
 
 	CharacterController m_shellCon;
 	CollisionObject* m_collObj;

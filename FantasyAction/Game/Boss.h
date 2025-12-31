@@ -1,4 +1,4 @@
-#pragma once
+Ôªø#pragma once
 
 class Player;
 class Shell;
@@ -7,7 +7,7 @@ class FireBall;
 class Boss:public IGameObject
 {
 public:
-	//É{ÉXÉXÉeÅ[Ég
+	//„Éú„Çπ„Çπ„ÉÜ„Éº„Éà
 	enum EnBossState
 	{
 		enBossState_Idle,
@@ -48,10 +48,7 @@ public:
 		m_bossState = state;
 	}
 
-	void Damage()
-	{
-		m_hp--;
-	}
+	void Damage();
 
 	/*CollisionObject* GetBodyColl() const
 	{
@@ -102,7 +99,7 @@ private:
 	Shell* m_shell = nullptr;
 	FireBall* m_fireBall = nullptr;
 
-	
+	SoundSource* m_damageSE;
 
 
 

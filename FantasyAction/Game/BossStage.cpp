@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "BossStage.h"
 #include "Player.h"
 #include "BossStageLevel.h"
@@ -11,6 +11,7 @@
 #include "GameScene.h"
 #include "StageCount.h"
 #include "ItemSpawner.h"
+#include "SoundManager.h"
 
 
 namespace
@@ -39,6 +40,11 @@ BossStage::~BossStage()
 	{
 		DeleteGO(m_bossStateChangeColl);
 	}
+	if (m_bossStageBGM != nullptr)
+	{
+		DeleteGO(m_bossStageBGM);
+	}
+	DeleteGO(m_bossBGM);
 	for (auto wall : m_castleWalls)
 	{
 		DeleteGO(wall);
@@ -82,6 +88,9 @@ bool BossStage::Start()
 	m_skyCube->SetType(enSkyCubeType_NightToon_2);
 	m_skyCube->SetScale(2500.0f);
 	m_skyCube->SetLuminance(0.5f);
+
+	soundManager = FindGO<SoundManager>("soundManager");
+	m_bossStageBGM = soundManager->PlayingSound(Sound::enSound_BossStageBGM);
 
 	MakeLevel();
 	MakeColl();
@@ -218,6 +227,9 @@ void BossStage::BossStateChange()
 		if (collision->IsHit(m_player->GetCharacterController()))
 		{
 			m_boss->SetState(Boss::enBossState_App);
+			DeleteGO(m_bossStageBGM);
+			m_bossBGM = soundManager->PlayingSound(Sound::enSound_BossBGM);
+			
 			DeleteGO(m_bossStateChangeColl);
 		}
 	}
@@ -259,14 +271,14 @@ void BossStage::ClearScene()
 {
 	m_stageCount = FindGO<StageCount>("stageCount");
 	m_stageCount->SetStageCount(0);
-	//ƒQ[ƒ€ƒV[ƒ“‚É‘JˆÚ‚·‚éB
+	//ã‚²ãƒ¼ãƒ ã‚·ãƒ¼ãƒ³ã«é·ç§»ã™ã‚‹ã€‚
 	m_gameScene = NewGO<GameClear>(0, "gameClear");
 	DeleteGO(this);
 }
 
 void BossStage::GameOverScene()
 {
-	//ƒQ[ƒ€ƒV[ƒ“‚É‘JˆÚ‚·‚éB
+	//ã‚²ãƒ¼ãƒ ã‚·ãƒ¼ãƒ³ã«é·ç§»ã™ã‚‹ã€‚
 	m_gameScene = NewGO<GameOver>(0, "gameOver");
 	DeleteGO(this);
 }
@@ -277,7 +289,7 @@ void BossStage::DispTime()
 	m_timer -= g_gameTime->GetFrameDeltaTime();
 
 	wchar_t text[256];
-	swprintf_s(text, 256, L"TIMEF%02d", sec);
+	swprintf_s(text, 256, L"TIMEï¼š%02d", sec);
 	m_timeRender.SetText(text);
 	m_timeRender.SetPosition(TIME_POSITION);
 	m_timeRender.SetScale(TIME_SCALE);

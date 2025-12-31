@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 enum
 {
@@ -43,6 +43,7 @@ private:
 class Title :public GameScene
 {
 public:
+	~Title() override;
 	bool Start();
 	void Update();
 	void Transition();
@@ -53,6 +54,8 @@ private:
 	StageNo1* m_stageNo1 = nullptr;
 	BossStage* m_bossStage = nullptr;
 	Game* m_game = nullptr;
+	SoundSource* m_titleBGM;
+	SoundSource* m_buttonSe;
 
 	int m_stageClearCount = 0;
 };
@@ -60,6 +63,7 @@ private:
 class StageClear :public GameScene
 {
 public:
+	~StageClear() override;
 	bool Start();
 	void Update();
 	void Transition();
@@ -69,6 +73,8 @@ private:
 	StageCount* m_stageCount = nullptr;
 	StageNo1* m_stageNo1 = nullptr;
 	BossStage* m_bossStage = nullptr;
+	SoundSource* m_stageClearBGM;
+	SoundSource* m_buttonSe;
 
 	int m_stageClearCount = 0;
 };
@@ -76,6 +82,7 @@ private:
 class GameOver :public GameScene
 {
 public:
+	~GameOver() override;
 	bool Start();
 	void Update();
 	void Transition();
@@ -85,6 +92,8 @@ private:
 	StageCount* m_stageCount = nullptr;
 	StageNo1* m_stageNo1 = nullptr;
 	BossStage* m_bossStage = nullptr;
+	SoundSource* m_gameOverBGM;
+	SoundSource* m_buttonSe;
 
 	int m_stageClearCount = 0;
 };
@@ -92,6 +101,7 @@ private:
 class GameClear :public GameScene
 {
 public:
+	~GameClear() override;
 	bool Start();
 	void Update();
 	void Transition();
@@ -100,6 +110,8 @@ public:
 private:
 	Title* m_title = nullptr;
 	StageCount* m_stageCount = nullptr;
+	SoundSource* m_gameClearBGM;
+	SoundSource* m_buttonSe;
 
 	int m_stageClearCount = 0;
 };

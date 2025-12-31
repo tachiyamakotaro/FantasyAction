@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 class Player;
 class Shell;
@@ -7,14 +7,14 @@ class ItemSpawner;
 class Enemy2:public IGameObject
 {
 public:
-	//ƒGƒlƒ~[ƒXƒe[ƒg
+	//ã‚¨ãƒãƒŸãƒ¼ã‚¹ãƒ†ãƒ¼ãƒˆ
 	enum EnEnemyState
 	{
-		enEnemyState_Idle,		//‘Ò‹@
-		//enEnemyState_Patrol,	//„‰ñ
-		enEnemyState_Chase,		//’ÇÕ
-		//enEnemyState_ReceiveDamage,			//”íƒ_ƒ[ƒWB
-		enEnemyState_Dead,		//€–S
+		enEnemyState_Idle,		//å¾…æ©Ÿ
+		//enEnemyState_Patrol,	//å·¡å›
+		enEnemyState_Chase,		//è¿½è·¡
+		//enEnemyState_ReceiveDamage,			//è¢«ãƒ€ãƒ¡ãƒ¼ã‚¸ã€‚
+		enEnemyState_Dead,		//æ­»äº¡
 	};
 public:
 	Enemy2();
@@ -25,73 +25,73 @@ public:
 	void Gravity();
 	void MakeBodyCollision();
 	/// <summary>
-	/// À•W‚ğİ’è‚·‚éB
+	/// åº§æ¨™ã‚’è¨­å®šã™ã‚‹ã€‚
 	/// </summary>
-	/// <param name="position">À•WB</param>
+	/// <param name="position">åº§æ¨™ã€‚</param>
 	void SetPosition(const Vector3& position)
 	{
 		m_position = position;
 	}
 	/// <summary>
-	/// À•W‚ğæ“¾‚·‚éB
+	/// åº§æ¨™ã‚’å–å¾—ã™ã‚‹ã€‚
 	/// </summary>
-	/// <returns>À•WB</returns>
+	/// <returns>åº§æ¨™ã€‚</returns>
 	const Vector3& GetPosition() const
 	{
 		return m_position;
 	}
 	/// <summary>
-	/// ‰ñ“]‚ğİ’è‚·‚éB
+	/// å›è»¢ã‚’è¨­å®šã™ã‚‹ã€‚
 	/// </summary>
-	/// <param name="rotation">‰ñ“]B</param>
+	/// <param name="rotation">å›è»¢ã€‚</param>
 	void SetRotation(const Quaternion& rotation)
 	{
 		m_rotation = rotation;
 	}
 	/// <summary>
-	/// ‘å‚«‚³‚ğİ’è‚·‚éB
+	/// å¤§ãã•ã‚’è¨­å®šã™ã‚‹ã€‚
 	/// </summary>
-	/// <param name="scale">‘å‚«‚³B</param>
+	/// <param name="scale">å¤§ãã•ã€‚</param>
 	void SetScale(const Vector3& scale)
 	{
 		m_scale = scale;
 	}
 
 	/// <summary>
-	/// ’ÇÕˆ—B
+	/// è¿½è·¡å‡¦ç†ã€‚
 	/// </summary>
 	void Chase();
 	/// <summary>
-	/// ‰ñ“]ˆ—B
+	/// å›è»¢å‡¦ç†ã€‚
 	/// </summary>
 	void Rotation();
 	/// <summary>
-	/// ƒvƒŒƒCƒ„[‚ÌUŒ‚‚Æ‚Ì“–‚½‚è”»’èˆ—B
+	/// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®æ”»æ’ƒã¨ã®å½“ãŸã‚Šåˆ¤å®šå‡¦ç†ã€‚
 	/// </summary>
 	void Collision();
 	/// <summary>
-	/// ƒvƒŒƒCƒ„[‚ğ’Tõ‚·‚éB
+	/// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚’æ¢ç´¢ã™ã‚‹ã€‚
 	/// </summary>
-	/// <returns>ƒvƒŒƒCƒ„[‚ªŒ©‚Â‚©‚Á‚½‚çtrueB</returns>
+	/// <returns>ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãŒè¦‹ã¤ã‹ã£ãŸã‚‰trueã€‚</returns>
 	const bool SearchPlayer() const;
 	/// <summary>
-	/// ŠeƒXƒe[ƒg‚Ì‘JˆÚˆ—B
+	/// å„ã‚¹ãƒ†ãƒ¼ãƒˆã®é·ç§»å‡¦ç†ã€‚
 	/// </summary>
 	void ManageState();
 	/// <summary>
-	/// ‹¤’Ê‚ÌƒXƒe[ƒg‘JˆÚˆ—B
+	/// å…±é€šã®ã‚¹ãƒ†ãƒ¼ãƒˆé·ç§»å‡¦ç†ã€‚
 	/// </summary>
 	void ProcessCommonStateTransition();
 	/// <summary>
-	/// ‘Ò‹@ƒXƒe[ƒg‚Ì‘JˆÚˆ—B
+	/// å¾…æ©Ÿã‚¹ãƒ†ãƒ¼ãƒˆã®é·ç§»å‡¦ç†ã€‚
 	/// </summary>
 	void ProcessIdleStateTransition();
 	/// <summary>
-	/// €–SƒXƒe[ƒg‚Ì‘JˆÚˆ—B
+	/// æ­»äº¡ã‚¹ãƒ†ãƒ¼ãƒˆã®é·ç§»å‡¦ç†ã€‚
 	/// </summary>
 	void ProcessDeadStateTransition();
 	/// <summary>
-	/// b—…‚ğ¶‚İo‚·ˆ—B
+	/// ç”²ç¾…ã‚’ç”Ÿã¿å‡ºã™å‡¦ç†ã€‚
 	/// </summary>
 	void ProduceShell();
 
@@ -101,29 +101,30 @@ public:
 		return m_spawnerFlag;
 	}
 
-	ModelRender					m_modelRender;								//ƒ‚ƒfƒ‹ƒŒƒ“ƒ_[B
-	Vector3						m_position;									//À•WB
-	Vector3						m_moveSpeed;								//ˆÚ“®‘¬“xB
-	Vector3						m_forward = Vector3::AxisZ;					//ƒGƒlƒ~[‚Ì³–ÊƒxƒNƒgƒ‹B
-	Quaternion					m_rotation;									//‰ñ“]B
-	Vector3						m_scale = Vector3::One;						//‘å‚«‚³B
+	ModelRender					m_modelRender;								//ãƒ¢ãƒ‡ãƒ«ãƒ¬ãƒ³ãƒ€ãƒ¼ã€‚
+	Vector3						m_position;									//åº§æ¨™ã€‚
+	Vector3						m_moveSpeed;								//ç§»å‹•é€Ÿåº¦ã€‚
+	Vector3						m_forward = Vector3::AxisZ;					//ã‚¨ãƒãƒŸãƒ¼ã®æ­£é¢ãƒ™ã‚¯ãƒˆãƒ«ã€‚
+	Quaternion					m_rotation;									//å›è»¢ã€‚
+	Vector3						m_scale = Vector3::One;						//å¤§ãã•ã€‚
 	Vector3						m_up = Vector3::AxisY;
 	Vector3						m_bodyCollPos;
-	CharacterController			m_charaCon;									//ƒLƒƒƒ‰ƒRƒ“B
-	EnEnemyState				m_enemyState = enEnemyState_Idle;			//ƒGƒlƒ~[ƒXƒe[ƒgB
+	CharacterController			m_charaCon;									//ã‚­ãƒ£ãƒ©ã‚³ãƒ³ã€‚
+	EnEnemyState				m_enemyState = enEnemyState_Idle;			//ã‚¨ãƒãƒŸãƒ¼ã‚¹ãƒ†ãƒ¼ãƒˆã€‚
 
-	Player* m_player = nullptr;							//ƒvƒŒƒCƒ„[B
+	Player* m_player = nullptr;							//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã€‚
 	Shell* m_shell = nullptr;
 	CollisionObject* m_bodyColl;
 	ItemSpawner* m_spawner = nullptr;
+	SoundSource* m_damageSE;
 
 	//std::vector<CollisionObject*>m_bodyCollisions;
 
-	float						m_chaseTimer = 0.0f;						//’ÇÕƒ^ƒCƒ}[B
+	float						m_chaseTimer = 0.0f;						//è¿½è·¡ã‚¿ã‚¤ãƒãƒ¼ã€‚
 	float						m_idleTimer = 0.0f;
 	float						m_deleteTimer = 0.0f;
 	float						m_deleteTime = 1.0f;
-	bool						m_itemProduced = false;							//ƒAƒCƒeƒ€‚ğ¶¬‚µ‚½‚©‚Ç‚¤‚©B
+	bool						m_itemProduced = false;							//ã‚¢ã‚¤ãƒ†ãƒ ã‚’ç”Ÿæˆã—ãŸã‹ã©ã†ã‹ã€‚
 	bool m_spawnerFlag = false;
 };
 

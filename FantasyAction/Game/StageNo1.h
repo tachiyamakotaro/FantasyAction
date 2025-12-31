@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "level3DRender/LevelRender.h"
 
@@ -43,6 +43,7 @@ private:
 	GameScene* m_gameScene = nullptr;
 	SkyCube* m_skyCube = nullptr;
 	StageCount* m_stageCount = nullptr;
+	SoundSource* m_stageBGM;
 
 
 	std::vector<StageNo1Level*> m_stageNo1Levels;

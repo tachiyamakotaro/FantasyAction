@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 class Shell;
 class Hp;
@@ -24,7 +24,7 @@ public:
 	void PlayerState();
 	void Animation();
 	void Render(RenderContext& rc);
-	//ƒvƒŒƒCƒ„[‚Ì‘O•ûƒxƒNƒgƒ‹‚ğ•Ô‚·
+	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®å‰æ–¹ãƒ™ã‚¯ãƒˆãƒ«ã‚’è¿”ã™
 	Vector3 GetForwardXZ();
 
 	const bool IsMove()const;
@@ -34,49 +34,49 @@ public:
 	const bool IsShellHas() const;
 
 	/// <summary>
-	/// À•W‚ğİ’èB
+	/// åº§æ¨™ã‚’è¨­å®šã€‚
 	/// </summary>
-	/// <param name="position">À•WB</param>
+	/// <param name="position">åº§æ¨™ã€‚</param>
 	void SetPosition(const Vector3& position)
 	{
 		m_position = position;
 	}
 	/// <summary>
-	/// À•W‚ğæ“¾B
+	/// åº§æ¨™ã‚’å–å¾—ã€‚
 	/// </summary>
-	/// <returns>À•WB</returns>
+	/// <returns>åº§æ¨™ã€‚</returns>
 	const Vector3& GetPosition() const
 	{
 		return m_position;
 	}
 	/// <summary>
-	/// ‰ŠúÀ•W‚ğİ’èB
+	/// åˆæœŸåº§æ¨™ã‚’è¨­å®šã€‚
 	/// </summary>
-	/// <param name="startPosition">‰ŠúÀ•WB</param>
+	/// <param name="startPosition">åˆæœŸåº§æ¨™ã€‚</param>
 	void SetStartPosition(const Vector3& startPosition)
 	{
 		m_startPosition = startPosition;
 	}
 	/// <summary>
-	/// ‰ŠúÀ•W‚ğæ“¾B
+	/// åˆæœŸåº§æ¨™ã‚’å–å¾—ã€‚
 	/// </summary>
-	/// <param name="startPosition">‰ŠúÀ•WB</param>
+	/// <param name="startPosition">åˆæœŸåº§æ¨™ã€‚</param>
 	void GetStartPosition(Vector3& startPosition) const
 	{
 		startPosition = m_startPosition;
 	}
 	///<summary>
-	///	ˆÚ“®‘¬“x‚ğ‰ÁZ
+	///	ç§»å‹•é€Ÿåº¦ã‚’åŠ ç®—
 	/// </summary>
-	/// <param name="addMoveSpeed">‰ÁZ‚·‚éˆÚ“®‘¬“x</param>
+	/// <param name="addMoveSpeed">åŠ ç®—ã™ã‚‹ç§»å‹•é€Ÿåº¦</param>
 	void AddMoveSpeed(const Vector3& addMoveSpeed)
 	{
 		m_moveSpeed += addMoveSpeed;
 	}
 	///<summary>
-	///	ƒLƒƒƒ‰ƒNƒ^[ƒRƒ“ƒgƒ[ƒ‰[
+	///	ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼
 	/// </summary>
-	/// <returns>ƒLƒƒƒ‰ƒNƒ^[ƒRƒ“ƒgƒ[ƒ‰[</returns>
+	/// <returns>ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼</returns>
 	CharacterController& GetCharacterController()
 	{
 		return m_characterController;
@@ -158,6 +158,7 @@ private:
 	int m_maxLife = 3;
 
 	SoundSource* m_jumpSe;
+	SoundSource* m_damageSE;
 	CollisionObject* m_jumpCol = nullptr;
 	Shell* m_shell = nullptr;
 	Hp* m_hpUI = nullptr;

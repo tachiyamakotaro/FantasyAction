@@ -33,10 +33,10 @@ namespace
 	};
 
 	SceanInfo sceanInfo[GameScene_num] = {
-		{"Title1"/*,u8"スタートボタンでゲームスタート"*/},
-		{"GoalPedestal", u8"ステージクリア！\nスタートボタンで次のステージ"},
-		{"gameOver", u8"ゲームオーバー\nスタートボタンでリトライ"},
-		{"GameClear"/*, u8"ゲームクリア！\nスタートボタンでタイトルへ"*/},
+		{"Title1", u8"    GAME START    \nPREES START BUTTON"},
+		{"StageClear", u8"    NEXT STAGE    \nPREES START BUTTON"},
+		{"GameOver", u8"    RETRY     \nPREES START BUTTON"},
+		{"GameClear", u8"    TITLE    \nPREES START BUTTON"},
 	};
 }
 
@@ -59,8 +59,9 @@ void GameScene::SetText(int scenenum)
 	std::wstring wstr = converter.from_bytes(str);
 	const wchar_t* text = wstr.c_str();
 	m_sceneFont.SetText(text);
-	m_sceneFont.SetPosition(0.0f, 0.0f, -10.0f);
-	m_sceneFont.SetColor(g_vec4White);
+	m_sceneFont.SetPosition(-300.0f, -300.0f, -10.0f);
+	m_sceneFont.SetColor(0.0f,1.0f,0.0f,1.0f);
+	m_sceneFont.SetScale(1.5f);
 }
 
 void GameScene::SetSprite(int spritenum)

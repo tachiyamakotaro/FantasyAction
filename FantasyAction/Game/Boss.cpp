@@ -97,6 +97,11 @@ void Boss::Update()
 		//return;
 	}
 
+	if (m_bossState != enBossState_Idle)
+	{
+		m_modelDrawFlag = true;
+	}
+
 	Chase();
 
 	Rotation();
@@ -104,16 +109,6 @@ void Boss::Update()
 	Collision();
 
 	ManageState();
-
-	m_bodyCollPos = m_charaCon.GetPosition();
-	m_bodyCollPos.y += 100.0f;
-	m_bodyColl->SetPosition(m_bodyCollPos);
-	m_bodyColl->SetRotation(m_rotation);
-
-	if (m_bossState != enBossState_Idle)
-	{
-		m_modelDrawFlag = true;
-	}
 
 	m_modelRender.Update();
 }
@@ -136,6 +131,10 @@ void Boss::Chase()
 	{
 		m_moveSpeed.x = 0.0f;
 		m_moveSpeed.z = 0.0f;
+		m_bodyCollPos = m_charaCon.GetPosition();
+		m_bodyCollPos.y += 100.0f;
+		m_bodyColl->SetPosition(m_bodyCollPos);
+		m_bodyColl->SetRotation(m_rotation);
 		return;
 	}
 
@@ -154,6 +153,10 @@ void Boss::Chase()
 		m_moveSpeed.y = 0.0f;
 	}
 
+	m_bodyCollPos = m_charaCon.GetPosition();
+	m_bodyCollPos.y += 100.0f;
+	m_bodyColl->SetPosition(m_bodyCollPos);
+	m_bodyColl->SetRotation(m_rotation);
 	/*Vector3 modelPos = m_position;
 	modelPos.y += 2.5f;*/
 	m_modelRender.SetPosition(modelPos);

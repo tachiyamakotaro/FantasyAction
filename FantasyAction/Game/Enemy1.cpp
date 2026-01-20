@@ -24,7 +24,10 @@ Enemy1::Enemy1()
 
 Enemy1::~Enemy1()
 {
-	DeleteGO(m_bodyColl);
+	if (m_bodyColl != nullptr)
+	{
+		DeleteGO(m_bodyColl);
+	}
 	DeleteGO(m_damageSE);
 }
 
@@ -56,6 +59,12 @@ bool Enemy1::Start()
 
 void Enemy1::Update()
 {
+	if (m_enemyState == enEnemyState_Dead)
+	{
+		ManageState();
+		m_modelRender.Update();
+		return;
+	}
 	Gravity();
 
 	Chase();
@@ -66,9 +75,12 @@ void Enemy1::Update()
 
 	ManageState();
 
-	m_bodyCollPos = m_charaCon.GetPosition();
-	m_bodyCollPos.y += 50.0f;
-	m_bodyColl->SetPosition(m_bodyCollPos);
+	/*if (m_requestDeleteBodyColl && m_bodyColl)
+	{
+		m_bodyCollPos = m_charaCon.GetPosition();
+		m_bodyCollPos.y += 50.0f;
+		m_bodyColl->SetPosition(m_bodyCollPos);
+	}*/
 
 	m_modelRender.Update();
 }
@@ -89,6 +101,9 @@ void Enemy1::Chase()
 	{
 		m_moveSpeed.x = 0.0f;
 		m_moveSpeed.z = 0.0f;
+		m_bodyCollPos = m_charaCon.GetPosition();
+		m_bodyCollPos.y += 50.0f;
+		m_bodyColl->SetPosition(m_bodyCollPos);
 		return;
 	}
 
@@ -130,6 +145,10 @@ void Enemy1::Chase()
 
 	/*Vector3 modelPos = m_position;
 	modelPos.y += 2.5f;*/
+	m_bodyCollPos = m_charaCon.GetPosition();
+	m_bodyCollPos.y += 50.0f;
+	m_bodyColl->SetPosition(m_bodyCollPos);
+
 	m_modelRender.SetPosition(modelPos);
 }
 
@@ -173,8 +192,9 @@ void Enemy1::Collision()
 			SoundManager* sound = FindGO<SoundManager>("soundManager");
 			m_damageSE = sound->PlayingSound(Sound::enSound_EnDamageSE, false);
 			m_enemyState = enEnemyState_Dead;
-
+			m_requestDeleteBodyColl = true;
 			m_player->m_moveSpeed.y = PLAYER_BOUNCE;
+			return;
 		
 		}
 	}
@@ -187,6 +207,9 @@ void Enemy1::Collision()
 			SoundManager*sound = FindGO<SoundManager>("soundManager");
 			m_damageSE = sound->PlayingSound(Sound::enSound_EnDamageSE,false);
 			m_enemyState = enEnemyState_Dead;
+			m_requestDeleteBodyColl = true;
+
+			return;
 		}
 	}
 }
@@ -281,7 +304,11 @@ void Enemy1::ProcessDeadStateTransition()
 	m_modelRender.SetScale(m_scale.x, 0.3f, m_scale.z);
 	m_charaCon.RemoveRigidBoby();
 
-	DeleteGO(m_bodyColl);
+	if (m_bodyColl != nullptr)
+	{
+		DeleteGO(m_bodyColl);
+		m_bodyColl = nullptr;
+	}
 
 	if (m_deleteTimer >= m_deleteTime)
 	{

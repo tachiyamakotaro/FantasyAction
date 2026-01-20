@@ -112,5 +112,6 @@ private:
 	float						m_idleTimer = 0.0f;
 	float						m_deleteTimer = 0.0f;
 	float						m_deleteTime = 1.5f;
+	bool 						m_requestDeleteBodyColl = false;
 };
 

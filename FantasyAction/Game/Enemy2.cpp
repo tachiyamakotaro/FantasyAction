@@ -288,7 +288,10 @@ void Enemy2::ProcessDeadStateTransition()
 	m_modelRender.SetScale(m_scale.x, 0.3f, m_scale.z);
 	m_charaCon.RemoveRigidBoby();
 
-	DeleteGO(m_bodyColl);
+	if (m_bodyColl != nullptr)
+	{
+		DeleteGO(m_bodyColl);
+	}
 
 	if (m_deleteTimer >= m_deleteTime)
 	{

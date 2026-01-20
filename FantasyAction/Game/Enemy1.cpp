@@ -33,13 +33,22 @@ Enemy1::~Enemy1()
 
 bool Enemy1::Start()
 {
-	m_modelRender.Init("Assets/modelData/slime.tkm");
+	//アニメーション設定
+	m_animClips[enEnemyState_Idle].Load("Assets/animData/enemyAnim/slime/Idle.tka");
+	m_animClips[enEnemyState_Idle].SetLoopFlag(true);
+	m_animClips[enEnemyState_Chase].Load("Assets/animData/enemyAnim/slime/walk.tka");
+	m_animClips[enEnemyState_Chase].SetLoopFlag(true);
+	m_animClips[enEnemyState_Dead].Load("Assets/animData/enemyAnim/slime/die2.tka");
+	m_animClips[enEnemyState_Dead].SetLoopFlag(false);
+	m_modelRender.Init("Assets/modelData/slime.tkm",m_animClips,
+		enEnemyState_Num,enModelUpAxisZ);
 	//m_modelRender.Init("Assets/modelData/unityChan.tkm");
 
 	m_player = FindGO<Player>("player");
 
 	m_modelRender.SetPosition(m_position);
 	m_modelRender.SetRotation(m_rotation);
+	m_scale = Vector3(2.5f,2.5f,2.5f);
 	m_modelRender.SetScale(m_scale);
 
 	m_charaCon.Init(
@@ -301,7 +310,7 @@ void Enemy1::ProcessDeadStateTransition()
 	m_moveSpeed.x = 0.0f;
 	m_moveSpeed.y = 0.0f;
 	m_moveSpeed.z = 0.0f;
-	m_modelRender.SetScale(m_scale.x, 0.3f, m_scale.z);
+	/*m_modelRender.SetScale(m_scale.x, 0.3f, m_scale.z);*/
 	m_charaCon.RemoveRigidBoby();
 
 	if (m_bodyColl != nullptr)
@@ -323,13 +332,19 @@ void Enemy1::ManageState()
 	case enEnemyState_Idle:
 		//待機ステートの遷移処理。
 		ProcessIdleStateTransition();
+		m_modelRender.PlayAnimation(enEnemyState_Idle);
 		break;
 	case enEnemyState_Chase:
+		//追跡ステートの遷移処理。
+		/*ProcessCommonStateTransition();*/
+		m_modelRender.PlayAnimation(enEnemyState_Chase);
 		
 		break;
 	case enEnemyState_Dead:
 		//死亡ステートの遷移処理。
 		ProcessDeadStateTransition();
+		m_modelRender.PlayAnimation(enEnemyState_Dead);
+		
 		break;
 	}
 }

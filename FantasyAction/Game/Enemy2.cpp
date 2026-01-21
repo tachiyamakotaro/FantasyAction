@@ -34,7 +34,7 @@ Enemy2::~Enemy2()
 
 bool Enemy2::Start()
 {
-	m_modelRender.Init("Assets/modelData/golem.tkm");
+	m_modelRender.Init("Assets/modelData/mimic.tkm");
 
 	m_player = FindGO<Player>("player");
 
@@ -46,6 +46,7 @@ bool Enemy2::Start()
 
 	m_modelRender.SetPosition(m_position);
 	m_modelRender.SetRotation(m_rotation);
+	m_scale = Vector3(5.0f, 5.0f, 5.0f);
 	m_modelRender.SetScale(m_scale);
 
 	m_charaCon.Init(
@@ -281,26 +282,26 @@ void Enemy2::ProcessDeadStateTransition()
 	{
 		ProduceShell();
 	}
-	m_deleteTimer += g_gameTime->GetFrameDeltaTime();
+	/*m_deleteTimer += g_gameTime->GetFrameDeltaTime();
 	m_moveSpeed.x = 0.0f;
 	m_moveSpeed.y = 0.0f;
 	m_moveSpeed.z = 0.0f;
-	m_modelRender.SetScale(m_scale.x, 0.3f, m_scale.z);
-	m_charaCon.RemoveRigidBoby();
+	m_modelRender.SetScale(m_scale.x, 0.3f, m_scale.z);*/
+	//m_charaCon.RemoveRigidBoby();
 
 	if (m_bodyColl != nullptr)
 	{
 		DeleteGO(m_bodyColl);
 	}
 
-	if (m_deleteTimer >= m_deleteTime)
-	{
+	/*if (m_deleteTimer >= m_deleteTime)
+	{*/
 		/*if (m_spawnerFlag == true)
 		{
 			m_spawner->SetSpawnedEnemy(false);
 		}*/
 		DeleteGO(this);
-	}
+	//}
 }
 
 void Enemy2::ProduceShell()

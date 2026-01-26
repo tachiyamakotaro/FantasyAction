@@ -34,7 +34,9 @@ Enemy2::~Enemy2()
 
 bool Enemy2::Start()
 {
-	m_modelRender.Init("Assets/modelData/mimic.tkm");
+	Animation();
+	m_modelRender.Init("Assets/modelData/mimic.tkm",m_animClips,
+		enEnemyState_Num,enModelUpAxisZ);
 
 	m_player = FindGO<Player>("player");
 
@@ -55,12 +57,21 @@ bool Enemy2::Start()
 		m_position
 	);
 
-	MakeBodyCollision();
-
 	m_enemyState = enEnemyState_Idle;
 	m_forward = Vector3::AxisZ; // 初期前ベクトル
+	m_rotation.Apply(m_forward);
+
+	MakeBodyCollision();
 	
 	return true;
+}
+
+void Enemy2::Animation()
+{
+	m_animClips[enEnemyState_Idle].Load("Assets/animData/enemyAnim/mimic/idle.tka");
+	m_animClips[enEnemyState_Idle].SetLoopFlag(true);
+	m_animClips[enEnemyState_Chase].Load("Assets/animData/enemyAnim/mimic/walk.tka");
+	m_animClips[enEnemyState_Chase].SetLoopFlag(true);
 }
 
 void Enemy2::MakeBodyCollision()
@@ -90,9 +101,9 @@ void Enemy2::Update()
 
 	ManageState();
 
-	m_bodyCollPos = m_charaCon.GetPosition();
+	/*m_bodyCollPos = m_charaCon.GetPosition();
 	m_bodyCollPos.y += 50.0f;
-	m_bodyColl->SetPosition(m_bodyCollPos);
+	m_bodyColl->SetPosition(m_bodyCollPos);*/
 	
 	m_modelRender.Update();
 }
@@ -104,7 +115,7 @@ void Enemy2::Gravity()
 
 void Enemy2::Chase()
 {
-	m_position = m_charaCon.Execute(m_moveSpeed, /*g_gameTime->GetFrameDeltaTime()*/1.0f/60.0f);
+	m_position = m_charaCon.Execute(m_moveSpeed, g_gameTime->GetFrameDeltaTime());
 	Vector3 modelPos = m_position;
 	modelPos.y += 2.5f;
 	m_modelRender.SetPosition(modelPos);
@@ -112,6 +123,9 @@ void Enemy2::Chase()
 	{
 		m_moveSpeed.x = 0.0f;
 		m_moveSpeed.z = 0.0f;
+		m_bodyCollPos = m_charaCon.GetPosition();
+		m_bodyCollPos.y += 50.0f;
+		m_bodyColl->SetPosition(m_bodyCollPos);
 		return;
 	}
 
@@ -136,6 +150,7 @@ void Enemy2::Chase()
 	}
 	if (acosf(cosv) > Math::PI / 180.0f * 120.0f) // 視界外なら停止
 	{
+		m_forward = m_moveSpeed;
 		m_moveSpeed = Vector3::Zero;
 		m_enemyState = enEnemyState_Idle;
 	}
@@ -151,6 +166,10 @@ void Enemy2::Chase()
 
 	/*Vector3 modelPos = m_position;
 	modelPos.y += 2.5f;*/
+	m_bodyCollPos = m_charaCon.GetPosition();
+	m_bodyCollPos.y += 50.0f;
+	m_bodyColl->SetPosition(m_bodyCollPos);
+
 	m_modelRender.SetPosition(modelPos);
 }
 
@@ -196,7 +215,7 @@ void Enemy2::Collision()
 			m_enemyState = enEnemyState_Dead;
 
 			m_player->m_moveSpeed.y = PLAYER_BOUNCE;
-
+			return;
 		}
 	}
 
@@ -208,7 +227,7 @@ void Enemy2::Collision()
 			SoundManager* sound = FindGO<SoundManager>("soundManager");
 			m_damageSE = sound->PlayingSound(Sound::enSound_EnDamageSE, false);
 			m_enemyState = enEnemyState_Dead;
-
+			return;
 		}
 	}
 }
@@ -318,9 +337,10 @@ void Enemy2::ManageState()
 	case enEnemyState_Idle:
 		//待機ステートの遷移処理。
 		ProcessIdleStateTransition();
+		m_modelRender.PlayAnimation(enEnemyState_Idle);
 		break;
 	case enEnemyState_Chase:
-
+		m_modelRender.PlayAnimation(enEnemyState_Chase);
 		break;
 	case enEnemyState_Dead:
 		//死亡ステートの遷移処理。

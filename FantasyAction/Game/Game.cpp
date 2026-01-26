@@ -13,7 +13,7 @@ Game::Game()
 
 Game::~Game()
 {
-	DeleteGO(m_stageNo1);
+	//DeleteGO(m_stageNo1);
 }
 
 bool Game::Start()
@@ -28,7 +28,7 @@ bool Game::Start()
 
 void Game::Update()
 {
-	m_modelRender.Update();
+	//m_modelRender.Update();
 }
 
 void Game::Render(RenderContext& rc)

@@ -151,7 +151,7 @@ void BossStage::MakeLevel()
 				return true;
 			}
 
-			if (objData.EqualObjectName(L"boss2"))
+			if (objData.EqualObjectName(L"boss"))
 			{
 				m_boss = NewGO<Boss>(0, "boss");
 				m_boss->SetPosition(objData.position);

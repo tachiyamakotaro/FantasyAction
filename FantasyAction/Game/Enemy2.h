@@ -25,6 +25,7 @@ public:
 	void Render(RenderContext& rc);
 	void Gravity();
 	void MakeBodyCollision();
+	void Animation();
 	/// <summary>
 	/// 座標を設定する。
 	/// </summary>

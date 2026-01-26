@@ -8,7 +8,7 @@ namespace
 {
 	const float BODY_COLLISION_RADIUS = 10.0f;
 	const float BODY_COLLISION_HEIGHT = 3.0f;
-	const Vector3 BODY_COLLISION_SIZE = {250.0f,250.0f,500.0f};
+	const Vector3 BODY_COLLISION_SIZE = {250.0f,250.0f,600.0f};
 
 	const float CHARACON_RADIUS = 50.0f;
 	const float CHARACON_HEIGHT = 10.0f;
@@ -18,7 +18,7 @@ namespace
 	const float ATTACK_COOL_TIME = 2.0f;
 	const float ATTACK_RANGE = 1000.0f;
 	const float FIRE_SPEED = 1200.0f;
-
+	
 	const float PLAYER_BOUNCE = 1000.0f;
 }
 
@@ -35,17 +35,16 @@ Boss::~Boss()
 
 bool Boss::Start()
 {
-	//AnimClips();
+	AnimClips();
 
-	/*m_modelRender.Init("Assets/modelData/boss/boss2.tkm", m_animClips,
-		enBossState_Num,enModelUpAxisY);*/
-
-	m_modelRender.Init("Assets/modelData/boss/boss2.tkm");
+	m_modelRender.Init("Assets/modelData/boss/boss.tkm",m_animClips,
+		enBossState_Num,enModelUpAxisZ);
 
 	m_player = FindGO<Player>("player");
 
 	m_modelRender.SetPosition(m_position);
 	m_modelRender.SetRotation(m_rotation);
+	//m_scale = Vector3(30.0f, 30.0f, 30.0f);
 	m_modelRender.SetScale(m_scale);
 
 	m_charaCon.Init(
@@ -64,13 +63,13 @@ bool Boss::Start()
 
 void Boss::AnimClips()
 {
-	m_animClips[enBossState_Idle].Load("Assets/animData/bossAnimData/boss2Attack.tka");
+	m_animClips[enBossState_Idle].Load("Assets/animData/bossAnimData/Move.tka");
 	m_animClips[enBossState_Idle].SetLoopFlag(false);
-	m_animClips[enBossState_Chase].Load("Assets/animData/bossAnimData/boss2Attack.tka");
-	m_animClips[enBossState_Chase].SetLoopFlag(false);
-	m_animClips[enBossState_Attack].Load("Assets/animData/bossAnimData/boss2Attack.tka");
+	m_animClips[enBossState_Chase].Load("Assets/animData/bossAnimData/Move.tka");
+	m_animClips[enBossState_Chase].SetLoopFlag(true);
+	m_animClips[enBossState_Attack].Load("Assets/animData/bossAnimData/Move.tka");
 	m_animClips[enBossState_Attack].SetLoopFlag(true);
-	m_animClips[enBossState_Dead].Load("Assets/animData/bossAnimData/boss2Attack.tka");
+	m_animClips[enBossState_Dead].Load("Assets/animData/bossAnimData/Move.tka");
 	m_animClips[enBossState_Dead].SetLoopFlag(false);
 }
 
@@ -174,9 +173,9 @@ void Boss::Rotation()
 		}
 
 		diff.Normalize();
-		const float PI = 3.14159265;
+		//const float PI = 3.14159265;
 		float angle = atan2(diff.x, diff.z);
-		m_rotation.SetRotationY(angle + PI);
+		m_rotation.SetRotationY(angle /*+ PI*0.1f*/);
 		m_modelRender.SetRotation(m_rotation);
 	}
 }
@@ -311,11 +310,11 @@ void Boss::ManageState()
 		Appearance();
 		break;
 	case enBossState_Chase:
-		
+		m_modelRender.PlayAnimation(enBossState_Chase);
 		break;
 	case enBossState_Attack:
 		ProcessAttackStateTransition();
-		m_modelRender.PlayAnimation(enBossState_Attack);
+		//m_modelRender.PlayAnimation(enBossState_Attack);
 		break;
 	case enBossState_Dead:
 		ProcessDeadStateTransition();

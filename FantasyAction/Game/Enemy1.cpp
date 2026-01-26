@@ -13,7 +13,10 @@ namespace
 	const float ATTACK_COLLISION_HEIGHT = 3.0f;
 	const float GRAVITY = 200.0f;
 	const float HIGHER =  30.0f;
-	const float PLAYER_BOUNCE = 1000.0f;
+
+	const Vector3 PLAYER_BOUNCE = { 0.0f, 1000.0f,0.0f };
+	const Vector3 MODEL_SCALE = { 2.5f,2.5f,2.5f };
+
 	//const float PLAYER_JUMPSPEED_LIMIT = 900.0f;
 }
 
@@ -24,7 +27,7 @@ Enemy1::Enemy1()
 
 Enemy1::~Enemy1()
 {
-	if (m_bodyColl != nullptr)
+	if (m_bodyColl)
 	{
 		DeleteGO(m_bodyColl);
 	}
@@ -48,7 +51,7 @@ bool Enemy1::Start()
 
 	m_modelRender.SetPosition(m_position);
 	m_modelRender.SetRotation(m_rotation);
-	m_scale = Vector3(2.5f,2.5f,2.5f);
+	m_scale = MODEL_SCALE;
 	m_modelRender.SetScale(m_scale);
 
 	m_charaCon.Init(
@@ -74,7 +77,7 @@ void Enemy1::Update()
 		m_modelRender.Update();
 		return;
 	}
-	Gravity();
+	//Gravity();
 
 	Chase();
 
@@ -101,7 +104,7 @@ void Enemy1::Gravity()
 
 void Enemy1::Chase()
 {
-	//m_moveSpeed.y -= GRAVITY;
+	m_moveSpeed.y -= GRAVITY;
 	m_position = m_charaCon.Execute(m_moveSpeed, g_gameTime->GetFrameDeltaTime());
 	Vector3 modelPos = m_position;
 	modelPos.y += 2.5f;
@@ -202,7 +205,8 @@ void Enemy1::Collision()
 			m_damageSE = sound->PlayingSound(Sound::enSound_EnDamageSE, false);
 			m_enemyState = enEnemyState_Dead;
 			m_requestDeleteBodyColl = true;
-			m_player->m_moveSpeed.y = PLAYER_BOUNCE;
+			
+			m_player->SetMoveSpeed(PLAYER_BOUNCE);
 			return;
 		
 		}
@@ -313,11 +317,13 @@ void Enemy1::ProcessDeadStateTransition()
 	/*m_modelRender.SetScale(m_scale.x, 0.3f, m_scale.z);*/
 	m_charaCon.RemoveRigidBoby();
 
-	if (m_bodyColl != nullptr)
+	/*if (m_bodyColl != nullptr)
 	{
 		DeleteGO(m_bodyColl);
 		m_bodyColl = nullptr;
-	}
+	}*/
+
+	m_bodyColl->SetIsEnable(false);
 
 	if (m_deleteTimer >= m_deleteTime)
 	{

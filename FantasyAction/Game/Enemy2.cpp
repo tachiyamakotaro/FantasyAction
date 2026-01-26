@@ -14,7 +14,10 @@ namespace
 	const float ATTACK_COLLISION_HEIGHT = 5.0f;
 	const float GRAVITY = 200.0f;
 	const float HIGHER = 30.0f;
-	const float PLAYER_BOUNCE = 1000.0f;
+
+	const Vector3 PLAYER_BOUNCE = {0.0f, 1000.0f,0.0f };
+
+	const Vector3 MODEL_SCALE = { 5.0f,5.0f,5.0f };
 	//const float PLAYER_JUMPSPEED_LIMIT = 900.0f;
 }
 
@@ -40,15 +43,9 @@ bool Enemy2::Start()
 
 	m_player = FindGO<Player>("player");
 
-	if (m_spawnerFlag == true)
-	{
-		/*m_spawner = FindGO<ItemSpawner>("item_spawner");
-		m_spawner->SetSpawnedEnemy(true);*/
-	}
-
 	m_modelRender.SetPosition(m_position);
 	m_modelRender.SetRotation(m_rotation);
-	m_scale = Vector3(5.0f, 5.0f, 5.0f);
+	m_scale = MODEL_SCALE;
 	m_modelRender.SetScale(m_scale);
 
 	m_charaCon.Init(
@@ -91,8 +88,6 @@ void Enemy2::MakeBodyCollision()
 
 void Enemy2::Update()
 {
-	Gravity();
-
 	Chase();
 
 	Rotation();
@@ -100,21 +95,13 @@ void Enemy2::Update()
 	Collision();
 
 	ManageState();
-
-	/*m_bodyCollPos = m_charaCon.GetPosition();
-	m_bodyCollPos.y += 50.0f;
-	m_bodyColl->SetPosition(m_bodyCollPos);*/
 	
 	m_modelRender.Update();
 }
 
-void Enemy2::Gravity()
-{
-	m_moveSpeed.y -= GRAVITY;
-}
-
 void Enemy2::Chase()
 {
+	m_moveSpeed.y -= GRAVITY;
 	m_position = m_charaCon.Execute(m_moveSpeed, g_gameTime->GetFrameDeltaTime());
 	Vector3 modelPos = m_position;
 	modelPos.y += 2.5f;
@@ -158,14 +145,11 @@ void Enemy2::Chase()
 	m_moveSpeed = diff * 250.0f;
 	m_moveSpeed.y -= GRAVITY;
 
-	//m_position = m_charaCon.Execute(m_moveSpeed, g_gameTime->GetFrameDeltaTime());
 	if (m_charaCon.IsOnGround())
 	{
 		m_moveSpeed.y = 0.0f;
 	}
 
-	/*Vector3 modelPos = m_position;
-	modelPos.y += 2.5f;*/
 	m_bodyCollPos = m_charaCon.GetPosition();
 	m_bodyCollPos.y += 50.0f;
 	m_bodyColl->SetPosition(m_bodyCollPos);
@@ -214,7 +198,7 @@ void Enemy2::Collision()
 			m_damageSE = sound->PlayingSound(Sound::enSound_EnDamageSE, false);
 			m_enemyState = enEnemyState_Dead;
 
-			m_player->m_moveSpeed.y = PLAYER_BOUNCE;
+			m_player->SetMoveSpeed(PLAYER_BOUNCE);
 			return;
 		}
 	}
@@ -301,26 +285,8 @@ void Enemy2::ProcessDeadStateTransition()
 	{
 		ProduceShell();
 	}
-	/*m_deleteTimer += g_gameTime->GetFrameDeltaTime();
-	m_moveSpeed.x = 0.0f;
-	m_moveSpeed.y = 0.0f;
-	m_moveSpeed.z = 0.0f;
-	m_modelRender.SetScale(m_scale.x, 0.3f, m_scale.z);*/
-	//m_charaCon.RemoveRigidBoby();
 
-	if (m_bodyColl != nullptr)
-	{
-		DeleteGO(m_bodyColl);
-	}
-
-	/*if (m_deleteTimer >= m_deleteTime)
-	{*/
-		/*if (m_spawnerFlag == true)
-		{
-			m_spawner->SetSpawnedEnemy(false);
-		}*/
-		DeleteGO(this);
-	//}
+	DeleteGO(this);
 }
 
 void Enemy2::ProduceShell()

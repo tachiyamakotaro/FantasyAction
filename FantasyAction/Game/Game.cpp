@@ -3,8 +3,8 @@
 #include "Player.h"
 #include "GameCamera.h"
 #include "StageNo1.h"
-#include "GameScene.h"
 #include "BossStage.h"
+#include "GameScene.h"
 
 Game::Game()
 {

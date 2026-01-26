@@ -18,8 +18,10 @@ namespace
 	const float ATTACK_COOL_TIME = 2.0f;
 	const float ATTACK_RANGE = 1000.0f;
 	const float FIRE_SPEED = 1200.0f;
+
+	const int BOSS_HP_ZERO = 0;
 	
-	const float PLAYER_BOUNCE = 1000.0f;
+	//const float PLAYER_BOUNCE = 1000.0f;
 }
 
 Boss::Boss()
@@ -90,10 +92,17 @@ void Boss::MakeBodyColl()
 void Boss::Update()
 {
 	//m_moveSpeed.y -= GRAVITY;
-	if (m_hp <= 0)
+	if (m_hp <= BOSS_HP_ZERO)
 	{
 		m_bossState = enBossState_Dead;
-		//return;
+	}
+
+	if (m_bossState == enBossState_Dead)
+	{
+		ManageState();
+
+		m_modelRender.Update();
+		return;
 	}
 
 	if (m_bossState != enBossState_Idle)
@@ -275,9 +284,7 @@ void Boss::ProcessDeadStateTransition()
 	m_modelRender.SetScale(m_scale.x, 0.3f, m_scale.z);
 	m_charaCon.RemoveRigidBoby();
 
-	DeleteGO(m_bodyColl);
-
-	
+	m_bodyColl->SetIsEnable(false);	
 
 	if (m_deleteTimer >= m_deleteTime)
 	{

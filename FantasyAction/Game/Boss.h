@@ -75,6 +75,8 @@ public:
 	
 	void ProcessDeadStateTransition();
 
+	void BossHpSituation();
+
 	const bool IsDead() const;
 
 	Vector3 GetForwardXZ();
@@ -108,6 +110,7 @@ private:
 	float						m_deleteTimer = 0.0f;
 	float						m_deleteTime = 1.5f;
 	float m_attackCoolTime = 0.0f;
+	float m_moveSpeedMag = 350.0f;
 	int m_hp = 3;	
 };
 

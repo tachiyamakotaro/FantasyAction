@@ -71,7 +71,7 @@ void Boss::AnimClips()
 	m_animClips[enBossState_Chase].SetLoopFlag(true);
 	m_animClips[enBossState_Attack].Load("Assets/animData/bossAnimData/Move.tka");
 	m_animClips[enBossState_Attack].SetLoopFlag(true);
-	m_animClips[enBossState_Dead].Load("Assets/animData/bossAnimData/Move.tka");
+	m_animClips[enBossState_Dead].Load("Assets/animData/bossAnimData/Die.tka");
 	m_animClips[enBossState_Dead].SetLoopFlag(false);
 }
 
@@ -110,11 +110,13 @@ void Boss::Update()
 		m_modelDrawFlag = true;
 	}
 
+	//BossHpSituation();
+
 	Chase();
 
 	Rotation();
 
-	Collision();
+	//Collision();
 
 	ManageState();
 
@@ -152,7 +154,8 @@ void Boss::Chase()
 	diff.Normalize();
 
 	//移動速度
-	m_moveSpeed = diff * 350.0f;
+	m_moveSpeed = diff * m_moveSpeedMag;
+
 	//m_moveSpeed.y -= GRAVITY;
 
 	//m_position = m_charaCon.Execute(m_moveSpeed, g_gameTime->GetFrameDeltaTime());
@@ -277,16 +280,21 @@ void Boss::ProcessAttackStateTransition()
 
 void Boss::ProcessDeadStateTransition()
 {
-	m_deleteTimer += g_gameTime->GetFrameDeltaTime();
+	//m_deleteTimer += g_gameTime->GetFrameDeltaTime();
 	m_moveSpeed.x = 0.0f;
 	m_moveSpeed.y = 0.0f;
 	m_moveSpeed.z = 0.0f;
-	m_modelRender.SetScale(m_scale.x, 0.3f, m_scale.z);
+	//m_modelRender.SetScale(m_scale.x, 0.3f, m_scale.z);
 	m_charaCon.RemoveRigidBoby();
 
 	m_bodyColl->SetIsEnable(false);	
 
-	if (m_deleteTimer >= m_deleteTime)
+	/*if (m_deleteTimer >= m_deleteTime)
+	{
+		DeleteGO(this);
+	}*/
+
+	if (m_modelRender.IsPlayingAnimation() == false)
 	{
 		DeleteGO(this);
 	}
@@ -324,6 +332,7 @@ void Boss::ManageState()
 		//m_modelRender.PlayAnimation(enBossState_Attack);
 		break;
 	case enBossState_Dead:
+		m_modelRender.PlayAnimation(enBossState_Dead);
 		ProcessDeadStateTransition();
 		break;
 	case enBossState_Num:
@@ -333,6 +342,24 @@ void Boss::ManageState()
 		break;
 	}
 }
+
+//void Boss::BossHpSituation()
+//{
+//	switch (m_hp)
+//	{
+//	case 3:
+//		m_moveSpeedMag = 350.0f;
+//		break;
+//	case 2:
+//		m_moveSpeedMag = 400.0f;
+//		break;
+//	case 1:
+//		m_moveSpeedMag = 450.0f;
+//		break;
+//	default:
+//		break;
+//	}
+//}
 
 void Boss::Render(RenderContext& rc)
 {

@@ -13,7 +13,10 @@ namespace
 	const float ATTACK_COLLISION_HEIGHT = 3.0f;
 	const float GRAVITY = 200.0f;
 	const float HIGHER =  30.0f;
-	const float PLAYER_BOUNCE = 1000.0f;
+
+	const Vector3 PLAYER_BOUNCE = { 0.0f, 1000.0f,0.0f };
+	const Vector3 MODEL_SCALE = { 2.5f,2.5f,2.5f };
+
 	//const float PLAYER_JUMPSPEED_LIMIT = 900.0f;
 }
 
@@ -24,19 +27,31 @@ Enemy1::Enemy1()
 
 Enemy1::~Enemy1()
 {
-	DeleteGO(m_bodyColl);
+	if (m_bodyColl)
+	{
+		DeleteGO(m_bodyColl);
+	}
 	DeleteGO(m_damageSE);
 }
 
 bool Enemy1::Start()
 {
-	m_modelRender.Init("Assets/modelData/slime.tkm");
+	//アニメーション設定
+	m_animClips[enEnemyState_Idle].Load("Assets/animData/enemyAnim/slime/Idle.tka");
+	m_animClips[enEnemyState_Idle].SetLoopFlag(true);
+	m_animClips[enEnemyState_Chase].Load("Assets/animData/enemyAnim/slime/walk.tka");
+	m_animClips[enEnemyState_Chase].SetLoopFlag(true);
+	m_animClips[enEnemyState_Dead].Load("Assets/animData/enemyAnim/slime/die2.tka");
+	m_animClips[enEnemyState_Dead].SetLoopFlag(false);
+	m_modelRender.Init("Assets/modelData/slime.tkm",m_animClips,
+		enEnemyState_Num,enModelUpAxisZ);
 	//m_modelRender.Init("Assets/modelData/unityChan.tkm");
 
 	m_player = FindGO<Player>("player");
 
 	m_modelRender.SetPosition(m_position);
 	m_modelRender.SetRotation(m_rotation);
+	m_scale = MODEL_SCALE;
 	m_modelRender.SetScale(m_scale);
 
 	m_charaCon.Init(
@@ -56,7 +71,13 @@ bool Enemy1::Start()
 
 void Enemy1::Update()
 {
-	Gravity();
+	if (m_enemyState == enEnemyState_Dead)
+	{
+		ManageState();
+		m_modelRender.Update();
+		return;
+	}
+	//Gravity();
 
 	Chase();
 
@@ -66,9 +87,12 @@ void Enemy1::Update()
 
 	ManageState();
 
-	m_bodyCollPos = m_charaCon.GetPosition();
-	m_bodyCollPos.y += 50.0f;
-	m_bodyColl->SetPosition(m_bodyCollPos);
+	/*if (m_requestDeleteBodyColl && m_bodyColl)
+	{
+		m_bodyCollPos = m_charaCon.GetPosition();
+		m_bodyCollPos.y += 50.0f;
+		m_bodyColl->SetPosition(m_bodyCollPos);
+	}*/
 
 	m_modelRender.Update();
 }
@@ -80,7 +104,7 @@ void Enemy1::Gravity()
 
 void Enemy1::Chase()
 {
-	//m_moveSpeed.y -= GRAVITY;
+	m_moveSpeed.y -= GRAVITY;
 	m_position = m_charaCon.Execute(m_moveSpeed, g_gameTime->GetFrameDeltaTime());
 	Vector3 modelPos = m_position;
 	modelPos.y += 2.5f;
@@ -89,6 +113,9 @@ void Enemy1::Chase()
 	{
 		m_moveSpeed.x = 0.0f;
 		m_moveSpeed.z = 0.0f;
+		m_bodyCollPos = m_charaCon.GetPosition();
+		m_bodyCollPos.y += 50.0f;
+		m_bodyColl->SetPosition(m_bodyCollPos);
 		return;
 	}
 
@@ -130,6 +157,10 @@ void Enemy1::Chase()
 
 	/*Vector3 modelPos = m_position;
 	modelPos.y += 2.5f;*/
+	m_bodyCollPos = m_charaCon.GetPosition();
+	m_bodyCollPos.y += 50.0f;
+	m_bodyColl->SetPosition(m_bodyCollPos);
+
 	m_modelRender.SetPosition(modelPos);
 }
 
@@ -173,8 +204,10 @@ void Enemy1::Collision()
 			SoundManager* sound = FindGO<SoundManager>("soundManager");
 			m_damageSE = sound->PlayingSound(Sound::enSound_EnDamageSE, false);
 			m_enemyState = enEnemyState_Dead;
-
-			m_player->m_moveSpeed.y = PLAYER_BOUNCE;
+			m_requestDeleteBodyColl = true;
+			
+			m_player->SetMoveSpeed(PLAYER_BOUNCE);
+			return;
 		
 		}
 	}
@@ -187,6 +220,9 @@ void Enemy1::Collision()
 			SoundManager*sound = FindGO<SoundManager>("soundManager");
 			m_damageSE = sound->PlayingSound(Sound::enSound_EnDamageSE,false);
 			m_enemyState = enEnemyState_Dead;
+			m_requestDeleteBodyColl = true;
+
+			return;
 		}
 	}
 }
@@ -278,10 +314,16 @@ void Enemy1::ProcessDeadStateTransition()
 	m_moveSpeed.x = 0.0f;
 	m_moveSpeed.y = 0.0f;
 	m_moveSpeed.z = 0.0f;
-	m_modelRender.SetScale(m_scale.x, 0.3f, m_scale.z);
+	/*m_modelRender.SetScale(m_scale.x, 0.3f, m_scale.z);*/
 	m_charaCon.RemoveRigidBoby();
 
-	DeleteGO(m_bodyColl);
+	/*if (m_bodyColl != nullptr)
+	{
+		DeleteGO(m_bodyColl);
+		m_bodyColl = nullptr;
+	}*/
+
+	m_bodyColl->SetIsEnable(false);
 
 	if (m_deleteTimer >= m_deleteTime)
 	{
@@ -296,13 +338,19 @@ void Enemy1::ManageState()
 	case enEnemyState_Idle:
 		//待機ステートの遷移処理。
 		ProcessIdleStateTransition();
+		m_modelRender.PlayAnimation(enEnemyState_Idle);
 		break;
 	case enEnemyState_Chase:
+		//追跡ステートの遷移処理。
+		/*ProcessCommonStateTransition();*/
+		m_modelRender.PlayAnimation(enEnemyState_Chase);
 		
 		break;
 	case enEnemyState_Dead:
 		//死亡ステートの遷移処理。
 		ProcessDeadStateTransition();
+		m_modelRender.PlayAnimation(enEnemyState_Dead);
+		
 		break;
 	}
 }

@@ -15,6 +15,7 @@ public:
 		enEnemyState_Chase,		//追跡
 		//enEnemyState_ReceiveDamage,			//被ダメージ。
 		enEnemyState_Dead,		//死亡
+		enEnemyState_Num
 	};
 public:
 	Enemy2();
@@ -24,6 +25,7 @@ public:
 	void Render(RenderContext& rc);
 	void Gravity();
 	void MakeBodyCollision();
+	void Animation();
 	/// <summary>
 	/// 座標を設定する。
 	/// </summary>
@@ -111,6 +113,7 @@ public:
 	Vector3						m_bodyCollPos;
 	CharacterController			m_charaCon;									//キャラコン。
 	EnEnemyState				m_enemyState = enEnemyState_Idle;			//エネミーステート。
+	AnimationClip				m_animClips[enEnemyState_Num];
 
 	Player* m_player = nullptr;							//プレイヤー。
 	Shell* m_shell = nullptr;

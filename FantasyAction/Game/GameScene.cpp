@@ -35,8 +35,8 @@ namespace
 	SceanInfo sceanInfo[GameScene_num] = {
 		{"Title1", u8"    GAME START    \nPREES START BUTTON"},
 		{"StageClear", u8"    NEXT STAGE    \nPREES START BUTTON"},
-		{"GameOver", u8"    RETRY     \nPREES START BUTTON"},
-		{"GameClear", u8"    TITLE    \nPREES START BUTTON"},
+		{"GameOver", u8"      RETRY     \nPREES START BUTTON"},
+		{"GameClear", u8"      TITLE    \nPREES START BUTTON"},
 	};
 }
 
@@ -279,7 +279,7 @@ bool GameClear::Start()
 {
 	int scene = GameClearScene;
 	SetSprite(scene);
-	//SetText(scene);
+	SetText(scene);
 	m_stageCount = FindGO<StageCount>("stageCount");
 	m_stageClearCount = m_stageCount->GetStageCount();
 

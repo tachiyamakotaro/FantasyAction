@@ -82,20 +82,15 @@ public:
 		return m_characterController;
 	}
 
-	/*const void GetPlayerState()const
-	{
-		return m_playerState=enPlayerState_Num;
-	}*/
-
 	void SetRotation(const Quaternion& rotation)
 	{
 		m_rotation = rotation;
 	}
 
-	//void SetScale(const Vector3& scale)
-	//{
-	//	m_scale = scale;
-	//}
+	void SetMoveSpeed(const Vector3& moveSpeed)
+	{
+		m_moveSpeed = moveSpeed;
+	}
 
 	const int GetLife()const
 	{

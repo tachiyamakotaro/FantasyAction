@@ -12,7 +12,7 @@ namespace
 
 	//甲羅の定数
 	const float SHELLCON_RADIUS = 10.0f;
-	const float SHELLCON_HEIGHT = 10.0f;
+	const float SHELLCON_HEIGHT = 20.0f;
 	const Vector3 COLLISION_SCALE = Vector3(100.0f, 50.0f, 100.0f);
 	const float THROW_SPEED = 1200.0f;
 	
@@ -49,12 +49,7 @@ Shell::Shell()
 
 Shell::~Shell()
 {
-	if (m_collObj != nullptr)
-	{
-		DeleteGO(m_collObj);
-	}
 	DeleteGO(m_throwSE);
-
 }
 
 bool Shell::Start()
@@ -65,9 +60,8 @@ bool Shell::Start()
 
 	//m_spawner = FindGO<ItemSpawner>("ItemSpawner");
 
-	m_shellRender.Init("Assets/modelData/rock.tkm");
+	m_shellRender.Init("Assets/modelData/hako.tkm");
 	//m_position = m_Enemy2->GetPosition();
-
 
 	m_position.y += 10.0f;
 	m_shellRender.SetPosition(m_position);
@@ -75,6 +69,8 @@ bool Shell::Start()
 	m_moveSpeed = Vector3::Zero;
 
 	m_rotation = Quaternion::Identity;
+	m_scale = Vector3(5.0f, 5.0f, 5.0f);
+	m_shellRender.SetScale(m_scale);
 
 	CharaCon();
 	Collision();
@@ -84,18 +80,22 @@ bool Shell::Start()
 
 void Shell::Update()
 {
+	/*GetRoatation(m_rotation);*/
 	if (m_deleteFlag == true)
 	{
+		if (m_collObj!=nullptr)
+		{
+			m_collObj->SetIsEnable(false);
+			DeleteGO(m_collObj);
+			m_collObj = nullptr;
+		}
+		DeleteGO(this);
 		return;
 	}
-	/*GetRoatation(m_rotation);*/
-	DeleteItem();
+	
 	Rotation();
 	ShellState();
-	m_position = m_shellCon.Execute(m_moveSpeed, g_gameTime->GetFrameDeltaTime());
-	//m_position.y -= 10.0f;
-	m_collObj->SetPosition(m_position);
-	
+
 	m_shellRender.SetPosition(m_position);
 	m_shellRender.SetRotation(m_rotation);
 	m_shellRender.Update();
@@ -152,13 +152,10 @@ void Shell::DeleteItem()
 		{
 			m_boss->Damage();
 			m_deleteFlag = true;
+			return;
 		}
 	}
 
-	if (m_deleteFlag == true)
-	{
-		DeleteGO(this);
-	}
 }
 
 void Shell::ShellState()
@@ -205,6 +202,9 @@ void Shell::PlayerFollow()
 	m_position.y += 150.0f;
 	m_shellCon.SetPosition(m_position);
 	m_position = m_shellCon.Execute(m_moveSpeed, g_gameTime->GetFrameDeltaTime());
+
+	m_collObj->SetPosition(m_position);
+
 	m_collObj->SetIsEnable(false);
 	if (g_pad[0]->IsTrigger(enButtonX))
 	{
@@ -221,17 +221,16 @@ void Shell::PlayerFollow()
 
 void Shell::ShellMove()
 {
-	DeleteTimer();
-	
-
-	//CharaCon();
-	//Collision();
 	m_collObj->SetIsEnable(true);
+	m_position = m_shellCon.Execute(m_moveSpeed, g_gameTime->GetFrameDeltaTime());
 	
-	
+	m_collObj->SetPosition(m_position);
+
 	m_moveSpeed.y -= 50.0f;
 
 
+	DeleteTimer();
+	DeleteItem();
 }
 
 void Shell::Rotation()

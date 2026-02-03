@@ -15,6 +15,11 @@ namespace
 {
 	const Vector3 TIME_POSITION = { -200.0f,475.0f,0.0f };
 	const float TIME_SCALE = 2.0f;
+
+	const float FALL_DEATH_POS = -500.0f;
+	const int HP_ZERO = 0;
+
+	const float TIME_UP = 0.0f;
 }
 
 StageNo1::StageNo1()
@@ -106,6 +111,7 @@ void StageNo1::MakeLevel()
 				auto enemy1 = NewGO<Enemy1>(2,"enemy1");
 				enemy1->SetPosition(objData.position);
 				enemy1->SetRotation(objData.rotation);
+				enemy1->SetScale(objData.scale);
 				m_enemy1s.push_back(enemy1);
 				return true;
 			}
@@ -152,12 +158,12 @@ void StageNo1::Update()
 
 void StageNo1::Death()
 {
-	if (m_player->m_position.y < -500.0f)
+	if (m_player->m_position.y < FALL_DEATH_POS)
 	{
 		GameOverScene();
 		m_stageCount->SetStageCount(0);
 	}
-	if (m_player->GetLife()<=0)
+	if (m_player->GetLife()<= HP_ZERO)
 	{
 		GameOverScene();
 		m_stageCount->SetStageCount(0);
@@ -206,7 +212,7 @@ void StageNo1::DispTime()
 
 void StageNo1::TimeUp()
 {
-	if (m_timer <= 0.0f)
+	if (m_timer <= TIME_UP)
 	{
 		GameOverScene();
 	}

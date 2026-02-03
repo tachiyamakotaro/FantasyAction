@@ -21,6 +21,11 @@ namespace
 
 	const Vector3 COLL_POS = { -2000.0f,500.0f,8750.0f };
 	const Vector3 COLL_SCALE = { 20000.0f,10000.0f,5000.0f };
+
+	const float FALL_DEATH_POS = -500.0f;
+	const int HP_ZERO = 0;
+
+	const float TIME_UP = 0.0f;
 }
 
 BossStage::BossStage()
@@ -151,7 +156,7 @@ void BossStage::MakeLevel()
 				return true;
 			}
 
-			if (objData.EqualObjectName(L"boss2"))
+			if (objData.EqualObjectName(L"boss"))
 			{
 				m_boss = NewGO<Boss>(0, "boss");
 				m_boss->SetPosition(objData.position);
@@ -237,12 +242,12 @@ void BossStage::BossStateChange()
 
 void BossStage::Death()
 {
-	if (m_player->m_position.y < -500.0f)
+	if (m_player->m_position.y < FALL_DEATH_POS)
 	{
 		GameOverScene();
 		m_stageCount->SetStageCount(1);
 	}
-	if (m_player->GetLife() <= 0)
+	if (m_player->GetLife() <= HP_ZERO)
 	{
 		GameOverScene();
 		m_stageCount->SetStageCount(1);
@@ -300,7 +305,7 @@ void BossStage::DispTime()
 
 void BossStage::TimeUp()
 {
-	if (m_timer <= 0.0f)
+	if (m_timer <= TIME_UP)
 	{
 		GameOverScene();
 	}

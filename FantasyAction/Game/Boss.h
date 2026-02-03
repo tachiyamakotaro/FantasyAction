@@ -75,6 +75,8 @@ public:
 	
 	void ProcessDeadStateTransition();
 
+	void BossHpSituation();
+
 	const bool IsDead() const;
 
 	Vector3 GetForwardXZ();
@@ -83,13 +85,13 @@ public:
 
 private:
 	ModelRender m_modelRender;
-	Vector3 m_position;
-	Quaternion m_rotation;
-	Vector3 m_scale;
-	Vector3						m_moveSpeed;							
+	Vector3 m_position = {0.0f,0.0f,0.0f};
+	Quaternion m_rotation={ 0.0f,0.0f,0.0f,0.0f };
+	Vector3 m_scale= { 0.0f,0.0f,0.0f };
+	Vector3						m_moveSpeed= { 0.0f,0.0f,0.0f };
 	Vector3						m_forward = Vector3::AxisZ;
 	Vector3						m_up = Vector3::AxisY;
-	Vector3						m_bodyCollPos;
+	Vector3						m_bodyCollPos= { 0.0f,0.0f,0.0f };
 	CharacterController			m_charaCon;
 
 	EnBossState m_bossState = enBossState_Idle;
@@ -108,6 +110,7 @@ private:
 	float						m_deleteTimer = 0.0f;
 	float						m_deleteTime = 1.5f;
 	float m_attackCoolTime = 0.0f;
+	float m_moveSpeedMag = 350.0f;
 	int m_hp = 3;	
 };
 
